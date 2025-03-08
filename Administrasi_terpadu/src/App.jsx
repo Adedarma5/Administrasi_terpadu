@@ -1,0 +1,88 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './Pages/Home.jsx';
+import Login from './Pages/Login.jsx';
+import Kema from './Pages/Kema.jsx';
+import Berita from './Pages/Berita.jsx';
+import About from './Pages/About.jsx';
+import LayoutAdmin from './components/LayoutAdmin.jsx';
+import LayoutDosen from './components/LayoutDosen.jsx';
+import AdminDashboard from './Dasboard/AdminDashboard.jsx';
+import AkademikDashboard from './Dasboard/AkademikDashboard.jsx';
+import BahanAjar from './Dasboard/BahanAjar.jsx';
+import UserDosen from './Dasboard/UserDosen.jsx';
+import Dosen from './Dasboard/Dosen.jsx';
+import Penelitina from './Dasboard/Penelitian.jsx';
+import Pengabdian from './Dasboard/Pengabdian.jsx';
+import Pengajaran from './Dasboard/Pengajaran.jsx';
+import TambahUser from './Dasboard/TambahUser.jsx';
+import Msib from './Dasboard/Msib.jsx';
+import KerjaPraktik from './Dasboard/KerjaPraktik.jsx';
+import TugasAkhir from './Dasboard/TugasAkhir.jsx';
+import Kkn from './Dasboard/Kkn.jsx';
+import MagangMandiri from './Dasboard/MagangMandiri.jsx';
+import Prestasi from './Dasboard/Prestasi.jsx';
+import TambahBahanAjar from './Dasboard/TambahBahanAjar.jsx';
+import TambahDosen from './Dasboard/TambahDosen.jsx';
+import TambahPengajaran from './Dasboard/TambahPengajaran.jsx';
+import TambahPengabdian from './Dasboard/TambahPengabdian.jsx';
+import TambahPenelitian from './Dasboard/TambahPenelitian.jsx';
+import TambahAbsensi from './Dasboard/TambahAbsensi.jsx';
+import Absensi from './Dasboard/Absensi.jsx';
+import EditDosen from './Dasboard/EditDosen.jsx';
+import MataKuliah from './Dasboard/MataKuliah.jsx';
+import EditMataKuliah from './Dasboard/EditMataKuliah.jsx';
+import TambahMataKuliah from './Dasboard/TambahMataKuliah.jsx';
+import EditBahanAjar from './Dasboard/EditBahanAjar.jsx';
+
+
+
+
+function App() {
+  return (
+    <div>
+      <Routes>
+        <Route index element={<Home />} />
+        <Route path='/Home' Component={Home} />
+        <Route path='/Login' Component={Login} />
+        <Route path='/Berita' Component={Berita} />
+        <Route path='/Kema' Component={Kema} />
+        <Route path='/About' Component={About} />
+        <Route path='/admin' Component={LayoutAdmin}>
+          <Route path='dashboard' Component={AdminDashboard} />
+          <Route path='dashboard/BahanAjar' Component={BahanAjar} />
+          <Route path='dashboard/UserDosen' Component={UserDosen} />
+          <Route path='dashboard/Msib' Component={Msib} />
+          <Route path='dashboard/Kkn' Component={Kkn} />
+          <Route path='dashboard/Prestasi' Component={Prestasi} />
+          <Route path='dashboard/KerjaPraktik' Component={KerjaPraktik} />
+          <Route path='dashboard/TugasAkhir' Component={TugasAkhir} />
+          <Route path='dashboard/MagangMandiri' Component={MagangMandiri} />
+          <Route path='dashboard/Absensi' Component={Absensi} />
+          <Route path='dashboard/MataKuliah' Component={MataKuliah} />
+          <Route path='dashboard/UserDosen/TambahUser' Component={TambahUser} />
+          <Route path='dashboard/Absensi/TambahAbsensi' Component={TambahAbsensi} />
+          <Route path='dashboard/BahanAjar/TambahBahanAjar' Component={TambahBahanAjar} />
+          <Route path='dashboard/Dosen/TambahDosen' Component={TambahDosen} />
+          <Route path='dashboard/Dosen/EditDosen/:id' Component={EditDosen} />
+          <Route path='dashboard/MataKuliah/EditMataKuliah/:id' Component={EditMataKuliah} />
+          <Route path='dashboard/Bahanajar/EditBahanAjar/:id' Component={EditBahanAjar} />
+          <Route path='dashboard/MataKuliah/TambahMataKuliah' Component={TambahMataKuliah} />
+          <Route path='dashboard/Penelitian/TambahPenelitian' Component={TambahPenelitian} />
+          <Route path='dashboard/Pengabdian/TambahPengabdian' Component={TambahPengabdian} />
+          <Route path='dashboard/Pengajaran/TambahPengajaran' Component={TambahPengajaran} />
+          <Route path='dashboard/Dosen' Component={Dosen} />
+          <Route path='dashboard/Penelitian' Component={Penelitina} />
+          <Route path='dashboard/Pengabdian' Component={Pengabdian} />
+          <Route path='dashboard/Pengajaran' Component={Pengajaran} />
+        </Route>
+        <Route path='/dosen' Component={LayoutDosen}>
+          <Route path='dashboard' Component={AkademikDashboard} />
+        </Route>
+      </Routes>
+    </div>
+
+  )
+}
+
+export default App;

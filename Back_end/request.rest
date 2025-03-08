@@ -1,0 +1,137 @@
+// Get semua Users //
+GET http://localhost:5000/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJBZGUgdXBkYXRlIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJpYXQiOjE3NDExODQ1NzIsImV4cCI6MTc0MTE4NDYwMn0.gGm3vrjvRKQ6yEBswdnudVwPyV03leIqvgmtPX9Uh3Y
+
+
+
+// Users By UuId //
+###
+GET http://localhost:5000/users/a935fe23-a707-430f-8e6b-df7f7c720414
+
+
+// Register Users dan admin//
+###
+POST  http://localhost:5000/users
+Content-Type: application/json
+
+{
+    "name": "Ade darma",
+    "email": "ade@gmail.com",
+    "password": "123456",
+    "confPassword": "123456",
+    "role": "user"
+}
+
+
+// Edit Users dan admin //
+###
+PATCH   http://localhost:5000/users/a935fe23-a707-430f-8e6b-df7f7c720414
+Content-Type: application/json
+
+{
+    "name": "Ade update",
+    "email": "admin@gmail.com",
+    "password": "",
+    "confPassword": "",
+    "role": "admin"
+}
+
+
+// Login Users dan Admin //
+###
+POST  http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "email": "admin@gmail.com",
+    "password": "123456"
+}
+
+
+// Get Token Dari Akun //
+###
+GET   http://localhost:5000/token
+
+
+// Delete Users dan Admin Berdasarkan UuId //
+###
+DELETE    http://localhost:5000/users/8a932ec1-f236-4065-a069-ab79df2297e2
+
+
+// Logout akun //   
+###
+DELETE http://localhost:5000/logout
+
+
+
+
+DOSEN
+###
+GET http://localhost:5000/dosen/2
+
+
+###
+POST http://localhost:5000/dosen
+Content-Type: application/json
+
+{
+    "nip": "1122334455",
+    "name": "Rizky Putra Fhonna, S.T., M.Kom",
+    "keahlian": "website",
+    "jabatan": "Ketua Prodi",
+    "status": "aktif"
+}
+
+
+###
+PATCH  http://localhost:5000/dosen/1
+Content-Type: application/json
+
+{
+    "nip": "1122334455",
+    "name": "Rizky Putra Fhonna",
+    "keahlian": "website",
+    "jabatan": "Ketua Prodi",
+    "status": "aktif"
+}
+
+
+###
+DELETE http://localhost:5000/dosen/1
+
+
+
+
+MATA KULIAH
+###
+GET http://localhost:5000/mata_kuliah
+
+
+###
+GET http://localhost:5000/mata_kuliah/1
+
+
+###
+POST http://localhost:5000/mata_kuliah
+Content-Type: application/json
+
+{
+    "name": "Pemograman Web 1",
+    "sks": "3 SKS",
+    "semester": "Semester 3"
+}
+
+
+###
+PATCH  http://localhost:5000/mata_kuliah/1
+Content-Type: application/json
+
+{
+    "name": "Pemograman Web 1",
+    "sks": "3 SKS",
+    "semester": "Semester 3"
+}
+
+
+###
+DELETE http://localhost:5000/mata_kuliah/1
