@@ -8,6 +8,8 @@ const Dosen = () => {
   const navigate = useNavigate();
   const [dosenList, setDosenList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const fetchDosen = async () => {
     try {
@@ -27,12 +29,21 @@ const Dosen = () => {
     if (window.confirm("Apakah Anda yakin ingin menghapus dosen ini?")) {
       try {
         await axios.delete(`http://localhost:5000/dosen/${id}`);
-        fetchDosen(); 
+        fetchDosen();
       } catch (error) {
         console.error("Error deleting dosen:", error);
       }
     }
   };
+
+  const filteredDosen = dosenList.filter((dosen) =>
+    dosen.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    dosen.nip.toString().includes(searchTerm)
+  );
+
+  const totalItems = filteredDosen.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const paginatedDosen = filteredDosen.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <Container fluid className="p-4">
@@ -81,7 +92,8 @@ const Dosen = () => {
                   <th className="py-3">NIP</th>
                   <th className="py-3">Nama</th>
                   <th className="py-3">Bidang Keahlian</th>
-                  <th className="py-3">Jabatan</th>
+                  <th className="py-3">Jabatan Struktural</th>
+                  <th className="py-3">Jabatan Fungsional</th>
                   <th className="py-3">Status</th>
                   <th className="py-3 text-center">Aksi</th>
                 </tr>
@@ -99,7 +111,8 @@ const Dosen = () => {
                         <td>{dosen.nip}</td>
                         <td>{dosen.name}</td>
                         <td>{dosen.keahlian}</td>
-                        <td>{dosen.jabatan}</td>
+                        <td>{dosen.jabatan_struktural}</td>
+                        <td>{dosen.jabatan_fungsional}</td>
                         <td>
                           <Badge bg={dosen.status === "Aktif" ? "success" : "warning"}>{dosen.status}</Badge>
                         </td>
@@ -125,13 +138,27 @@ const Dosen = () => {
                     ))
                 ) : (
                   <tr>
-                    <td colSpan="7" className="text-center text-muted py-3">
+                    <td colSpan="8" className="text-center text-muted py-3">
                       Tidak ada data
                     </td>
                   </tr>
                 )}
               </tbody>
             </Table>
+          </div>
+
+          <div className="p-3 border-top d-flex justify-content-between align-items-center">
+            <div className="small text-muted">
+              Menampilkan {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
+            </div>
+            <div>
+              <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="mx-4">
+                Sebelumnya
+              </Button>
+              <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+                Selanjutnya
+              </Button>
+            </div>
           </div>
         </Card.Body>
       </Card>

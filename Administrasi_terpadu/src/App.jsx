@@ -34,7 +34,16 @@ import MataKuliah from './Dasboard/MataKuliah.jsx';
 import EditMataKuliah from './Dasboard/EditMataKuliah.jsx';
 import TambahMataKuliah from './Dasboard/TambahMataKuliah.jsx';
 import EditBahanAjar from './Dasboard/EditBahanAjar.jsx';
-
+import './Dist/Sidebar.css'
+import Rps from './Dasboard/Rps.jsx';
+import TambahRps from './Dasboard/TambahRps.jsx';
+import EditRps from './Dasboard/EditRps.jsx';
+import TambahMsib from './Dasboard/TambahMsib.jsx';
+import TambahMagangMandiri from './Dasboard/TambahMagangMandiri.jsx';
+import TambahPrestasi from './Dasboard/TambahPrestasi.jsx';
+import Alumni from './Dasboard/Alumni.jsx';
+import Pmm from './Dasboard/Pmm.jsx';
+import Kewirausahaan from './Dasboard/Kewirausahaan.jsx';
 
 
 
@@ -60,11 +69,20 @@ function App() {
           <Route path='dashboard/MagangMandiri' Component={MagangMandiri} />
           <Route path='dashboard/Absensi' Component={Absensi} />
           <Route path='dashboard/MataKuliah' Component={MataKuliah} />
+          <Route path='dashboard/Rps' Component={Rps} />
+          <Route path='dashboard/Alumni' Component={Alumni} />
+          <Route path='dashboard/Pmm' Component={Pmm} />
+          <Route path='dashboard/Kewirausahaan' Component={Kewirausahaan} />
+          <Route path='dashboard/Rps/TambahRps' Component={TambahRps} />
+          <Route path='dashboard/Rps/TambahRps' Component={TambahRps} />
+          <Route path='dashboard/Prestasi/TambahPrestasi' Component={TambahPrestasi} />
+          <Route path='dashboard/Msib/TambahMsib' Component={TambahMsib} />
           <Route path='dashboard/UserDosen/TambahUser' Component={TambahUser} />
           <Route path='dashboard/Absensi/TambahAbsensi' Component={TambahAbsensi} />
           <Route path='dashboard/BahanAjar/TambahBahanAjar' Component={TambahBahanAjar} />
           <Route path='dashboard/Dosen/TambahDosen' Component={TambahDosen} />
           <Route path='dashboard/Dosen/EditDosen/:id' Component={EditDosen} />
+          <Route path='dashboard/Rps/EditRps/:id' Component={EditRps} />
           <Route path='dashboard/MataKuliah/EditMataKuliah/:id' Component={EditMataKuliah} />
           <Route path='dashboard/Bahanajar/EditBahanAjar/:id' Component={EditBahanAjar} />
           <Route path='dashboard/MataKuliah/TambahMataKuliah' Component={TambahMataKuliah} />

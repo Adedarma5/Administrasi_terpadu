@@ -3,7 +3,7 @@ import { Container, Card, Table, Button, Row, Col, Form, InputGroup } from "reac
 import { FiPlus, FiSearch  } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
-const MagangMandiri = () => {
+const Alumni = () => {
     const navigate = useNavigate ();
 
   return (
@@ -12,9 +12,9 @@ const MagangMandiri = () => {
         <Card.Body className="p-4">
           <Row className="align-items-center">
             <Col>
-              <h2 className="mb-1 fw-bold">MAGANG MANDIRI</h2>
+              <h2 className="mb-1 fw-bold text-uppercase">Alumni</h2>
               <p className="text-muted mb-0">
-                Daftar Magang Mandiri Mahasiswa Sistem Informasi
+                Daftar Alumni Mahasiswa Sistem Informasi
               </p>
             </Col>
             <Col xs="auto">
@@ -127,4 +127,4 @@ const MagangMandiri = () => {
   );
 };
 
-export default MagangMandiri;
+export default Alumni;

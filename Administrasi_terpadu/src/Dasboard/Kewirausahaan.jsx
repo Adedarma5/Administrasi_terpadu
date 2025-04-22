@@ -1,26 +1,26 @@
 import React  from "react";
 import { Container, Card, Table, Button, Row, Col, Form, InputGroup } from "react-bootstrap";
 import { FiPlus, FiSearch  } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
-const MagangMandiri = () => {
-    const navigate = useNavigate ();
-
+const Kewirausahaan = () => {
+  const navigate =useNavigate ();
+ 
   return (
     <Container fluid className="p-4">
       <Card className="mb-4 shadow border-0">
         <Card.Body className="p-4">
           <Row className="align-items-center">
             <Col>
-              <h2 className="mb-1 fw-bold">MAGANG MANDIRI</h2>
+              <h2 className="mb-1 fw-bold text-uppercase">Kewirausahaan</h2>
               <p className="text-muted mb-0">
-                Daftar Magang Mandiri Mahasiswa Sistem Informasi
+                Daftar Kewirausahaan Mahasiswa Sistem Informasi
               </p>
             </Col>
             <Col xs="auto">
-              <Button variant="primary" className="d-flex align-items-center gap-2" onClick={() => navigate("/admin/dashboard/magangmandiri/tambahmagangmandiri")}>
+              <Button variant="primary" className="d-flex align-items-center gap-2" onClick={() => navigate("/admin/dashboard/prestasi/tambahprestasi")}>
                 <FiPlus size={18} />
-                <span>Tambah</span>
+                <span>Tambah Prestasi</span>
               </Button>
             </Col>
           </Row>
@@ -68,15 +68,15 @@ const MagangMandiri = () => {
             <Table striped bordered over className="align-middle mb-0 text-center">
               <thead className="bg-light">
                 <tr>
-                  <th className="py-3">NIP</th>
-                  <th className="py-3">Nama</th>
+                  <th className="py-3">No</th>
+                  <th className="py-3">Nama Ketua</th>
                   <th className="py-3">Nim</th>
+                  <th className="py-3">Nama Anggota Tim</th>
+                  <th className="py-3">Nama Dospem</th>
+                  <th className="py-3">Kewirausahaan Yang Di Ikuti</th>
                   <th className="py-3">Judul</th>
-                  <th className="py-3">Nama Perusahaan</th>
-                  <th className="py-3">Tanggal Mulai</th>
-                  <th className="py-3">Tanggal Selesai</th>
-                  <th className="py-3">Konversi Nilai</th>
-                  <th className="py-3">File Laporan</th>
+                  <th className="py-3">File Projek</th>
+                  <th className="py-3"> Laporan</th>
                   <th className="py-3">Aksi</th>
                 </tr>
               </thead>
@@ -127,4 +127,4 @@ const MagangMandiri = () => {
   );
 };
 
-export default MagangMandiri;
+export default Kewirausahaan;

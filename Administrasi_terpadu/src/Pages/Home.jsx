@@ -56,7 +56,7 @@ const Home = () => {
         </div>
       </Container>
 
-      <Container className="mt-4">
+      <Container className="mt-5">
         <div className="row justify-content-center g-4">
           <div className="col-6 col-sm-6 col-md-4 col-lg-2">
             <Card onClick={() => handleCardClick("/Login")} className="text-center rounded-4 border-0 shadow card-hover" style={{ cursor: "pointer" }}>
@@ -93,7 +93,7 @@ const Home = () => {
 
       </Container>
               
-      <div style={{ backgroundColor: 'darkblue' }}>        
+      <div style={{ backgroundColor: 'darkblue', marginTop: '100px', marginBottom: '100px' }}>        
       <div className="container mt-5 ">
         <div className="row align-items-center g-4">
           <div className="col-10 col-sm-6 col-md-4 col-lg-7 pe-lg-5 text-white">
@@ -113,8 +113,10 @@ const Home = () => {
       </div>
       </div>
 
-      <div className="container mt-5 mb-4">
-        <h1 id='program' className="text-center " style={{ color: 'darkblue' }}>PROGRAM</h1>
+      
+
+      <div   className="container mt-5 mb-4">
+        <h1 id='program' className="text-center  " style={{ color: 'darkblue' }}>PROGRAM</h1>
         <div className="row g-4 justify-content-center ">
           <div className="col-12 col-md-12 ">
             <div className="card d-flex align-items-center flex-row p-1 shadow border-0 card-hover">
@@ -169,9 +171,26 @@ const Home = () => {
         </div>
       </div>
 
+
+      <div style={{ position: 'relative', width: '100%', marginTop: '50px' }}>
+  <svg
+    className="w-100 position-absolute"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 1440 320"
+    style={{ bottom: 0, width: '100vw', height: 'auto', zIndex: '-1' }}
+  >
+    <path
+      fill="#e2edff"
+      fillOpacity="1"
+      d="M0,256L40,261.3C80,267,160,277,240,282.7C320,288,400,288,480,250.7C560,213,640,139,720,133.3C800,128,880,192,960,186.7C1040,181,1120,107,1200,69.3C1280,32,1360,32,1400,32L1440,32L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z"
+    />
+  </svg>
+</div>
       <Footer />
       <FooterEnd />
     </div>
+
+    
   );
 };
 

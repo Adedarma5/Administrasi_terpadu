@@ -1,8 +1,10 @@
 import React  from "react";
 import { Container, Card, Table, Button, Row, Col, Form, InputGroup } from "react-bootstrap";
 import { FiPlus, FiSearch  } from "react-icons/fi";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Prestasi = () => {
+  const navigate =useNavigate ();
  
   return (
     <Container fluid className="p-4">
@@ -10,15 +12,15 @@ const Prestasi = () => {
         <Card.Body className="p-4">
           <Row className="align-items-center">
             <Col>
-              <h2 className="mb-1 fw-bold">Prestasi</h2>
+              <h2 className="mb-1 fw-bold text-uppercase">Prestasi</h2>
               <p className="text-muted mb-0">
                 Daftar Prestasi Mahasiswa Sistem Informasi
               </p>
             </Col>
             <Col xs="auto">
-              <Button variant="primary" className="d-flex align-items-center gap-2">
+              <Button variant="primary" className="d-flex align-items-center gap-2" onClick={() => navigate("/admin/dashboard/prestasi/tambahprestasi")}>
                 <FiPlus size={18} />
-                <span>Tambah Dosen</span>
+                <span>Tambah Prestasi</span>
               </Button>
             </Col>
           </Row>
@@ -63,16 +65,19 @@ const Prestasi = () => {
 
 
           <div className="table-responsive">
-            <Table striped bordered over className="align-middle mb-0">
+            <Table striped bordered over className="align-middle mb-0 text-center">
               <thead className="bg-light">
                 <tr>
-                  <th className="py-3">NIP</th>
-                  <th className="py-3">Nama Lengkap</th>
-                  <th className="py-3">Pendidikan</th>
-                  <th className="py-3">Bidang Keahlian</th>
-                  <th className="py-3">Status</th>
-                  <th className="py-3">Kontak</th>
-                  <th className="py-3 text-center">Aksi</th>
+                  <th className="py-3">No</th>
+                  <th className="py-3">Kategori</th>
+                  <th className="py-3">Tingkatan</th>
+                  <th className="py-3">Nama Ketua</th>
+                  <th className="py-3">Nim</th>
+                  <th className="py-3">Nama Anggota</th>
+                  <th className="py-3">Nama Perlombaan</th>
+                  <th className="py-3">Bidang Perlombaan</th>
+                  <th className="py-3">Sertifikat</th>
+                  <th className="py-3">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -96,7 +101,7 @@ const Prestasi = () => {
                     </tr>
                 ))} */}
                 <tr>
-                    <td colSpan="7" className="text-center text-muted py-3">
+                    <td colSpan="10" className="text-center text-muted py-3">
                       Tidak ada data
                     </td>
                   </tr>

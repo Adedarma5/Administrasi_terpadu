@@ -21,6 +21,7 @@ const UserDosen = () => {
       const token = localStorage.getItem("token");
       if (!token) {
         console.error("Token tidak ditemukan. Silakan login.");
+        navigate("/login");
         return;
       }
 
@@ -30,7 +31,15 @@ const UserDosen = () => {
 
       setUsers(response.data);
     } catch (error) {
-      console.error("Error fetching users:", error.response?.data?.message || error.message);
+      const msg = error.response?.data?.message || error.message;
+      console.error("Error fetching users:", msg);
+
+
+      if (msg.includes("kadaluarsa") || msg.includes("tidak valid")) {
+        alert("Sesi Anda telah berakhir. Silakan login kembali.");
+        localStorage.removeItem("token");
+        navigate("/login");
+      }
     }
   };
 
@@ -48,7 +57,7 @@ const UserDosen = () => {
     }
   };
 
-  const filteredUsers = users.filter(user => 
+  const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
     (filterRole === "" || user.role === filterRole)
   );
@@ -98,7 +107,7 @@ const UserDosen = () => {
             </Row>
           </div>
 
-          <div className="table-responsive">
+          <div className="table-responsive text-center">
             <Table striped bordered hover className="align-middle mb-0">
               <thead className="bg-dark text-white text-center">
                 <tr>

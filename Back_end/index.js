@@ -9,15 +9,23 @@ import DosenRouter from "./routes/dosenroute.js";
 import MataKuliah from "./routes/matakuliah.js";
 import BahanAjar from "./routes/bahanajar.js";
 import Absensi from "./routes/absensi.js";
+import Msib from "./routes/msib.js";
+import Rps from "./routes/rps.js";
 import upload from "./middleware/upload.js";
 
 dotenv.config();
 
 const app = express();
 
-// (async()=>{
-//     await db.sync();
+// (async () => {
+//     try {
+//         await db.sync({ force: false });
+//         console.log("Database synchronized...");
+//     } catch (error) {
+//         console.error("Error synchronizing database:", error);
+//     }
 // })();
+
 
 try{
     await db.authenticate();
@@ -31,12 +39,16 @@ app.use(cookieParser());
 app.use(express.json());
 app.use("/uploads/bahan_ajar", express.static("uploads/bahan_ajar")); 
 app.use("/uploads/absensi", express.static("uploads/absensi")); 
+app.use("/uploads/msib", express.static("uploads/msib")); 
+app.use("/uploads/rps", express.static("uploads/rps")); 
 app.use(router);
 app.use(AuthRoute);
 app.use(DosenRouter);
 app.use(MataKuliah);
 app.use(BahanAjar );
 app.use(Absensi );
+app.use(Rps );
+app.use(Msib );
 
 
 

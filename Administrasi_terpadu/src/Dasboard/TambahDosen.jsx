@@ -8,7 +8,8 @@ const TambahDosen = () => {
   const [nip, setNip] = useState("");
   const [name, setName] = useState("");
   const [keahlian, setKeahlian] = useState("");
-  const [jabatan, setJabatan] = useState("");
+  const [Jabatan_struktural, setJabatan_Strukrural] = useState("");
+  const [jabatan_fungsional, setJabatan_Fungsional] = useState("");
   const [status, setStatus] = useState("");
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
@@ -20,7 +21,8 @@ const TambahDosen = () => {
         nip: nip,
         name: name,
         keahlian: keahlian,
-        jabatan: jabatan,
+        jabatan_struktural: Jabatan_struktural,
+        jabatan_fungsional: jabatan_fungsional,
         status: status,
       });
       navigate("/admin/dashboard/dosen");
@@ -97,16 +99,41 @@ const TambahDosen = () => {
 
             <Row className="align-items-center mb-3">
               <Col md={3}>
-                <Form.Label >Jabatan </Form.Label>
+                <Form.Label >Jabatan Struktural </Form.Label>
               </Col> :
               <Col md={8}>
-                <Form.Control
+                <Form.Select
                   type="text"
-                  value={jabatan}
-                  onChange={(e) => setJabatan(e.target.value)}
-                  placeholder="Masukkan Jabatan"
-                  required
-                />
+                  value={Jabatan_struktural}
+                  onChange={(e) => setJabatan_Strukrural(e.target.value)}
+                >
+                  <option value="">-- Pilih Jabatan Struktural --</option>
+                  <option value="Ketua Jurusan">Ketua Jurusan</option>
+                  <option value="Sekertaris Jurusan">Sekertaris Jurusan</option>
+                  <option value="Ketua Prodi">Ketua Prodi</option>
+                  <option value="Wakil Ketua Prodi">Wakil Ketua Prodi</option>
+                  <option value="Kepala Laboratorium">Kepala Laboratorium</option>
+                </Form.Select>
+              </Col>
+            </Row>
+
+            <Row className="align-items-center mb-3">
+              <Col md={3}>
+                <Form.Label >Jabatan Fungsional </Form.Label>
+              </Col> :
+              <Col md={8}>
+                <Form.Select
+                  type="text"
+                  value={jabatan_fungsional}
+                  onChange={(e) => setJabatan_Fungsional(e.target.value)}
+                >
+                  <option value="">-- Pilih Jabatan Fungsional --</option>
+                  <option value="Profesor">Profesor</option>
+                  <option value="Lektor Kepala">Lektor Kepala</option>
+                  <option value="Lektor">Lektor</option>
+                  <option value="Asisten Ahli">Asisten Ahli</option>
+                  <option value="Tenaga Pengajar">Tenaga Pengajar</option>
+                </Form.Select>
               </Col>
             </Row>
 
@@ -119,7 +146,7 @@ const TambahDosen = () => {
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
                 >
-                  <option value="">Pilih Status</option>
+                  <option value="">-- Pilih Status --</option>
                   <option value="Aktif">Aktif</option>
                   <option value="Cuti">Cuti</option>
                 </Form.Select>

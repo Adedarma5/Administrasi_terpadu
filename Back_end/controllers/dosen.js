@@ -4,7 +4,7 @@ import Dosen from "../models/dosenmodel.js";
 export const getDosen = async(req, res) => {
     try {
         const dosen = await Dosen.findAll({
-         attributes: ['id','nip','name', 'keahlian', 'jabatan', 'status']
+         attributes: ['id','nip','name', 'keahlian', 'jabatan_struktural', 'jabatan_fungsional', 'status']
         });
         res.json(dosen);
     } catch (error){
@@ -15,7 +15,7 @@ export const getDosen = async(req, res) => {
 export const getDosenById = async (req, res) => {
     try {
         const dosen = await Dosen.findOne({
-            attributes: ['id', 'nip', 'name', 'keahlian', 'jabatan', 'status'],
+            attributes: ['id', 'nip', 'name', 'keahlian', 'jabatan_struktural', 'jabatan_fungsional', 'status'],
             where: {
                 id: req.params.id
             }
@@ -32,13 +32,14 @@ export const getDosenById = async (req, res) => {
 };
 
 export const createDosen = async(req, res) =>{
-    const {nip, name, keahlian, jabatan, status} = req.body;
+    const {nip, name, keahlian, jabatan_struktural, jabatan_fungsional, status} = req.body;
     try {
         await Dosen.create({
             nip: nip,
             name: name,
             keahlian: keahlian,
-            jabatan: jabatan,
+            jabatan_struktural: jabatan_struktural,
+            jabatan_fungsional: jabatan_fungsional,
             status: status
         });
         res.status(201).json({msg: "dosen Created Successfuly"});
@@ -57,8 +58,8 @@ export const updateDosen = async (req, res) => {
             return res.status(404).json({ msg: "Dosen tidak ditemukan" });
         }
 
-        const { nip, name, keahlian, jabatan, status } = req.body;
-        await dosen.update({ nip, name, keahlian, jabatan, status });
+        const { nip, name, keahlian, jabatan_struktural, jabatan_fungsional, status } = req.body;
+        await dosen.update({ nip, name, keahlian, jabatan_struktural, jabatan_fungsional, status });
 
         res.status(200).json({ msg: "Dosen berhasil diperbarui" });
     } catch (error) {

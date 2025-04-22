@@ -14,14 +14,20 @@ const storage = multer.diskStorage({
         let folder = "uploads/";
 
         if (ext === ".pdf") {
-            folder += "bahan_ajar/"; 
+            if (req.body.type === "rps") {
+                folder += "rps/";
+            } else if (req.body.type === "msib") {
+                folder += "msib/";
+            } else {
+                folder += "bahan_ajar/";
+            }
         } else if ([".jpg", ".jpeg", ".png"].includes(ext)) {
-            folder += "absensi/"; 
+            folder += "absensi/";
         } else {
             return cb(new Error("Format file tidak didukung"), false);
         }
 
-        createFolderIfNotExists(folder); 
+        createFolderIfNotExists(folder);
         cb(null, folder);
     },
     filename: function (req, file, cb) {
@@ -40,11 +46,10 @@ const fileFilter = (req, file, cb) => {
     cb(null, true);
 };
 
-
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 } 
+    limits: { fileSize: 5 * 1024 * 1024 }
 });
 
 export default upload;

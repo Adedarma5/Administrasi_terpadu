@@ -1,26 +1,26 @@
 import React  from "react";
 import { Container, Card, Table, Button, Row, Col, Form, InputGroup } from "react-bootstrap";
 import { FiPlus, FiSearch  } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
-const MagangMandiri = () => {
-    const navigate = useNavigate ();
-
+const Pmm = () => {
+  const navigate =useNavigate ();
+ 
   return (
     <Container fluid className="p-4">
       <Card className="mb-4 shadow border-0">
         <Card.Body className="p-4">
           <Row className="align-items-center">
             <Col>
-              <h2 className="mb-1 fw-bold">MAGANG MANDIRI</h2>
+              <h2 className="mb-1 fw-bold text-uppercase">Pertukaran Mahasiswa</h2>
               <p className="text-muted mb-0">
-                Daftar Magang Mandiri Mahasiswa Sistem Informasi
+                Daftar Pertukaran Mahasiswa Sistem Informasi
               </p>
             </Col>
             <Col xs="auto">
-              <Button variant="primary" className="d-flex align-items-center gap-2" onClick={() => navigate("/admin/dashboard/magangmandiri/tambahmagangmandiri")}>
+              <Button variant="primary" className="d-flex align-items-center gap-2" onClick={() => navigate("/admin/dashboard/prestasi/tambahprestasi")}>
                 <FiPlus size={18} />
-                <span>Tambah</span>
+                <span>Tambah Prestasi</span>
               </Button>
             </Col>
           </Row>
@@ -68,15 +68,13 @@ const MagangMandiri = () => {
             <Table striped bordered over className="align-middle mb-0 text-center">
               <thead className="bg-light">
                 <tr>
-                  <th className="py-3">NIP</th>
+                  <th className="py-3">No</th>
                   <th className="py-3">Nama</th>
                   <th className="py-3">Nim</th>
-                  <th className="py-3">Judul</th>
-                  <th className="py-3">Nama Perusahaan</th>
-                  <th className="py-3">Tanggal Mulai</th>
-                  <th className="py-3">Tanggal Selesai</th>
+                  <th className="py-3">Nama Universitas</th>
+                  <th className="py-3">Module Pembelajaran</th>
+                  <th className="py-3">Lembar Nilai Dari Univ PMM</th>
                   <th className="py-3">Konversi Nilai</th>
-                  <th className="py-3">File Laporan</th>
                   <th className="py-3">Aksi</th>
                 </tr>
               </thead>
@@ -127,4 +125,4 @@ const MagangMandiri = () => {
   );
 };
 
-export default MagangMandiri;
+export default Pmm;

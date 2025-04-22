@@ -63,16 +63,17 @@ const TugasAkhir = () => {
 
 
           <div className="table-responsive">
-            <Table striped bordered over className="align-middle mb-0">
+            <Table striped bordered over className="align-middle mb-0 text-center">
               <thead className="bg-light">
                 <tr>
-                  <th className="py-3">NIP</th>
-                  <th className="py-3">Nama Lengkap</th>
-                  <th className="py-3">Pendidikan</th>
-                  <th className="py-3">Bidang Keahlian</th>
-                  <th className="py-3">Status</th>
-                  <th className="py-3">Kontak</th>
-                  <th className="py-3 text-center">Aksi</th>
+                  <th className="py-3">No</th>
+                  <th className="py-3">Nama</th>
+                  <th className="py-3">Nim</th>
+                  <th className="py-3">NO Hp</th>
+                  <th className="py-3">Skripsi Versi Distribusi</th>
+                  <th className="py-3">Program TGA</th>
+                  <th className="py-3">Jurnal Skripsi Dengan Format Sisfo</th>
+                  <th className="py-3">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -96,7 +97,7 @@ const TugasAkhir = () => {
                     </tr>
                 ))} */}
                 <tr>
-                    <td colSpan="7" className="text-center text-muted py-3">
+                    <td colSpan="8" className="text-center text-muted py-3">
                       Tidak ada data
                     </td>
                   </tr>
@@ -104,7 +105,7 @@ const TugasAkhir = () => {
             </Table>
           </div>
 
-          {/* Pagination section */}
+
           <div className="p-3 border-top d-flex justify-content-between align-items-center">
             <div className="small text-muted">Menampilkan 1-5 dari 5 entri</div>
             <div>

@@ -1,8 +1,6 @@
 // Get semua Users //
 GET http://localhost:5000/users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJBZGUgdXBkYXRlIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJpYXQiOjE3NDExODQ1NzIsImV4cCI6MTc0MTE4NDYwMn0.gGm3vrjvRKQ6yEBswdnudVwPyV03leIqvgmtPX9Uh3Y
-
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJBZGUgdXBkYXRlIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJpYXQiOjE3NDUyOTQyMTQsImV4cCI6MTc0NTMwMTQxNH0.IXxIWu13hRP7ydcbz_Tu149cnGP4HoGAErYmxoMqhwI
 
 // Users By UuId //
 ###
@@ -112,13 +110,13 @@ GET http://localhost:5000/mata_kuliah/1
 
 
 ###
-POST http://localhost:5000/mata_kuliah
+POST http://localhost:5000/rps
 Content-Type: application/json
 
 {
     "name": "Pemograman Web 1",
-    "sks": "3 SKS",
-    "semester": "Semester 3"
+    "semester": "semester 3",
+    "file_rps": "   "
 }
 
 

@@ -52,7 +52,7 @@ const TambahBahanAjar = () => {
     axios.post("http://localhost:5000/bahan_ajar", formData, {
       headers: { "Content-Type": "multipart/form-data" }
     }).then(response => {
-      console.log(response.data);
+      console.log(response.data); 
       navigate("/admin/dashboard/bahanajar");
     }).catch(error => {
       console.error(error.response.data);
@@ -80,7 +80,9 @@ const TambahBahanAjar = () => {
                   <Form.Label>Nama Mata Kuliah</Form.Label>
                 </Col>
                 <Col md={8}>
-                  <Form.Select value={name} onChange={(e) => setName(e.target.value)} required>
+                  <Form.Select 
+                  value={name} 
+                  onChange={(e) => setName(e.target.value)} required>
                     <option value="">Pilih Mata Kuliah</option>
                     {mataKuliahList.map((mata_kuliah) => (
                       <option key={mata_kuliah.id} value={mata_kuliah.name}>{mata_kuliah.name}</option>

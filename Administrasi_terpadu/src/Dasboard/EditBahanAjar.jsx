@@ -8,7 +8,7 @@ const EditBahanAjar = () => {
   const [dosenList, setDosenList] = useState([]);
   const [name, setName] = useState("");
   const [judul_materi, setJudulMateri] = useState("");
-  const [mata_kuliah, setMataKuliah] = useState("");
+  const [dosen_pengampu, setDosenPengampu] = useState("");
   const [pertemuan, setPertemuan] = useState("");
   const [file_pendukung, setFilePendukung] = useState(null);
   const [msg, setMsg] = useState("");
@@ -25,9 +25,9 @@ const EditBahanAjar = () => {
     try {
       const response = await axios.get(`http://localhost:5000/bahan_ajar/${id}`);
       const bahan_ajar = response.data;
-      setMataKuliah(bahan_ajar.mata_kuliah);
-      setJudulMateri(bahan_ajar.judul_materi);
       setName(bahan_ajar.name);
+      setJudulMateri(bahan_ajar.judul_materi);
+      setDosenPengampu(bahan_ajar.dosen_pengampu);
       setPertemuan(bahan_ajar.pertemuan);
     } catch (error) {
       console.error("Gagal mengambil data bahan ajar:", error);
@@ -61,9 +61,9 @@ const EditBahanAjar = () => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("mata_kuliah", mata_kuliah);
-      formData.append("judul_materi", judul_materi);
       formData.append("name", name);
+      formData.append("judul_materi", judul_materi);
+      formData.append("dosen_pengampu", dosen_pengampu);
       formData.append("pertemuan", pertemuan);
       if (file_pendukung) {
         formData.append("file_pendukung", file_pendukung);
@@ -96,7 +96,7 @@ const EditBahanAjar = () => {
             <Row className="mb-3">
               <Col md={3}><Form.Label>Mata Kuliah</Form.Label></Col>
               <Col md={8}>
-                <Form.Select value={mata_kuliah} onChange={(e) => setMataKuliah(e.target.value)} required>
+                <Form.Select value={name} onChange={(e) => setName(e.target.value)} required>
                   <option value="">Pilih Mata Kuliah</option>
                   {mataKuliahList.map((mata_kuliah) => (
                     <option key={mata_kuliah.id} value={mata_kuliah.name}>{mata_kuliah.name}</option>
@@ -115,7 +115,7 @@ const EditBahanAjar = () => {
             <Row className="mb-3">
               <Col md={3}><Form.Label>Dosen Pengampu</Form.Label></Col>
               <Col md={8}>
-                <Form.Select value={name} onChange={(e) => setName(e.target.value)} required>
+                <Form.Select value={dosen_pengampu} onChange={(e) => setDosenPengampu(e.target.value)} required>
                   <option value="">Pilih Dosen</option>
                   {dosenList.map((dosen) => (
                     <option key={dosen.id} value={dosen.name}>{dosen.name}</option>

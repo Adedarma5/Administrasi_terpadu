@@ -4,37 +4,21 @@ import db from "../config/database.js"
 
 const { DataTypes } = Sequelize;
 
-const Dosen = db.define('dosen', {
+const Rps = db.define('rps', {
     id:{
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    nip: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     name: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    keahlian: {
+    semester: {
         type: DataTypes.STRING,
         allowNull: false,
-
     },
-    jabatan_struktural: {
-        type: DataTypes.STRING,
-        allowNull: true,
-
-    },
-
-    jabatan_fungsional: {
-        type: DataTypes.STRING,
-        allowNull: true,
-
-    },
-    status:{
+    file_rps:{
         type: DataTypes.STRING,
         allowNull: false,
     },
@@ -43,4 +27,4 @@ const Dosen = db.define('dosen', {
     timestamps: false,
 });
 
-export default Dosen;
+export default Rps;

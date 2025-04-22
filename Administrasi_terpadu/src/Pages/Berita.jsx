@@ -20,7 +20,7 @@ const Berita = () => {
                                 </Card.Text>
                             </Card.Body>
                             <Card.Footer className="d-flex border-0 justify-content-end">
-                                <Button variant="primary">Baca Selengkapnya</Button>
+                                <Button variant="primary" href='https://news.unimal.ac.id/'>Baca Selengkapnya</Button>
                             </Card.Footer>
                         </Card>
                 </Col>

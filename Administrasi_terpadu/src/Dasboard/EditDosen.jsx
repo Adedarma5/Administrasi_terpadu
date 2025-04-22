@@ -7,13 +7,13 @@ const EditDosen = () => {
   const [nip, setNip] = useState("");
   const [name, setName] = useState("");
   const [keahlian, setKeahlian] = useState("");
-  const [jabatan, setJabatan] = useState("");
+  const [jabatan_struktural, setJabatan_Strukrural] = useState("");
+  const [jabatan_fungsional, setJabatan_Fungsional] = useState("");
   const [status, setStatus] = useState("");
   const [msg, setMsg] = useState("");
-  const { id } = useParams(); // Ambil ID dari URL
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  // Mengambil data dosen berdasarkan ID
   useEffect(() => {
     getDosenById();
   }, []);
@@ -25,7 +25,8 @@ const EditDosen = () => {
       setNip(dosen.nip);
       setName(dosen.name);
       setKeahlian(dosen.keahlian);
-      setJabatan(dosen.jabatan);
+      setJabatan_Strukrural(dosen.jabatan_struktural);
+      setJabatan_Fungsional(dosen.jabatan_fungsional);
       setStatus(dosen.status);
     } catch (error) {
       console.error("Gagal mengambil data dosen:", error);
@@ -33,7 +34,6 @@ const EditDosen = () => {
     }
   };
 
-  // Fungsi untuk menyimpan perubahan
   const updateDosen = async (e) => {
     e.preventDefault();
     try {
@@ -41,7 +41,8 @@ const EditDosen = () => {
         nip,
         name,
         keahlian,
-        jabatan,
+        jabatan_struktural,
+        jabatan_fungsional,
         status,
       });
       navigate("/admin/dashboard/dosen");
@@ -114,15 +115,37 @@ const EditDosen = () => {
 
             <Row className="align-items-center mb-3">
               <Col md={3}>
-                <Form.Label>Jabatan</Form.Label>
+                <Form.Label>Jabatan Struktural</Form.Label>
               </Col>
               <Col md={8}>
-                <Form.Control
+                <Form.Select
                   type="text"
-                  value={jabatan}
-                  onChange={(e) => setJabatan(e.target.value)}
-                  required
-                />
+                  value={jabatan_struktural}
+                  onChange={(e) => setJabatan_Strukrural(e.target.value)}
+                  >
+                  <option value="">-- Pilih Jabatan Struktural --</option>
+                  <option value="Ketua Jurusan">Ketua Jurusan</option>
+                  <option value="Sekertaris Jurusan">Sekertaris Jurusan</option>
+                  <option value="Ketua Prodi">Ketua Prodi</option>
+                  <option value="Wakil Ketua Prodi">Wakil Ketua Prodi</option>
+                  <option value="Kepala Laboratorium">Kepala Laboratorium</option>
+                </Form.Select>
+              </Col>
+            </Row>
+
+            <Row className="align-items-center mb-3">
+              <Col md={3}>
+                <Form.Label>Jabatan Fungsional</Form.Label>
+              </Col>
+              <Col md={8}>
+                <Form.Select
+                  value={jabatan_fungsional}
+                  onChange={(e) => setJabatan_Fungsional(e.target.value)}
+                >
+                  <option value="">Pilih Status</option>
+                  <option value="Aktif">Aktif</option>
+                  <option value="Cuti">Cuti</option>
+                </Form.Select>
               </Col>
             </Row>
 
@@ -131,10 +154,14 @@ const EditDosen = () => {
                 <Form.Label>Status</Form.Label>
               </Col>
               <Col md={8}>
-                <Form.Select value={status} onChange={(e) => setStatus(e.target.value)}>
-                  <option value="">Pilih Status</option>
-                  <option value="Aktif">Aktif</option>
-                  <option value="Cuti">Cuti</option>
+                <Form.Select value={status} onChange={(e) => setStatus(e.target.value)}
+                >
+                  <option value="">-- Pilih Jabatan Fungsional --</option>
+                  <option value="Profesor">Profesor</option>
+                  <option value="Lektor Kepala">Lektor Kepala</option>
+                  <option value="Lektor">Lektor</option>
+                  <option value="Asisten Ahli">Asisten Ahli</option>
+                  <option value="Tenaga Pengajar">Tenaga Pengajar</option>
                 </Form.Select>
               </Col>
             </Row>

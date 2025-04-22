@@ -5,7 +5,7 @@ import FooterEnd from '../components/FooterEnd';
 import Footer from '../components/FooterComponents';
 import NavbarComponents from '../components/NavbarComponents';
 import axios from 'axios';
-import React, {useState, use}  from 'react';
+import React, { useState, use } from 'react';
 
 const Login = () => {
   const [email, setEmail] = useState(' ');
@@ -15,14 +15,10 @@ const Login = () => {
   const Auth = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/login", {
-        email: email,
-        password: password
-      });
-  
-      console.log("Login berhasil, token:", response.data.token); 
-      
-      localStorage.setItem("token", response.data.token);
+      const response = await axios.post("http://localhost:5000/login", { email, password });
+      localStorage.setItem("token", response.data.accessToken);
+
+
 
       location.href = "/admin/dashboard";
     } catch (error) {
