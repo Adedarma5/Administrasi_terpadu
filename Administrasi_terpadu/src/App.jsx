@@ -44,6 +44,10 @@ import TambahPrestasi from './Dasboard/TambahPrestasi.jsx';
 import Alumni from './Dasboard/Alumni.jsx';
 import Pmm from './Dasboard/Pmm.jsx';
 import Kewirausahaan from './Dasboard/Kewirausahaan.jsx';
+import KontrakKuliah from './Dasboard/KontrakKuliah.jsx';
+import TambahKontrakKuliah from './Dasboard/TambahKontrakKuliah.jsx';
+import EditKontrakKuliah from './Dasboard/EditKontrakKuliah.jsx';
+import EditPenelitian from './Dasboard/EditPenelitian.jsx';
 
 
 
@@ -59,6 +63,7 @@ function App() {
         <Route path='/About' Component={About} />
         <Route path='/admin' Component={LayoutAdmin}>
           <Route path='dashboard' Component={AdminDashboard} />
+          <Route path='dashboard/KontrakKuliah' Component={KontrakKuliah} />
           <Route path='dashboard/BahanAjar' Component={BahanAjar} />
           <Route path='dashboard/UserDosen' Component={UserDosen} />
           <Route path='dashboard/Msib' Component={Msib} />
@@ -73,7 +78,7 @@ function App() {
           <Route path='dashboard/Alumni' Component={Alumni} />
           <Route path='dashboard/Pmm' Component={Pmm} />
           <Route path='dashboard/Kewirausahaan' Component={Kewirausahaan} />
-          <Route path='dashboard/Rps/TambahRps' Component={TambahRps} />
+          <Route path='dashboard/KontrakKuliah/TambahKontrakKuliah' Component={TambahKontrakKuliah} />
           <Route path='dashboard/Rps/TambahRps' Component={TambahRps} />
           <Route path='dashboard/Prestasi/TambahPrestasi' Component={TambahPrestasi} />
           <Route path='dashboard/Msib/TambahMsib' Component={TambahMsib} />
@@ -82,6 +87,8 @@ function App() {
           <Route path='dashboard/BahanAjar/TambahBahanAjar' Component={TambahBahanAjar} />
           <Route path='dashboard/Dosen/TambahDosen' Component={TambahDosen} />
           <Route path='dashboard/Dosen/EditDosen/:id' Component={EditDosen} />
+          <Route path='dashboard/Penelitian/EditPenelitian/:id' Component={EditPenelitian} />
+          <Route path='dashboard/KontrakKuliah/EditKontrakKuliah/:id' Component={EditKontrakKuliah} />
           <Route path='dashboard/Rps/EditRps/:id' Component={EditRps} />
           <Route path='dashboard/MataKuliah/EditMataKuliah/:id' Component={EditMataKuliah} />
           <Route path='dashboard/Bahanajar/EditBahanAjar/:id' Component={EditBahanAjar} />

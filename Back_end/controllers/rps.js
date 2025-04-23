@@ -35,8 +35,7 @@ export const getRpsById = async (req, res) => {
 
 export const createRps = async (req, res) => {
     try {
-      console.log("Req File:", req.file); // Cek apakah file dikirim
-  
+      console.log("Req File:", req.file); 
       if (!req.file) {
         return res.status(400).json({ msg: "File PDF harus diunggah!" });
       }

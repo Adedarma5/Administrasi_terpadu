@@ -65,13 +65,6 @@ const AdminDashboard = () => {
                            </p>
                        </div>
                        <div className="d-flex align-items-center">
-                           <button 
-                               onClick={Logout}
-                               className="btn btn-outline-danger d-flex align-items-center"
-                           >
-                               <LogOut size={20} className="me-2" />
-                               Logout
-                           </button>
                        </div>
                    </div>
                </Card.Body>

@@ -24,6 +24,7 @@ const EditBahanAjar = () => {
   const getBahanAjarById = async () => {
     try {
       const response = await axios.get(`http://localhost:5000/bahan_ajar/${id}`);
+      
       const bahan_ajar = response.data;
       setName(bahan_ajar.name);
       setJudulMateri(bahan_ajar.judul_materi);
@@ -91,10 +92,15 @@ const EditBahanAjar = () => {
 
       <Card className="shadow border-0">
         <Card.Body>
-          {msg && <Alert variant="danger">{msg}</Alert>}
+          {msg && 
+          <Alert variant="danger">{msg}
+          </Alert>}
+          
           <Form onSubmit={updateBahanAjar}>
             <Row className="mb-3">
-              <Col md={3}><Form.Label>Mata Kuliah</Form.Label></Col>
+              <Col md={3}>
+              <Form.Label>Mata Kuliah</Form.Label>
+              </Col>
               <Col md={8}>
                 <Form.Select value={name} onChange={(e) => setName(e.target.value)} required>
                   <option value="">Pilih Mata Kuliah</option>
@@ -108,7 +114,11 @@ const EditBahanAjar = () => {
             <Row className="mb-3">
               <Col md={3}><Form.Label>Judul Materi</Form.Label></Col>
               <Col md={8}>
-                <Form.Control type="text" value={judul_materi} onChange={(e) => setJudulMateri(e.target.value)} required />
+                <Form.Control 
+                type="text" 
+                value={judul_materi} 
+                onChange={(e) => setJudulMateri(e.target.value)} 
+                required />
               </Col>
             </Row>
 

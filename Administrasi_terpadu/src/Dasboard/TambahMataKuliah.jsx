@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Button, Alert, CardHeader } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -29,15 +29,17 @@ const TambahMataKuliah = () => {
 
   return (
     <Container fluid className="p-4">
-      <Card className="mb-4 shadow border-0">
-        <Card.Body className="p-4">
-          <h2 className="mb-1 fw-bold">Mata Kuliah</h2>
-          <p className="text-muted mb-0">Daftar Mata Kuliah Sistem Informasi</p>
-        </Card.Body>
-      </Card>
+      <Row className="align-items-center p-4">
+        <Col>
+          <h2 className="mb-1 fw-bold"> MATA KULIAH</h2>
+          <p className="text-muted mb-0">Tambah Data Mata Kuliah Sistem Informasi</p>
+        </Col>
+      </Row>
 
       <Card className="shadow border-0">
-        <h4 className="p-4">Tambah Mata Kuliah </h4>
+        <CardHeader className="bg-white">
+        <h5 className="mb-0 fw-semibold">Tambah Mata Kuliah </h5>
+        </CardHeader>
         <Card.Body className="p-4">
           {msg && (
             <Alert variant="danger" className="mb-4">
@@ -66,7 +68,7 @@ const TambahMataKuliah = () => {
                 <Form.Label >SKS </Form.Label>
               </Col> :
               <Col md={8}>
-              <Form.Select
+                <Form.Select
                   value={sks}
                   onChange={(e) => setSks(e.target.value)}
                 >
@@ -82,7 +84,7 @@ const TambahMataKuliah = () => {
                 <Form.Label >Semester </Form.Label>
               </Col> :
               <Col md={8}>
-              <Form.Select
+                <Form.Select
                   value={semester}
                   onChange={(e) => setSemester(e.target.value)}
                 >

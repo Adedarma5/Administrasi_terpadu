@@ -12,8 +12,8 @@ const router = express.Router();
 
 router.get('/rps',  getRps);
 router.get('/rps/:id',  getRpsById);
-router.post('/rps', upload.single("file_rps"), createRps);
-router.patch('/rps/:id', upload.single("file_rps"), updateRps);
+router.post('/rps',(req, res, next) => { req.body.type = "rps"; next();}, upload.single("file_rps"), createRps);
+router.patch('/rps/:id',(req, res, next) => { req.body.type = "rps"; next();}, upload.single("file_rps"), updateRps);
 router.delete('/rps/:id', deleteRps );
 
 export default router;

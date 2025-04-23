@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Button, Alert, CardHeader } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -35,15 +35,17 @@ const TambahDosen = () => {
 
   return (
     <Container fluid className="p-4">
-      <Card className="mb-4 shadow border-0">
-        <Card.Body className="p-4">
+      <Row className="align-items-center p-4">
+              <Col>
           <h2 className="mb-1 fw-bold">DOSEN</h2>
-          <p className="text-muted mb-0">Daftar Dosen Sistem Informasi</p>
-        </Card.Body>
-      </Card>
+          <p className="text-muted mb-0">Tambah Dosen Sistem Informasi</p>
+        </Col>
+        </Row>
 
       <Card className="shadow border-0">
-        <h4 className="p-4">Tambah Dosen </h4>
+        <CardHeader className="bg-white">
+        <h5 className="mb-0 fw-semibold">Tambah Dosen </h5>
+        </CardHeader>
         <Card.Body className="p-4">
           {msg && (
             <Alert variant="danger" className="mb-4">

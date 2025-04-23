@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Nav, Collapse, Button, Offcanvas } from "react-bootstrap";
+import { Container, Row, Col, Nav, Collapse, Button, Offcanvas, Navbar } from "react-bootstrap";
 import {
     FaBook,
     FaUsers,
@@ -99,13 +99,6 @@ const SidebarComponents = ({ children }) => {
                             </Nav.Link>
                         </Nav.Item>
                     </Nav>
-
-                    <div className="p-3 text-start">
-                        {!isCollapsed && <p className="mb-1">Hi, Admin</p>}
-                        <Button variant="danger" size="sm" onClick={handleLogout} className="d-flex align-items-center">
-                            <FaSignOutAlt className="me-2" /> {!isCollapsed && "Logout"}
-                        </Button>
-                    </div>
                 </Col>
 
                 <Button variant="dark" className="d-md-none m-2" onClick={() => setShowOffcanvas(true)}>
@@ -128,18 +121,11 @@ const SidebarComponents = ({ children }) => {
                                 </Nav.Link>
                             </Nav.Item>
                         </Nav>
-
-                        <div className="mt-4">
-                            <p>Hi, Admin</p>
-                            <Button variant="danger" size="sm" onClick={handleLogout}>
-                                <FaSignOutAlt className="me-2" /> Logout
-                            </Button>
-                        </div>
                     </Offcanvas.Body>
                 </Offcanvas>
+                
 
-                {/* Main Content */}
-                <Col className="py-3">
+                <Col className="p-0">
                     {children}
                 </Col>
             </Row>

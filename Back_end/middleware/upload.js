@@ -10,30 +10,35 @@ const createFolderIfNotExists = (folder) => {
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const ext = path.extname(file.originalname).toLowerCase();
         let folder = "uploads/";
 
-        if (ext === ".pdf") {
-            if (req.body.type === "rps") {
-                folder += "rps/";
-            } else if (req.body.type === "msib") {
-                folder += "msib/";
-            } else {
-                folder += "bahan_ajar/";
-            }
-        } else if ([".jpg", ".jpeg", ".png"].includes(ext)) {
+        if (file.fieldname === "file_pendukung") {
+            folder += "bahan_ajar/";
+        } else if (file.fieldname === "file_absensi") {
             folder += "absensi/";
+        } else if (file.fieldname === "file_msib") {
+            folder += "msib/";
+        } else if (file.fieldname === "file_rps") {
+            folder += "rps/";
+        } else if (file.fieldname === "file_kontrak_kuliah") {
+            folder += "kontrak_kuliah/";
+        } else if (file.fieldname === "file_laporan") {
+            folder += "penelitian/";
         } else {
-            return cb(new Error("Format file tidak didukung"), false);
+            folder += "misc/"; // Folder default
         }
 
         createFolderIfNotExists(folder);
         cb(null, folder);
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
+        const timestamp = Date.now();
+        const ext = path.extname(file.originalname);
+        const baseName = path.basename(file.originalname, ext);
+        const newFileName = `${baseName}-${timestamp}${ext}`;
+        cb(null, newFileName);
     }
+    
 });
 
 const fileFilter = (req, file, cb) => {
@@ -49,7 +54,6 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 }
 });
 
 export default upload;

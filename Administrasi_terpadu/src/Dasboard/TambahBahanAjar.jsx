@@ -58,7 +58,7 @@ const TambahBahanAjar = () => {
       console.error(error.response.data);
 
     });
-  }
+  };
 
     return (
       <Container fluid className="p-4">
@@ -83,7 +83,7 @@ const TambahBahanAjar = () => {
                   <Form.Select 
                   value={name} 
                   onChange={(e) => setName(e.target.value)} required>
-                    <option value="">Pilih Mata Kuliah</option>
+                    <option value="">-- Pilih Mata Kuliah --</option>
                     {mataKuliahList.map((mata_kuliah) => (
                       <option key={mata_kuliah.id} value={mata_kuliah.name}>{mata_kuliah.name}</option>
                     ))}
@@ -112,7 +112,7 @@ const TambahBahanAjar = () => {
                 </Col>
                 <Col md={8}>
                   <Form.Select value={dosen_pengampu} onChange={(e) => setDosenPengampu(e.target.value)} required>
-                    <option value="">Pilih Dosen Pengampu</option>
+                    <option value="">-- Pilih Dosen Pengampu --</option>
                     {dosenList.map((dosen) => (
                       <option key={dosen.id} value={dosen.name}>{dosen.name}</option>
                     ))}

@@ -11,7 +11,8 @@ import BahanAjar from "./routes/bahanajar.js";
 import Absensi from "./routes/absensi.js";
 import Msib from "./routes/msib.js";
 import Rps from "./routes/rps.js";
-import upload from "./middleware/upload.js";
+import KontrakKuliah from "./routes/kontarkkuliah.js";
+import Penelitian from "./routes/penelitian.js";
 
 dotenv.config();
 
@@ -41,6 +42,8 @@ app.use("/uploads/bahan_ajar", express.static("uploads/bahan_ajar"));
 app.use("/uploads/absensi", express.static("uploads/absensi")); 
 app.use("/uploads/msib", express.static("uploads/msib")); 
 app.use("/uploads/rps", express.static("uploads/rps")); 
+app.use("/uploads/kontrak_kuliah", express.static("uploads/kontrak_kuliah")); 
+app.use("/uploads/penelitian", express.static("uploads/penelitian")); 
 app.use(router);
 app.use(AuthRoute);
 app.use(DosenRouter);
@@ -48,6 +51,8 @@ app.use(MataKuliah);
 app.use(BahanAjar );
 app.use(Absensi );
 app.use(Rps );
+app.use(KontrakKuliah );
+app.use(Penelitian );
 app.use(Msib );
 
 

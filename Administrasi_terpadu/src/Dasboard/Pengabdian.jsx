@@ -8,22 +8,22 @@ const Pengabdian = () => {
 
   return (
     <Container fluid className="p-4">
-      <Card className="mb-4 shadow border-0">
-        <Card.Body className="p-4">
-          <Row className="align-items-center">
-            <Col>
-              <h2 className="mb-1 fw-bold">PENGABDIAN</h2>
-              <p className="text-muted mb-0">Daftar Pengabdian Dosen</p>
-            </Col>
-            <Col xs="auto">
-              <Button variant="primary" onClick={() => navigate("/admin/dashboard/pengabdian/tambahpengabdian")} className="d-flex align-items-center gap-2">
-                <FiPlus size={16} />
-                <span>Tambah Pengabdian</span>
-              </Button>
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
+      <Row className="align-items-center p-4">
+        <Col>
+          <h2 className="mb-1 fw-bold text-white">PENGABDIAN</h2>
+          <p className="text-muted mb-0">Daftar Pengabdian Dosen</p>
+        </Col>
+        <Col xs="auto">
+          <Button
+            variant="success"
+            onClick={() => navigate("/admin/dashboard/pengabdian/tambahpengabdian")}
+            className="shadwo d-flex align-items-center gap-2">
+            <FiPlus size={16} />
+            <span>Tambah Pengabdian</span>
+          </Button>
+        </Col>
+      </Row>
+
 
 
       <Card className="shadow border-0">
@@ -42,20 +42,22 @@ const Pengabdian = () => {
           </div>
 
           <div className="table-responsive">
-            <Table striped bordered hover className="align-middle mb-0">
+            <Table striped bordered hover className="align-middle mb-0" size="sm">
               <thead className="bg-dark text-white text-center">
                 <tr>
+                  <th className="py-3">No</th>
                   <th className="py-3">Judul Pengabdian</th>
-                  <th className="py-3">Ketua Kelompok</th>
-                  <th className="py-3">Tahun</th>
+                  <th className="py-3">Nama Dosen</th>
                   <th className="py-3">Mitra</th>
-                  <th className="py-3">Dosen Pengampu</th>
-                  <th className="py-3">Status</th>
+                  <th className="py-3">Bentuk Kegiatan</th>
+                  <th className="py-3">Lokasi</th>
+                  <th className="py-3">Tahun</th>
+                  <th className="py-3">Bukti Kegiatan</th>
                   <th className="py-3 text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody>
-                 {/* {d.map((dosen) => (
+                {/* {d.map((dosen) => (
                   <tr key={dosen.id}>
                     <td className="fw-medium">{dosen.nip}</td>
                     <td>{dosen.nama}</td>
@@ -75,10 +77,10 @@ const Pengabdian = () => {
                     </tr>
                 ))} */}
                 <tr>
-                    <td colSpan="7" className="text-center text-muted py-3">
-                      Tidak ada data
-                    </td>
-                  </tr>
+                  <td colSpan="8" className="text-center text-muted py-3">
+                    Tidak ada data
+                  </td>
+                </tr>
               </tbody>
             </Table>
           </div>

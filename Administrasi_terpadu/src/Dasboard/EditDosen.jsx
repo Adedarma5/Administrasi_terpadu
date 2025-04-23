@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Button, Alert, CardHeader } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -54,15 +54,17 @@ const EditDosen = () => {
 
   return (
     <Container fluid className="p-4">
-      <Card className="mb-4 shadow border-0">
-        <Card.Body className="p-4">
-          <h2 className="mb-1 fw-bold">EDIT DOSEN</h2>
+      <Row className="align-items-center p-4">
+        <Col>
+          <h2 className="mb-1 fw-bold">DOSEN</h2>
           <p className="text-muted mb-0">Perbarui Data Dosen Sistem Informasi</p>
-        </Card.Body>
-      </Card>
+        </Col>
+      </Row>
 
       <Card className="shadow border-0">
-        <h4 className="p-4">Edit Dosen</h4>
+        <CardHeader className="bg-white">
+          <h5 className="mb-0 fw-semibold ">Edit Dosen</h5>
+        </CardHeader>
         <Card.Body className="p-4">
           {msg && (
             <Alert variant="danger" className="mb-4">
@@ -122,7 +124,7 @@ const EditDosen = () => {
                   type="text"
                   value={jabatan_struktural}
                   onChange={(e) => setJabatan_Strukrural(e.target.value)}
-                  >
+                >
                   <option value="">-- Pilih Jabatan Struktural --</option>
                   <option value="Ketua Jurusan">Ketua Jurusan</option>
                   <option value="Sekertaris Jurusan">Sekertaris Jurusan</option>
@@ -142,9 +144,12 @@ const EditDosen = () => {
                   value={jabatan_fungsional}
                   onChange={(e) => setJabatan_Fungsional(e.target.value)}
                 >
-                  <option value="">Pilih Status</option>
-                  <option value="Aktif">Aktif</option>
-                  <option value="Cuti">Cuti</option>
+                  <option value="">-- Pilih Jabatan Fungsional --</option>
+                  <option value="Profesor">Profesor</option>
+                  <option value="Lektor Kepala">Lektor Kepala</option>
+                  <option value="Lektor">Lektor</option>
+                  <option value="Asisten Ahli">Asisten Ahli</option>
+                  <option value="Tenaga Pengajar">Tenaga Pengajar</option>
                 </Form.Select>
               </Col>
             </Row>
@@ -156,12 +161,10 @@ const EditDosen = () => {
               <Col md={8}>
                 <Form.Select value={status} onChange={(e) => setStatus(e.target.value)}
                 >
-                  <option value="">-- Pilih Jabatan Fungsional --</option>
-                  <option value="Profesor">Profesor</option>
-                  <option value="Lektor Kepala">Lektor Kepala</option>
-                  <option value="Lektor">Lektor</option>
-                  <option value="Asisten Ahli">Asisten Ahli</option>
-                  <option value="Tenaga Pengajar">Tenaga Pengajar</option>
+
+                  <option value="">Pilih Status</option>
+                  <option value="Aktif">Aktif</option>
+                  <option value="Cuti">Cuti</option>
                 </Form.Select>
               </Col>
             </Row>

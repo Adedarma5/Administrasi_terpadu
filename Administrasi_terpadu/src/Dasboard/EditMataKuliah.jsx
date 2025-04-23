@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Button, Alert, CardHeader } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -8,7 +8,7 @@ const EditMataKuliah = () => {
   const [sks, setSks] = useState("");
   const [semester, setSemester] = useState("");
   const [msg, setMsg] = useState("");
-  const { id } = useParams(); 
+  const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,15 +46,17 @@ const EditMataKuliah = () => {
 
   return (
     <Container fluid className="p-4">
-      <Card className="mb-4 shadow border-0">
-        <Card.Body className="p-4">
-          <h2 className="mb-1 fw-bold">EDIT MATA KULIAH</h2>
+      <Row className="align-items-center p-4">
+        <Col>
+          <h2 className="mb-1 fw-bold"> MATA KULIAH</h2>
           <p className="text-muted mb-0">Perbarui Data Mata Kuliah Sistem Informasi</p>
-        </Card.Body>
-      </Card>
+        </Col>
+      </Row>
 
       <Card className="shadow border-0">
-        <h4 className="p-4">Edit Dosen</h4>
+        <CardHeader className="bg-white">
+          <h5 className="mb-0 fw-semibold ">Edit Mata Kuliah</h5>
+        </CardHeader>
         <Card.Body className="p-4">
           {msg && (
             <Alert variant="danger" className="mb-4">
@@ -95,7 +97,7 @@ const EditMataKuliah = () => {
                 <Form.Label>Semester</Form.Label>
               </Col>
               <Col md={8}>
-              <Form.Select
+                <Form.Select
                   value={semester}
                   onChange={(e) => setSemester(e.target.value)}
                 >
