@@ -32,19 +32,17 @@ const TambahRps = () => {
 
     return (
         <Container fluid className="p-4">
-            <Card className="mb-4 shadow border-0">
-                <Card.Body className="p-4">
-                    <Row className="align-items-center">
+                    <Row className="align-items-center p-4">
                         <Col>
-                            <h2 className="mb-1 fw-bold">Rencana Pembelajaran Semester</h2>
+                            <h2 className="mb-1 fw-bold text-white">Rencana Pembelajaran Semester</h2>
                             <p className="text-muted mb-0">Daftar RPS Sistem Informasi</p>
                         </Col>
                     </Row>
-                </Card.Body>
-            </Card>
 
             <Card className="shadow border-0">
-                <h4 className="p-4">Tambah Rencana Pembelajaran Semester</h4>
+                <Card.Header className="bg-white">
+                <h5 className="mb-0 fw-semibold">Tambah Rencana Pembelajaran Semester</h5>
+                </Card.Header>
                 <Card.Body className="p-4">
                     {msg && <Alert variant="danger" className="mb-4">{msg}</Alert>}
 

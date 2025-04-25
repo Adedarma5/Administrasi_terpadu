@@ -40,11 +40,6 @@ const Pengabdian = db.define('pengabdian', {
     tahun: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        validate: {
-            isInt: true,
-            len: [4, 4],
-            max: new Date().getFullYear(),
-        }
     },
 
     file_kegiatan: {

@@ -1,10 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Card, Table, Button, Row, Col, Form, InputGroup } from "react-bootstrap";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Msib = () => {
-  const navigate = useNavigate ();
+  const navigate = useNavigate();
+  const [msibData, setMsibData] = useState([]);
+
+  useEffect(() => {
+    fetchMsibData();
+  }, []);
+
+  const fetchMsibData = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/msib");
+      setMsibData(response.data);
+    } catch (error) {
+      console.error("Gagal mengambil data MSIB:", error);
+    }
+  };
+
+  const handleDownload = (filename, field) => {
+    if (!filename) return;
+    window.open(`http://localhost:5000/uploads/msib/${filename}`, "_blank");
+  };
 
   return (
     <Container fluid className="p-4">
@@ -34,26 +54,8 @@ const Msib = () => {
                   <InputGroup.Text className="bg-light border-end-0">
                     <FiSearch size={16} />
                   </InputGroup.Text>
-                  <Form.Control placeholder="Cari dosen berdasarkan nama atau NIP..." className="border-start-0 bg-light" />
+                  <Form.Control placeholder="Cari berdasarkan nama atau NIM..." className="border-start-0 bg-light" />
                 </InputGroup>
-              </Col>
-              <Col md={6} lg={3}>
-                <Form.Select className="bg-light">
-                  <option value="">Semua Bidang Keahlian</option>
-                  <option value="Kecerdasan Buatan">Kecerdasan Buatan</option>
-                  <option value="Sistem Informasi">Sistem Informasi</option>
-                  <option value="Algoritma & Pemrograman">Algoritma & Pemrograman</option>
-                  <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
-                  <option value="Jaringan Komputer">Jaringan Komputer</option>
-                </Form.Select>
-              </Col>
-              <Col md={6} lg={3}>
-                <Form.Select className="bg-light">
-                  <option value="">Semua Status</option>
-                  <option value="Aktif">Aktif</option>
-                  <option value="Cuti">Cuti</option>
-                  <option value="Tugas Belajar">Tugas Belajar</option>
-                </Form.Select>
               </Col>
             </Row>
           </div>
@@ -79,25 +81,79 @@ const Msib = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td colSpan="14" className="text-center text-muted py-3">
-                    Tidak ada data
-                  </td>
-                </tr>
+                {msibData.length > 0 ? (
+                  msibData.map((item, index) => (
+                    <tr key={item.id}>
+                      <td>{index + 1}</td>
+                      <td>{item.nama}</td>
+                      <td>{item.nim}</td>
+                      <td>{item.program}</td>
+                      <td>{item.judul}</td>
+                      <td>{item.mitra}</td>
+                      <td>{item.tanggal_mulai?.slice(0, 10)}</td>
+                      <td>{item.tanggal_selesai?.slice(0, 10)}</td>
+                      <td>
+                        {item.lembar_pengesahan && (
+                          <Button
+                            size="sm"
+                            variant="link"
+                            onClick={() => handleDownload(item.lembar_pengesahan)}
+                          >
+                            Lihat
+                          </Button>
+                        )}
+                      </td>
+                      <td>
+                        {item.laporan && (
+                          <Button size="sm" variant="link" onClick={() => handleDownload(item.laporan)}>
+                            Lihat
+                          </Button>
+                        )}
+                      </td>
+                      <td>
+                        {item.projek && (
+                          <Button size="sm" variant="link" onClick={() => handleDownload(item.projek)}>
+                            Lihat
+                          </Button>
+                        )}
+                      </td>
+                      <td>
+                        {item.sertifikat && (
+                          <Button size="sm" variant="link" onClick={() => handleDownload(item.sertifikat)}>
+                            Lihat
+                          </Button>
+                        )}
+                      </td>
+                      <td>
+                        {item.konversi_nilai && (
+                          <Button size="sm" variant="link" onClick={() => handleDownload(item.konversi_nilai)}>
+                            Lihat
+                          </Button>
+                        )}
+                      </td>
+                      <td>
+                        <Button variant="warning" size="sm" className="me-2">
+                          Edit
+                        </Button>
+                        <Button variant="danger" size="sm">
+                          Hapus
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="14" className="text-center text-muted py-3">
+                      Tidak ada data
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </Table>
           </div>
 
           <div className="p-3 border-top d-flex justify-content-between align-items-center">
-            <div className="small text-muted">Menampilkan 1-5 dari 5 entri</div>
-            <div>
-              <Button variant="outline-primary" size="sm" className="me-2" disabled>
-                Sebelumnya
-              </Button>
-              <Button variant="outline-primary" size="sm" disabled>
-                Selanjutnya
-              </Button>
-            </div>
+            <div className="small text-muted">Menampilkan {msibData.length} entri</div>
           </div>
         </Card.Body>
       </Card>

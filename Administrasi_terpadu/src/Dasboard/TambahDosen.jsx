@@ -36,15 +36,15 @@ const TambahDosen = () => {
   return (
     <Container fluid className="p-4">
       <Row className="align-items-center p-4">
-              <Col>
-          <h2 className="mb-1 fw-bold">DOSEN</h2>
+        <Col>
+          <h2 className="mb-1 fw-bold text-white">DOSEN</h2>
           <p className="text-muted mb-0">Tambah Dosen Sistem Informasi</p>
         </Col>
-        </Row>
+      </Row>
 
       <Card className="shadow border-0">
         <CardHeader className="bg-white">
-        <h5 className="mb-0 fw-semibold">Tambah Dosen </h5>
+          <h5 className="mb-0 fw-semibold">Tambah Dosen </h5>
         </CardHeader>
         <Card.Body className="p-4">
           {msg && (

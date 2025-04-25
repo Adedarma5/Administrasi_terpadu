@@ -8,10 +8,11 @@ import {
 } from "../controllers/users.js";
 import { verifyToken } from "../middleware/verifytoken.js";
 import { refreshToken } from "../controllers/refreshtoken.js"
+import { adminOnly } from "../middleware/AuthUser.js"; 
 
 const router = express.Router();
 
-router.get('/users', verifyToken, getUsers);
+router.get('/users', verifyToken, getUsers); 
 router.get('/token', refreshToken);
 router.get('/users/:id', getUserById);
 router.post('/users', Register);

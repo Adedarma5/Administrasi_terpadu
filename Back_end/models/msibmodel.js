@@ -10,7 +10,7 @@ const Msib = db.define('msib', {
         primaryKey: true,
         autoIncrement: true
     },
-    name: {
+    nama: {
         type: DataTypes.STRING,
         allowNull: false,
     },

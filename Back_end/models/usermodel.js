@@ -5,13 +5,10 @@ import db from "../config/database.js"
 const { DataTypes } = Sequelize;
 
 const users = db.define('users', {
-    uuid:{
+    nip: {
         type: DataTypes.STRING,
-        defaultValue: DataTypes.UUIDV4,
         allowNull: false,
-        validate:{
-            notEmpty: true
-        }
+        unique: true
     },
     name: {
         type: DataTypes.STRING,

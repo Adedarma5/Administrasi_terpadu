@@ -5,7 +5,7 @@ import users from "../models/usermodel.js";
 export const getUsers = async(req, res) => {
     try {
         const users = await Users.findAll({
-         attributes: ['id','uuid','name','email', 'role']
+         attributes: ['id','nip','name','email', 'role']
         });
         res.json(users);
     } catch (error){
@@ -16,9 +16,9 @@ export const getUsers = async(req, res) => {
 export const getUserById = async(req, res) =>{
     try {
         const response = await Users.findOne({
-            attributes:['uuid','name','email','role'],
+            attributes:['nip','name','email','role'],
             where: {
-                uuid: req.params.id
+                nip: req.params.id
             }
         });
         res.status(200).json(response);
@@ -28,7 +28,7 @@ export const getUserById = async(req, res) =>{
 }
 
 export const Register = async (req, res) => {
-    const { name, email, password, confPassword, role } = req.body;
+    const { nip, name, email, password, confPassword, role } = req.body;
     if (password !== confPassword) {
         return res.status(400).json({ msg: "Password dan Confirm Password tidak cocok" });
     }
@@ -36,6 +36,7 @@ export const Register = async (req, res) => {
         const hashPassword = await bcrypt.hash(password, await bcrypt.genSalt());
 
         await Users.create({
+            nip: nip,
             name: name,
             email: email,
             password: hashPassword,
@@ -51,7 +52,7 @@ export const Register = async (req, res) => {
 export const updateUser = async (req, res) => {
     const user = await Users.findOne({
         where: {
-            uuid: req.params.id
+            nip: req.params.id
         }
     });
     if (!user) return res.status(404).json({ msg: "User tidak ditemukan" });
@@ -89,7 +90,7 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async(req, res) =>{
     const user = await users.findOne({
         where: {
-            uuid: req.params.id
+            nip: req.params.id
         }
     });
     if(!user) return res.status(404).json({msg: "User tidak ditemukan"});

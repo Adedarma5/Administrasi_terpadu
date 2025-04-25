@@ -8,7 +8,6 @@ export const verifyToken = (req, res, next) => {
     return res.status(401).json({ message: "Tidak ada token. Silakan login." });
   }
 
-  // Debugging log
   console.log("Authorization Header:", authHeader);
 
   const tokenParts = authHeader.split(' ');
@@ -18,7 +17,7 @@ export const verifyToken = (req, res, next) => {
   }
 
   const token = tokenParts[1];
-  console.log("Extracted Token:", token); // Debug: pastikan token terbaca dengan benar
+  console.log("Extracted Token:", token); 
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) {
@@ -35,7 +34,8 @@ export const verifyToken = (req, res, next) => {
 
     req.user = {
       id: decoded.id,
-      email: decoded.email,
+      nip: decoded.nip,
+      name: decoded.name,
       role: decoded.role
     };
 

@@ -3,6 +3,7 @@ import { Container, Card, Table, Button, Badge, Row, Col, Form, InputGroup } fro
 import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiEye, FiFilter } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import {  useAuth } from "../context/AuthContext";
 
 const Dosen = () => {
   const navigate = useNavigate();
@@ -10,6 +11,19 @@ const Dosen = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const { user, isAuthenticated  } = useAuth();
+
+  
+      useEffect(() => {
+          if (!isAuthenticated ) {
+              navigate('/login');
+          }
+      }, [isAuthenticated , navigate]);
+  
+      if (!isAuthenticated ) {
+          return <div>Loading...</div>;
+      }
+  
 
   const fetchDosen = async () => {
     try {

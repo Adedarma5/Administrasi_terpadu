@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Card from 'react-bootstrap/Card';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -8,24 +8,27 @@ import {
  Calendar, 
  FileText, 
  Activity,
- LogOut 
 } from 'lucide-react';
+import {  useAuth } from "../context/AuthContext";
+
+
 
 const AdminDashboard = () => {
-    const navigate = useNavigate();
+    const { user, isAuthenticated  } = useAuth();
+    const navigate = useNavigate(); 
 
-    const Logout = async () => {
-        try {
-            await axios.delete("http://localhost:5000/logout", {
-                withCredentials: true,
-            });
-    
-            navigate("/login");
-        } catch (error) {
-            console.error("Logout error:", error);
+    useEffect(() => {
+        if (!isAuthenticated ) {
+            navigate('/login');
         }
-    };
+    }, [isAuthenticated , navigate]);
 
+    if (!isAuthenticated ) {
+        return <div>Loading...</div>;
+    }
+
+
+   
    const stats = [
        {
            title: "Bahan Ajar",

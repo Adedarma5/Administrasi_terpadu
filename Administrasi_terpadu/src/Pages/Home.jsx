@@ -11,12 +11,13 @@ import NavbarComponents from '../components/NavbarComponents';
 
 const Home = () => {
   const [index, setIndex] = useState(0);
+  const navigate = useNavigate();
 
   const handleSelect = (selectedIndex) => {
     setIndex(selectedIndex);
   };
 
-  const navigate = useNavigate();
+  
 
   const handleNavigate = () => {
     navigate("/Login");

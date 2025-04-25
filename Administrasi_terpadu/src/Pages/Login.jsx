@@ -8,18 +8,15 @@ import axios from 'axios';
 import React, { useState, use } from 'react';
 
 const Login = () => {
-  const [email, setEmail] = useState(' ');
+  const [nip, setNip] = useState(' ');
   const [password, setPassword] = useState('');
   const [msg, setMsg] = useState(' ');
 
   const Auth = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/login", { email, password });
+      const response = await axios.post("http://localhost:5000/login", { nip, password });
       localStorage.setItem("token", response.data.accessToken);
-
-
-
       location.href = "/admin/dashboard";
     } catch (error) {
       if (error.response) {
@@ -44,12 +41,12 @@ const Login = () => {
                   <p className='text-center'>{msg}</p>
                   <h3 className='text-center'>Selamat Datang</h3>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
-                    <Form.Label>Email</Form.Label>
+                    <Form.Label>NIP</Form.Label>
                     <Form.Control
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Masukkan Email" />
+                      type="number"
+                      value={nip}
+                      onChange={(e) => setNip(e.target.value)}
+                      placeholder="Masukkan NIP" />
                   </Form.Group>
 
                   <Form.Group className="mb-3 " controlId="formBasicPassword">

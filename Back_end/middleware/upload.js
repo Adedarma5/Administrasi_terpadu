@@ -11,12 +11,13 @@ const createFolderIfNotExists = (folder) => {
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         let folder = "uploads/";
-
         if (file.fieldname === "file_pendukung") {
             folder += "bahan_ajar/";
         } else if (file.fieldname === "file_absensi") {
             folder += "absensi/";
-        } else if (file.fieldname === "file_msib") {
+        } else if (
+            ["lembar_pengesahan", "laporan", "projek", "sertifikat", "konversi_nilai"].includes(file.fieldname)
+        ) {
             folder += "msib/";
         } else if (file.fieldname === "file_rps") {
             folder += "rps/";
@@ -24,8 +25,10 @@ const storage = multer.diskStorage({
             folder += "kontrak_kuliah/";
         } else if (file.fieldname === "file_laporan") {
             folder += "penelitian/";
+        } else if (file.fieldname === "file_kegiatan") {
+            folder += "pengabdian/";
         } else {
-            folder += "misc/"; // Folder default
+            folder += "misc/"; 
         }
 
         createFolderIfNotExists(folder);
@@ -35,10 +38,9 @@ const storage = multer.diskStorage({
         const timestamp = Date.now();
         const ext = path.extname(file.originalname);
         const baseName = path.basename(file.originalname, ext);
-        const newFileName = `${baseName}-${timestamp}${ext}`;
+        const newFileName = `${baseName}-${timestamp}${ext}`; 
         cb(null, newFileName);
     }
-    
 });
 
 const fileFilter = (req, file, cb) => {
@@ -46,7 +48,7 @@ const fileFilter = (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
 
     if (!allowedExtensions.includes(ext)) {
-        return cb(new Error("Format file tidak diizinkan"), false);
+        return cb(new Error("Format file tidak diizinkan"), false); 
     }
     cb(null, true);
 };

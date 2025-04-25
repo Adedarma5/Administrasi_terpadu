@@ -2,7 +2,6 @@ import users from "../models/usermodel.js";
 
 export const verifyUser = async (req, res, next) => {
     try {
-        // Pastikan req.user sudah diset oleh middleware verifyToken
         const user = await users.findOne({
             where: {
                 id: req.user.id

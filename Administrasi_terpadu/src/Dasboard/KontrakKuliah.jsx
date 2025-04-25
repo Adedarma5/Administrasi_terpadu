@@ -83,7 +83,7 @@ const KontrakKuliah = () => {
         <Container fluid className="p-4">
             <Row className="align-items-center p-4">
                 <Col>
-                    <h2 className="mb-1 fw-bold text-white">Kontrak Kuliah</h2>
+                    <h2 className="mb-1 fw-bold text-white text-uppercase">Kontrak Kuliah</h2>
                     <p className="text-muted mb-0">Sistem Informasi</p>
                 </Col>
                 <Col xs="auto">

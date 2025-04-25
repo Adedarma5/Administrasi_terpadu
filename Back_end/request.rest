@@ -13,6 +13,7 @@ POST  http://localhost:5000/users
 Content-Type: application/json
 
 {
+    "nip": "332323222",
     "name": "Ade darma",
     "email": "ade@gmail.com",
     "password": "123456",
@@ -23,15 +24,16 @@ Content-Type: application/json
 
 // Edit Users dan admin //
 ###
-PATCH   http://localhost:5000/users/a935fe23-a707-430f-8e6b-df7f7c720414
+PATCH   http://localhost:5000/users/332323222
 Content-Type: application/json
 
 {
-    "name": "Ade update",
-    "email": "admin@gmail.com",
-    "password": "",
-    "confPassword": "",
-    "role": "admin"
+    "nip": "12345",
+    "name": "Ade darma",
+    "email": "ade@gmail.com",
+    "password": "12345",
+    "confPassword": "12345",
+    "role": "user"
 }
 
 
@@ -41,8 +43,8 @@ POST  http://localhost:5000/login
 Content-Type: application/json
 
 {
-    "email": "admin@gmail.com",
-    "password": "123456"
+    "nip": "332323222",
+    "password": "12345"
 }
 
 

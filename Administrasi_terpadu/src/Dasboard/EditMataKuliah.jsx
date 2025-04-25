@@ -48,7 +48,7 @@ const EditMataKuliah = () => {
     <Container fluid className="p-4">
       <Row className="align-items-center p-4">
         <Col>
-          <h2 className="mb-1 fw-bold"> MATA KULIAH</h2>
+          <h2 className="mb-1 fw-bold text-white"> MATA KULIAH</h2>
           <p className="text-muted mb-0">Perbarui Data Mata Kuliah Sistem Informasi</p>
         </Col>
       </Row>

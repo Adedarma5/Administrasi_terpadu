@@ -56,7 +56,7 @@ const EditDosen = () => {
     <Container fluid className="p-4">
       <Row className="align-items-center p-4">
         <Col>
-          <h2 className="mb-1 fw-bold">DOSEN</h2>
+          <h2 className="mb-1 fw-bold text-white">DOSEN</h2>
           <p className="text-muted mb-0">Perbarui Data Dosen Sistem Informasi</p>
         </Col>
       </Row>

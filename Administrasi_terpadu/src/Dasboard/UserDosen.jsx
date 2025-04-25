@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { Container, Card, Table, Button, Row, Col, Form, InputGroup, Modal } from "react-bootstrap";
-import { FiPlus, FiSearch } from "react-icons/fi";
+import { FiPlus, FiSearch, FiEdit2, FiTrash2 } from "react-icons/fi";
 
 const UserDosen = () => {
   const [users, setUsers] = useState([]);
@@ -17,40 +17,34 @@ const UserDosen = () => {
   }, []);
 
   const getUsers = async () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      console.error("Token tidak ditemukan di localStorage.");
+      return;
+    }
+
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        console.error("Token tidak ditemukan. Silakan login.");
-        navigate("/login");
-        return;
-      }
-
-      const response = await axios.get("http://localhost:5000/users", {
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await axios.get('http://localhost:5000/users', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
-
       setUsers(response.data);
     } catch (error) {
-      const msg = error.response?.data?.message || error.message;
-      console.error("Error fetching users:", msg);
-
-
-      if (msg.includes("kadaluarsa") || msg.includes("tidak valid")) {
-        alert("Sesi Anda telah berakhir. Silakan login kembali.");
-        localStorage.removeItem("token");
-        navigate("/login");
-      }
+      console.error("Error fetching users:", error);
     }
   };
+
 
   const handleDelete = async () => {
     if (!selectedUser) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/users/${selectedUser.uuid}`, {
+      await axios.delete(`http://localhost:5000/users/${selectedUser.nip}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setUsers(users.filter(user => user.uuid !== selectedUser.uuid));
+      setUsers(users.filter(user => user.nip !== selectedUser.nip));
       setShowModal(false);
     } catch (error) {
       console.error("Error deleting user:", error.response?.data?.message || error.message);
@@ -112,6 +106,7 @@ const UserDosen = () => {
               <thead className="bg-dark text-white text-center">
                 <tr>
                   <th>No</th>
+                  <th>NIP</th>
                   <th>Nama Dosen</th>
                   <th>Email</th>
                   <th>Role</th>
@@ -121,8 +116,9 @@ const UserDosen = () => {
               <tbody>
                 {filteredUsers.length > 0 ? (
                   filteredUsers.map((user, index) => (
-                    <tr key={user.uuid}>
+                    <tr key={user.nip}>
                       <td className="text-center">{index + 1}</td>
+                      <td>{user.nip}</td>
                       <td>{user.name}</td>
                       <td>{user.email}</td>
                       <td>
@@ -130,21 +126,26 @@ const UserDosen = () => {
                           {user.role}
                         </span>
                       </td>
-                      <td className="text-center">
-                        <Button as={Link} to={`/users/edit/${user.uuid}`} variant="info" size="sm" className="me-2">
-                          Edit
+                      <div className="d-flex justify-content-center gap-2">
+                        <Button
+                          variant="outline-success"
+                          size="sm"
+                          className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
+                          title="Edit"
+                          onClick={() => navigate(`/admin/dashboard/dosen/editdosen/${dosen.id}`)}
+                        >
+                          <FiEdit2 size={15} />
                         </Button>
                         <Button
-                          variant="danger"
+                          variant="outline-danger"
                           size="sm"
-                          onClick={() => {
-                            setSelectedUser(user);
-                            setShowModal(true);
-                          }}
+                          className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
+                          title="Hapus"
+                          onClick={() => deleteDosen(dosen.id)}
                         >
-                          Hapus
+                          <FiTrash2 size={15} />
                         </Button>
-                      </td>
+                      </div>
                     </tr>
                   ))
                 ) : (

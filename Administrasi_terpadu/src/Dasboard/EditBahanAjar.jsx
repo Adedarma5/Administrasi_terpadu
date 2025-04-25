@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Button, Alert, CardHeader } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -24,7 +24,7 @@ const EditBahanAjar = () => {
   const getBahanAjarById = async () => {
     try {
       const response = await axios.get(`http://localhost:5000/bahan_ajar/${id}`);
-      
+
       const bahan_ajar = response.data;
       setName(bahan_ajar.name);
       setJudulMateri(bahan_ajar.judul_materi);
@@ -83,23 +83,26 @@ const EditBahanAjar = () => {
 
   return (
     <Container fluid className="p-4">
-      <Card className="mb-4 shadow border-0">
-        <Card.Body>
-          <h2 className="fw-bold">EDIT BAHAN AJAR</h2>
+      <Row className="align-items-center p-4">
+        <Col>
+          <h2 className="fw-bold text-white"> BAHAN AJAR</h2>
           <p className="text-muted">Perbarui Data Bahan Ajar</p>
-        </Card.Body>
-      </Card>
+        </Col>
+      </Row>
 
       <Card className="shadow border-0">
+        <CardHeader className="bg-white">
+          <h5 className="mb-0 fw-semibold">Edit Bahan Ajar </h5>
+        </CardHeader>
         <Card.Body>
-          {msg && 
-          <Alert variant="danger">{msg}
-          </Alert>}
-          
+          {msg &&
+            <Alert variant="danger">{msg}
+            </Alert>}
+
           <Form onSubmit={updateBahanAjar}>
             <Row className="mb-3">
               <Col md={3}>
-              <Form.Label>Mata Kuliah</Form.Label>
+                <Form.Label>Mata Kuliah</Form.Label>
               </Col>
               <Col md={8}>
                 <Form.Select value={name} onChange={(e) => setName(e.target.value)} required>
@@ -114,11 +117,11 @@ const EditBahanAjar = () => {
             <Row className="mb-3">
               <Col md={3}><Form.Label>Judul Materi</Form.Label></Col>
               <Col md={8}>
-                <Form.Control 
-                type="text" 
-                value={judul_materi} 
-                onChange={(e) => setJudulMateri(e.target.value)} 
-                required />
+                <Form.Control
+                  type="text"
+                  value={judul_materi}
+                  onChange={(e) => setJudulMateri(e.target.value)}
+                  required />
               </Col>
             </Row>
 

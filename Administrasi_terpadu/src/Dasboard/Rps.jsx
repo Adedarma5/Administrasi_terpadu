@@ -60,7 +60,7 @@ const Rps = () => {
         <Container fluid className="p-4">
             <Row className="align-items-center p-4">
                 <Col>
-                    <h2 className="mb-1 fw-bold text-white">Rencana Pembelajaran Semester</h2>
+                    <h2 className="mb-1 fw-bold text-white text-uppercase">Rencana Pembelajaran Semester</h2>
                     <p className="text-muted mb-0">Sistem Informasi</p>
                 </Col>
                 <Col xs="auto">

@@ -31,14 +31,14 @@ const TambahMataKuliah = () => {
     <Container fluid className="p-4">
       <Row className="align-items-center p-4">
         <Col>
-          <h2 className="mb-1 fw-bold"> MATA KULIAH</h2>
+          <h2 className="mb-1 fw-bold text-white"> MATA KULIAH</h2>
           <p className="text-muted mb-0">Tambah Data Mata Kuliah Sistem Informasi</p>
         </Col>
       </Row>
 
       <Card className="shadow border-0">
         <CardHeader className="bg-white">
-        <h5 className="mb-0 fw-semibold">Tambah Mata Kuliah </h5>
+        <h5 className="mb-0 fw-semibold ">Tambah Mata Kuliah </h5>
         </CardHeader>
         <Card.Body className="p-4">
           {msg && (

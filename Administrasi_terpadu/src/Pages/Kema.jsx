@@ -1,49 +1,31 @@
-import { CardBody, CardHeader, CardText, CardTitle, Container } from "react-bootstrap";
+import { CardBody, CardHeader, CardText, Container } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import React, { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import Accordion from 'react-bootstrap/Accordion';
 import FooterEnd from "../components/FooterEnd";
 import Footer from "../components/FooterComponents";
 import NavbarComponents from "../components/NavbarComponents";
+import { useNavigate } from "react-router-dom";
 
 const Kema = () => {
     const [show, setShow] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState("");
-    const [formData, setFormData] = useState({
-        companyType: "",
-        companyName: "",
-        studyCost: "",
-        otherStudyCost: "",
-    });
+    const navigate = useNavigate();
 
-    const handleCompanyTypeChange = (e) => {
-        const selected = e.target.id;
-        setFormData({
-            ...formData,
-            companyType: selected,
-            companyName: selected === "lainnya" ? formData.companyName : "",
-        });
-    };
-
-    const handleStudyCostChange = (e) => {
-        const selected = e.target.id;
-        setFormData({
-            ...formData,
-            studyCost: selected,
-            otherStudyCost: selected === "biaya lainnya" ? formData.otherStudyCost : "",
-        });
-    };
-
-    const handleClose = () => {
-        setShow(false);
-    };
+    const handleNavigate = () => {
+        navigate("/akademik/dashboard");
+      };
 
     const handleShow = () => {
         setShow(true);
     };
+
+    const handleClose = () =>
+        setShow(false);
+
+
 
     return (
         <div>
@@ -77,7 +59,7 @@ const Kema = () => {
                 </div>
 
                 <div className="text-center mb-5 mt-5">
-                    <Button variant="primary" onClick={handleShow}>
+                    <Button variant="primary" onClick={handleNavigate}>
                         Buka Formulir
                     </Button>
                 </div>
@@ -88,7 +70,7 @@ const Kema = () => {
                         <CardHeader>
                             <h4 className='text-center text-uppercase' style={{ color: 'darkblue' }}>Tata Cara Upload Berkas</h4>
                         </CardHeader>
-                        <CardBody >
+                        <CardBody > 
                             <CardText>
                                 1.  Buka Formulir Kegiatan Mahasiswa (KEMA) <br />
                                 - Akses halaman formulir untuk mengunggah berkas yang diperlukan.<br /><br />
@@ -137,12 +119,12 @@ const Kema = () => {
             </div>
 
 
-            <Modal show={show} onHide={handleClose}>
+            <Modal show={show} onHide={handleClose} >
                 <Modal.Header closeButton>
                     <Modal.Title>Formulir</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
+                    <Form >
                         <p className="fw-bold text-center text-uppercase">Pilih Kategori  Untuk Isi Formulir</p>
                         <Form.Group className="mb-3">
                             <Form.Label>Pilih Kategori</Form.Label>
@@ -166,327 +148,11 @@ const Kema = () => {
 
                         {selectedCategory === "MSIB" && (
                             <>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nama </Form.Label>
-                                    <Form.Control type="text" placeholder="Nama Mahasiswa" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nim</Form.Label>
-                                    <Form.Control type="text" placeholder="Nim Mahasiswa" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Program yang di ikuti</Form.Label>
-                                    <Form.Select>
-                                        <option value="">-- Pilih Kategori --</option>
-                                        <option value="Magang MSIB">Magang MSIB</option>
-                                        <option value="Stupend">Stupend</option>
-                                        <option value="Kampus Mengajar">Kampus Mengajar</option>
-                                    </Form.Select>
-                                    <Form.Group className="mb-3 mt-3">
-                                        <Form.Label>Judul</Form.Label>
-                                        <Form.Control type="text" placeholder="Judul" />
-                                    </Form.Group>
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Mitra Msib</Form.Label>
-                                    <Form.Control type="text" placeholder="Nama Mitra" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Tanngal Mulai</Form.Label>
-                                    <Form.Control type="date" placeholder="Nama Mitra" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Tanggal selesai</Form.Label>
-                                    <Form.Control type="date" placeholder="Nama Mitra" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Lembar Pengesahan Pembimbing</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Laporan MSIB (Sudah Ditanda Tangani)</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Program (Jika Ada)</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Lembar Nilai dan Sertifikat Dari Mitra</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Konversi Nilai</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
+                                
                             </>
                         )}
 
-                        {selectedCategory === "Magang Mandiri" && (
-                            <>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nama</Form.Label>
-                                    <Form.Control type="text" placeholder="Nama" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nim</Form.Label>
-                                    <Form.Control type="text" placeholder="Nim" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Judul</Form.Label>
-                                    <Form.Control type="text" placeholder="Judul" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nama Perusahaan</Form.Label>
-                                    <Form.Control type="text" placeholder="Nama Perusahaan" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Tanggal Mulai</Form.Label>
-                                    <Form.Control type="date" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Tanggal Selesai</Form.Label>
-                                    <Form.Control type="date" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Konversi Nilai</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>File Laporan</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                            </>
-                        )}
 
-                        {selectedCategory === "Prestasi" && (
-                            <>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Tim Atau Individu</Form.Label>
-                                    <Form.Select>
-                                        <option value="">-- Pilih Kategori --</option>
-                                        <option value="Individu">Individu</option>
-                                        <option value="Tim">Tim</option>
-                                    </Form.Select>
-                                </Form.Group>
-                                <Form.Group>
-                                    <Form.Label>Tingkatan</Form.Label>
-                                    <Form.Select>
-                                        <option value="">-- Pilih Tingkatan Perlombaan --</option>
-                                        <option value="Internasional">Internasional</option>
-                                        <option value="Nasional">Nasional</option>
-                                        <option value="Provinsi">Provinsi</option>
-                                        <option value="Kabupaten/Kota">Kabupaten/Kota</option>
-                                    </Form.Select>
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nama Ketua </Form.Label>
-                                    <Form.Control type="text" placeholder="Masukan Nama Ketua Tim" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nim</Form.Label>
-                                    <Form.Control type="number" placeholder="Nim Mahasiswa" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nama Anggota Tim</Form.Label>
-                                    <Form.Control as="textarea" placeholder="Nim Anggota Tim" rows={3} />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nama Perlombaan</Form.Label>
-                                    <Form.Control type="number" placeholder="Masukan Nama Perlombaan" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Bidang Perlombaan</Form.Label>
-                                    <Form.Control type="text" placeholder="Masukan Bidang Perlombaan Yang Diikuti" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Sertifikat</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                            </>
-                        )}
-
-                        {selectedCategory === "Kerja Praktik" && (
-                            <>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Keterangan</Form.Label>
-                                    <Form.Select>
-                                        <option value="">-- Pilih Keterangan KP --</option>
-                                        <option value="Seminar">Seminar</option>
-                                        <option value="Projek">Projek</option>
-                                        <option value="Konversi">Konversi</option>
-                                    </Form.Select>
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nama </Form.Label>
-                                    <Form.Control type="text" placeholder="Nama Mahasiswa" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nim</Form.Label>
-                                    <Form.Control type="text" placeholder="Nim Mahasiswa" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Dosen Pembimbing</Form.Label>
-                                    <Form.Control type="text" placeholder="Nim Mahasiswa" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Judul Laporan</Form.Label>
-                                    <Form.Control type="text" placeholder="Judul Laporan" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Tempat Kerja Praktik</Form.Label>
-                                    <Form.Control type="text" placeholder="Masukkan Tempat" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Tanggal Mulai</Form.Label>
-                                    <Form.Control type="date" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Tanggal Selesai</Form.Label>
-                                    <Form.Control type="date" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Krs Terakhir</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Lembar Pengesahan Prodi Yang Telah Di ACC & TTD</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Lembar Pengesahan Pembimbing</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Lembar Konsul Pembimbing</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Lembar Nilai Pembimbing</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                                <Form.Label>Lembar Nilai Dari Perusahaan</Form.Label>
-                                <Form.Control
-                                    type="file"
-                                    placeholder="Masukkan Lembar NIlai Dari Perusahaan Tempat KP"
-                                    accept="application/pdf"
-                                />
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Daftar Hadir Tempat KP</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>File Laporan Yang Telah DI ACC & TTD</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>File Program Kerja Praktik</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                            </>
-                        )}
-
-                        {selectedCategory === "Tugas Akhir" && (
-                            <>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nama</Form.Label>
-                                    <Form.Control type="text" placeholder="Nama Mahasiswa" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nim</Form.Label>
-                                    <Form.Control type="number" placeholder="Nim Mahasiswa" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>No Hp (WhatsApp)</Form.Label>
-                                    <Form.Control type="number" placeholder="Nim Mahasiswa" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Skripsi Versi Distribusi</Form.Label>
-                                    <Form.Control type="file" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Program TGA</Form.Label>
-                                    <Form.Control type="file" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Jurnal Skripsi Dengan Format SISFO</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                            </>
-                        )}
-
-                        {/* {selectedCategory === "Kewirausahaan" && (
-                            <>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nama Ketua </Form.Label>
-                                    <Form.Control type="text" placeholder="Masukan Nama Ketua Tim" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nim</Form.Label>
-                                    <Form.Control type="number" placeholder="Nim Mahasiswa" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nama Anggota Tim</Form.Label>
-                                    <Form.Control as="textarea" placeholder="Nim Anggota Tim" rows={3} />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nama Dosen Pembimbing</Form.Label>
-                                    <Form.Control type="number" placeholder="Masukan Nama Pembimbing" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nama Kewirausahaan Yang Diikuti</Form.Label>
-                                    <Form.Control type="text" placeholder="Masukan Nama Program Kewirausahaan Yang Diikuti" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Judul Kewirausahaan</Form.Label>
-                                    <Form.Control type="text" placeholder="Judul Tugas Akhir" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>File Projek</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>File Laporan</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                            </>
-                        )} */}
-
-
-                        {selectedCategory === "Pertukaran Mahasiswa" && (
-                            <>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nama </Form.Label>
-                                    <Form.Control type="text" placeholder="Masukan Nama Ketua Tim" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nim</Form.Label>
-                                    <Form.Control type="number" placeholder="Nim Mahasiswa" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nama Dosen Pembimbing</Form.Label>
-                                    <Form.Control type="number" placeholder="Masukan Nama Pembimbing" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Nama Universitas</Form.Label>
-                                    <Form.Control type="text" placeholder="Masukkan Nama Univ" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Module Pembelajaran</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Lembaran Nilai Dari Univ Pmm</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Lembaran Konversi Nilai</Form.Label>
-                                    <Form.Control type="file" accept="application/pdf" />
-                                </Form.Group>
-                            </>
-                        )}
 
 
                         {selectedCategory === "Alumni" && (
@@ -824,9 +490,6 @@ const Kema = () => {
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
                         Kembali
-                    </Button>
-                    <Button variant="primary" onClick={handleClose}>
-                        Kirim
                     </Button>
                 </Modal.Footer>
             </Modal>

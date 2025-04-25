@@ -90,7 +90,11 @@ const TambahPenelitian = () => {
                                 <Form.Label >Nama Dosen </Form.Label>
                             </Col> :
                             <Col md={8}>
-                                <Form.Select value={nama_dosen} onChange={(e) => setNamaDosen(e.target.value)} required>
+                                <Form.Select 
+                                value={nama_dosen} 
+                                onChange={(e) => setNamaDosen(e.target.value)} 
+                                required
+                                >
                                     <option value="">-- Pilih Dosen Pengampu --</option>
                                     {dosenList.map((dosen) => (
                                         <option key={dosen.id} value={dosen.name}>{dosen.name}</option>

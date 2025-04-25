@@ -101,6 +101,14 @@ const Penelitian = () => {
 
       <Card className="shadow border-0">
         <Card.Body className="p-0">
+          <div className="p-3 border-bottom">
+            <Row className="align-items-center g-3">
+              <Col md={6} lg={5}>
+                <h5 className="mb-0 fw-semibold">Daftar Penelitian Dosen  Sistem Informasi</h5>
+              </Col>
+            </Row>
+          </div>
+
           <Card className="shadow-sm border-0 overflow-hidden">
             <Card.Header className="bg-white py-3 border-bottom">
               <div className="d-flex align-items-center flex-wrap gap-3">
