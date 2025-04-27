@@ -16,9 +16,12 @@ const storage = multer.diskStorage({
         } else if (file.fieldname === "file_absensi") {
             folder += "absensi/";
         } else if (
-            ["lembar_pengesahan", "laporan", "projek", "sertifikat", "konversi_nilai"].includes(file.fieldname)
+            ["lembar_pengesahan", "laporan", "projek",
+                "sertifikat", "pengesahan_prodi", "pengesahan_pembimbing",
+                "nilai_perusahaan", "daftar_hadir", "krs_terakhir", "konversi_nilai",
+                "skripsi", "program_tga", "jurnal_sisfo"].includes(file.fieldname)
         ) {
-            folder += "msib/";
+            folder += "kegiatan_mahasiswa/";
         } else if (file.fieldname === "file_rps") {
             folder += "rps/";
         } else if (file.fieldname === "file_kontrak_kuliah") {
@@ -28,7 +31,7 @@ const storage = multer.diskStorage({
         } else if (file.fieldname === "file_kegiatan") {
             folder += "pengabdian/";
         } else {
-            folder += "misc/"; 
+            folder += "misc/";
         }
 
         createFolderIfNotExists(folder);
@@ -38,24 +41,22 @@ const storage = multer.diskStorage({
         const timestamp = Date.now();
         const ext = path.extname(file.originalname);
         const baseName = path.basename(file.originalname, ext);
-        const newFileName = `${baseName}-${timestamp}${ext}`; 
+        const newFileName = `${baseName}-${timestamp}${ext}`;
         cb(null, newFileName);
     }
 });
 
-const fileFilter = (req, file, cb) => {
-    const allowedExtensions = [".jpg", ".jpeg", ".png", ".pdf"];
-    const ext = path.extname(file.originalname).toLowerCase();
+const handleFileUploads = (req) => {
+    const files = req.files || {};
 
-    if (!allowedExtensions.includes(ext)) {
-        return cb(new Error("Format file tidak diizinkan"), false); 
-    }
-    cb(null, true);
+    return {
+
+        projek: files.projek ? files.projek[0].filename : null,
+    };
 };
 
 const upload = multer({
     storage: storage,
-    fileFilter: fileFilter,
 });
 
 export default upload;

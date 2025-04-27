@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Card, Table, Button, Row, Col, Form, InputGroup } from "react-bootstrap";
-import { FiPlus, FiSearch } from "react-icons/fi";
+import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiEye } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -28,22 +28,18 @@ const Msib = () => {
 
   return (
     <Container fluid className="p-4">
-      <Card className="mb-4 shadow border-0">
-        <Card.Body className="p-4">
-          <Row className="align-items-center">
+          <Row className="align-items-center p-4">
             <Col>
-              <h2 className="mb-1 fw-bold">MSIB</h2>
+              <h2 className="mb-1 fw-bold text-white">MSIB</h2>
               <p className="text-muted mb-0">Daftar Kegiatan MSIB Mahasiswa Sistem Informasi</p>
             </Col>
-            <Col xs="auto">
+            {/* <Col xs="auto">
               <Button variant="primary" className="d-flex align-items-center gap-2" onClick={() => navigate("/admin/dashboard/msib/tambahmsib")}>
                 <FiPlus size={18} />
                 <span>Tambah</span>
               </Button>
-            </Col>
+            </Col> */}
           </Row>
-        </Card.Body>
-      </Card>
 
       <Card className="shadow border-0">
         <Card.Body className="p-0">
@@ -132,12 +128,35 @@ const Msib = () => {
                         )}
                       </td>
                       <td>
-                        <Button variant="warning" size="sm" className="me-2">
-                          Edit
-                        </Button>
-                        <Button variant="danger" size="sm">
-                          Hapus
-                        </Button>
+                        <div className="d-flex justify-content-center gap-2">
+                          <Button
+                            variant="outline-success"
+                            size="sm"
+                            className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
+                            title="Edit"
+                            onClick={() => navigate(`/admin/dashboard/msib/editmsib/${msib.id}`)}
+                          >
+                            <FiEdit2 size={16} />
+                          </Button>
+                          <Button
+                            variant="outline-warning"
+                            size="sm"
+                            className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
+                            title="Edit"
+                            onClick={() => navigate(`/admin/dashboard/msib/lihatmsib/${msib.id}`)}
+                          >
+                            <FiEye size={16} />
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
+                            title="Hapus"
+                            onClick={() => deleteMsib(msib.id)}
+                          >
+                            <FiTrash2 size={16} />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))

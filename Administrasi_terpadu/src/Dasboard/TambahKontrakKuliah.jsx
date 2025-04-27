@@ -117,7 +117,8 @@ const TambahKontrakKuliah = () => {
                                     type="text"
                                     value={semester}
                                     onChange={(e) => setSemester(e.target.value)}>
-                                    {Array.from({ length: 16 }, (_, i) => (
+                                        <option value="">-- Pilih Semester --</option>
+                                    {Array.from({ length: 8 }, (_, i) => (
                                         <option key={i + 1} value={`Semester ${i + 1}`}>
                                             Semester {i + 1}
                                         </option>

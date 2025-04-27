@@ -94,7 +94,7 @@ const Rps = () => {
                                     className="shadow-none py-1"
                                 >
                                     <option value="">Semua Semester</option>
-                                    {[...Array(16)].map((_, i) => (
+                                    {[...Array(8)].map((_, i) => (
                                         <option key={i + 1} value={(i + 1).toString()}>
                                             Semester {i + 1}
                                         </option>

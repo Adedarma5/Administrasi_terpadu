@@ -1,11 +1,68 @@
-import React  from "react";
-import { Container, Card, Table, Button, Row, Col, Form, InputGroup } from "react-bootstrap";
-import { FiPlus, FiSearch  } from "react-icons/fi";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Container, Card, Table, Button, Row, Col, Form, InputGroup, Modal } from "react-bootstrap";
+import { FiPlus, FiSearch, FiFilter, FiEye, FiTrash2 } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useState, useEffect } from "react";
 
 const Pmm = () => {
-  const navigate =useNavigate ();
- 
+  const navigate = useNavigate();
+  const [pmmList, setpmmList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedPmm, setSelectedPmm] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    fetchPmm();
+  }, []);
+
+  const fetchPmm = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/pmm");
+      setPmmList(response.data);
+    } catch (error) {
+      console.error("Gagal mengambil data Pmm:", error);
+    }
+  };
+
+  const deletePmm = async (id) => {
+    if (window.confirm("Apakah Anda yakin ingin menghapus Pmm ini?")) {
+      try {
+        await axios.delete(`http://localhost:5000/pmm/${id}`);
+        fetchPmm();
+      } catch (error) {
+        console.error("Error deleting Pmm:", error);
+      }
+    }
+  };
+
+  const handleDownload = (filename) => {
+    if (!filename) return;
+    window.open(`http://localhost:5000/uploads/kegiatan_mahasiswa/${filename}`, "_blank");
+  };
+
+  const handleShowDetail = (prestasi) => {
+    setSelectedPmm(prestasi);
+    setShowDetailModal(true);
+  };
+
+  const handleCloseDetail = () => {
+    setShowDetailModal(false);
+    setSelectedPmm(null);
+  };
+
+  const filteredPmm = pmmList.filter((prestasi) => {
+    return prestasi.nama.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+  const totalItems = filteredPmm.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const paginatedPrestasi = filteredPmm.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <Container fluid className="p-4">
       <Card className="mb-4 shadow border-0">
@@ -71,9 +128,8 @@ const Pmm = () => {
                   <th className="py-3">No</th>
                   <th className="py-3">Nama</th>
                   <th className="py-3">Nim</th>
+                  <th className="py-3">Stambuk</th>
                   <th className="py-3">Nama Universitas</th>
-                  <th className="py-3">Module Pembelajaran</th>
-                  <th className="py-3">Lembar Nilai Dari Univ PMM</th>
                   <th className="py-3">Konversi Nilai</th>
                   <th className="py-3">Aksi</th>
                 </tr>
@@ -99,10 +155,10 @@ const Pmm = () => {
                     </tr>
                 ))} */}
                 <tr>
-                    <td colSpan="10" className="text-center text-muted py-3">
-                      Tidak ada data
-                    </td>
-                  </tr>
+                  <td colSpan="10" className="text-center text-muted py-3">
+                    Tidak ada data
+                  </td>
+                </tr>
               </tbody>
             </Table>
           </div>

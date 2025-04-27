@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap";
 
 const TambahUser = () => {
+  const [nip, setNip] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,6 +18,7 @@ const TambahUser = () => {
     e.preventDefault();
     try {
       await axios.post("http://localhost:5000/users", {
+        nip: nip,
         name: name,
         email: email,
         password: password,
@@ -33,16 +35,19 @@ const TambahUser = () => {
 
   return (
     <Container fluid className="p-4">
-      <Card className="mb-4 shadow border-0">
-        <Card.Body className="p-4">
-          <h2 className="mb-1 fw-bold">User Dosen</h2>
-          <p className="text-muted mb-0">Daftar Akun User Dosen Sistem Informasi</p>
-        </Card.Body>
-      </Card>
+      <Row className="align-items-center p-4">
+        <Col>
+          <h2 className="mb-1 fw-bold text-white">User Dosen</h2>
+          <p className="text-muted mb-0">Tambah Akun User Dosen Sistem Informasi</p>
+        </Col>
+      </Row>
+
 
 
       <Card className="shadow border-0">
-        <h4 className="p-4">Tambah Users Dosen Sistem Informasi</h4>
+        <Card.Header>
+        <h5 className="mb-0 fw-semibold">Tambah Users </h5>
+        </Card.Header>
         <Card.Body className="p-4">
           {msg && (
             <Alert variant="danger" className="mb-4">
@@ -51,6 +56,21 @@ const TambahUser = () => {
           )}
 
           <Form onSubmit={Tambah}>
+            <Row className="align-items-center mb-3">
+              <Col md={3}>
+                <Form.Label >NIP </Form.Label>
+              </Col> :
+              <Col md={8}>
+                <Form.Control
+                  type="text"
+                  value={nip}
+                  onChange={(e) => setNip(e.target.value)}
+                  placeholder="Masukkan NIP"
+                  required
+                />
+              </Col>
+            </Row>
+
             <Row className="align-items-center mb-3">
               <Col md={3}>
                 <Form.Label >Nama Lengkap </Form.Label>

@@ -10,11 +10,10 @@ import {
     FaUniversity,
     FaStore,
     FaUserGraduate,
-    FaTachometerAlt,
-    FaNewspaper,
-    FaHome
+    FaTachometerAlt
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import AkademikDashboard from "../Kema/AkademikDashboard";
 
 const SidebarAkademikComponents = ({ children }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -26,25 +25,10 @@ const SidebarAkademikComponents = ({ children }) => {
         { icon: <FaTrophy />, title: "Prestasi", path: "/akademik/dashboard/Prestasi/TambahPrestasi" },
         { icon: <FaLaptopCode />, title: "Kerja Praktik", path: "/akademik/dashboard/KerjaPraktik/TambahKerjaPraktik" },
         { icon: <FaBook />, title: "Tugas Akhir", path: "/akademik/dashboard/TugasAkhir/TambahTugasAkhir" },
-        { icon: <FaUniversity />, title: "PMM", path: "/akademik/dashboard/Pmm?TambahPmm" },
+        { icon: <FaUniversity />, title: "PMM", path: "/akademik/dashboard/Pmm/TambahPmm" },
         // { icon: <FaStore />, title: "Kewirausahaan", path: "/akademik/dashboard/Kewirausahaan/TambahKewirausahaan" },
         { icon: <FaUserGraduate />, title: "Alumni", path: "/akademik/dashboard/Alumni/TambahAlumni" }
     ];
-
-    const DashboardContent = () => (
-        <div className="p-4">
-            <Card className="shadow-sm border-0 mb-4" style={{ maxWidth: '800px', margin: '0 auto' }}>
-                <Card.Body className="p-4">
-                    <h2 className="text-center mb-3">SELAMAT DATANG</h2>
-                    <div className="d-flex justify-content-center">
-                        <div className="bg-primary text-white px-3 py-2 rounded">
-                            Sistem Informasi Administrasi Terpadu
-                        </div>
-                    </div>
-                </Card.Body>
-            </Card>
-        </div>
-    );
 
     return (
         <Container fluid className="p-0">
@@ -88,8 +72,25 @@ const SidebarAkademikComponents = ({ children }) => {
                         </Button>
                     </div>
 
+                    <Nav.Link
+                        as={Link}
+                        to="/akademik/dashboard"
+                        className="text-white d-flex align-items-center py-2 px-3 mt-1"
+                        style={{
+                            borderRadius: '4px',
+                            margin: '2px 8px',
+                            backgroundColor: 'rgba(255,255,255,0.1)',
+                        }}
+                    >
+                        <FaTachometerAlt className="me-3" />
+                        {!isCollapsed && <span className="fw-medium">Dashboard</span>}
+                    </Nav.Link>
+
+                    <div className="mt-2 mb-2" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}></div>
+
+
                     {/* Menu Items */}
-                    <div className="overflow-auto flex-grow-1" style={{ maxHeight: 'calc(100vh - 170px)' }}>
+                    <div className="overflow-auto flex-grow-1 " style={{ maxHeight: 'calc(100vh - 170px)' }}>
                         {menuItems.map((item, index) => (
                             <Nav.Link
                                 key={index}
@@ -180,11 +181,11 @@ const SidebarAkademikComponents = ({ children }) => {
                     <div className="container-fluid py-3">
                         <div className="row">
                             <div className="col-12">
-                                {window.location.pathname === "/admin/dashboard" ? <DashboardContent /> : children}
+                                {window.location.pathname === "/akademik/dashboard" ? <AkademikDashboard /> : children}
                             </div>
                         </div>
                     </div>
-                </Col>  
+                </Col>
             </Row>
         </Container>
     );

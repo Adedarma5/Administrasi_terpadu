@@ -128,7 +128,7 @@ const TambahBahanAjar = () => {
               </Col>
               <Col md={8}>
                 <Form.Select value={pertemuan} onChange={(e) => setPertemuan(e.target.value)} required>
-                  <option value="">Pilih Pertemuan</option>
+                  <option value="">-- Pilih Pertemuan --</option>
                   {[...Array(16).keys()].map((num) => (
                     <option key={num + 1} value={num + 1}>{num + 1}</option>
                   ))}

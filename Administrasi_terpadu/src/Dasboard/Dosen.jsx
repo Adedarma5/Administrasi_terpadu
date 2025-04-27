@@ -110,14 +110,14 @@ const Dosen = () => {
                 <Table striped bordered hoverr className="align-middle mb-0 " size="sm">
                   <thead>
                     <tr className="bg-light">
-                      <th className="px-1 py-3" style={{ width: "5%" }}>No</th>
-                      <th className="px-3 py-3 " style={{ width: "12%" }}>NIP</th>
-                      <th className="px-3 py-3 " style={{ width: "18%" }}>Nama</th>
-                      <th className="px-3 py-3 " style={{ width: "15%" }}>Bidang Keahlian</th>
-                      <th className="px-3 py-3 " style={{ width: "15%" }}>Jabatan Struktural</th>
-                      <th className="px-3 py-2 " style={{ width: "10%" }}>Jabatan Fungsional</th>
-                      <th className="px-3 py-3 " style={{ width: "10%" }}>Status</th>
-                      <th className="px-3 py-3 " style={{ width: "10%" }}>Aksi</th>
+                      <th className="px-2 py-4" >No</th>
+                      <th className="px-3 py-4 " >NIP</th>
+                      <th className="px-4 py-4 " >Nama</th>
+                      <th className="px-3 py-4 " >Bidang Keahlian</th>
+                      <th className="px-3 py-3 " >Jabatan Struktural</th>
+                      <th className="px-2 py-2 " >Jabatan Fungsional</th>
+                      <th className="px-3 py-4 " >Status</th>
+                      <th className="px-3 py-4 " >Aksi</th>
                     </tr>
                   </thead>
                   <tbody>

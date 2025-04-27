@@ -1,449 +1,676 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Nav, Collapse, Button, Offcanvas, Card } from "react-bootstrap";
+import { Container, Row, Col, Nav, Collapse, Button, Offcanvas } from "react-bootstrap";
 import {
-    FaBook,
-    FaUsers,
-    FaChevronDown,
-    FaCalendarCheck,
-    FaClipboardList,
-    FaBars,
-    FaSignOutAlt,
-    FaAngleLeft,
-    FaAngleRight,
-    FaHome,
-    FaNewspaper,
-    FaTachometerAlt
+  FaBook,
+  FaUsers,
+  FaChevronDown,
+  FaCalendarCheck,
+  FaClipboardList,
+  FaBars,
+  FaSignOutAlt,
+  FaHome,
+  FaNewspaper,
+  FaTachometerAlt
 } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import AdminDashboard from "../Dasboard/AdminDashboard";
 
 const SidebarComponents = ({ children }) => {
-    const [openAkademik, setOpenAkademik] = useState(false);
-    const [openKegiatanMahasiswa, setOpenKegiatanMahasiswa] = useState(false);
-    const [isCollapsed, setIsCollapsed] = useState(false);
-    const [showOffcanvas, setShowOffcanvas] = useState(false);
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-    const navigate = useNavigate();
+  const [openAkademik, setOpenAkademik] = useState(false);
+  const [openKegiatanMahasiswa, setOpenKegiatanMahasiswa] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showOffcanvas, setShowOffcanvas] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  // Original dark background color
+  const colors = {
+    primary: "#212529", // Original dark color
+    secondary: "#f3f4f6", // Light gray
+    accent: "#0d6efd", // Bootstrap primary blue
+    activeMenu: "rgba(255, 255, 255, 0.2)", // Highlight for active menu
+    text: "#ffffff", // White text
+    textDark: "#1f2937", // Dark text
+    menuHover: "rgba(255, 255, 255, 0.1)", // Light hover effect
+    border: "rgba(255, 255, 255, 0.15)", // Border color
+  };
 
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth < 768);
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
-
-
-    const handleLogout = async () => {
-        try {
-            await axios.delete("http://localhost:5000/logout", { withCredentials: true });
-
-            localStorage.removeItem("token");
-
-            navigate("/login");
-        } catch (error) {
-            console.error("Logout gagal:", error);
-        }
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
     };
 
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
+  // Check if the current path matches a menu item or is a submenu
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
 
+  const isSubMenuActive = (basePath) => {
+    return location.pathname.startsWith(basePath);
+  };
 
-    return (
-        <Container fluid className="p-0">
-            <Row className="g-0">
-                {/* Desktop Sidebar */}
-                <Col
-                   className="d-none d-md-flex flex-column bg-dark text-white min-vh-100 shadow-sm position-fixed"
-                   style={{
-                       width: isCollapsed ? '80px' : '260px',
-                       transition: "width 0.3s ease",
-                       zIndex: 1030
-                    }}
+  const handleLogout = async () => {
+    try {
+      await axios.delete("http://localhost:5000/logout", { withCredentials: true });
+      localStorage.removeItem("token");
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout gagal:", error);
+    }
+  };
+
+  // Common link style for consistency
+  const navLinkStyle = (active = false) => ({
+    borderRadius: '6px',
+    margin: '3px 8px',
+    padding: '10px 16px',
+    transition: 'all 0.2s ease',
+    fontSize: '14px',
+    fontWeight: '500',
+    backgroundColor: active ? colors.activeMenu : 'transparent',
+    '&:hover': {
+      backgroundColor: colors.menuHover,
+    }
+  });
+
+  const subMenuLinkStyle = (active = false) => ({
+    padding: '8px 16px',
+    paddingLeft: '40px',
+    fontSize: '13px',
+    transition: 'all 0.2s ease',
+    backgroundColor: active ? colors.activeMenu : 'transparent',
+  });
+
+  return (
+    <Container fluid className="p-0">
+      <Row className="g-0">
+        {/* Desktop Sidebar */}
+        <Col
+          className="d-none d-md-flex flex-column min-vh-100 shadow-sm position-fixed"
+          style={{
+            width: isCollapsed ? '70px' : '250px',
+            transition: "all 0.3s ease",
+            zIndex: 1030,
+            backgroundColor: colors.primary,
+          }}
+        >
+          {/* Header/Logo Area */}
+          <div className="d-flex align-items-center p-3 border-bottom" style={{ borderColor: colors.border }}>
+            <img
+              src="/src/assets/unimal.png"
+              width="40"
+              height="40"
+              className="rounded-circle"
+              alt="Logo"
+            />
+            {!isCollapsed && (
+              <div className="ms-2 text-white">
+                <div className="fw-bold" style={{ fontSize: '14px' }}>Sistem Informasi</div>
+                <div style={{ fontSize: '12px', color: colors.accent }}>Akademik Terpadu</div>
+              </div>
+            )}
+          </div>
+
+          {/* Navigation Menu - Fixed Height with Scrollable Content */}
+          <div className="d-flex flex-column" style={{ height: 'calc(100vh - 72px)' }}> {/* Fixed height minus header */}
+            {/* Toggle Button */}
+            <div className="d-flex justify-content-end p-2">
+              <Button
+                variant="outline-light"
+                size="sm"
+                className="d-flex align-items-center justify-content-center p-1"
+                style={{ width: '28px', height: '28px', borderRadius: '4px', border: `1px solid ${colors.border}` }}
+                onClick={() => setIsCollapsed(!isCollapsed)}
+              >
+                <FaBars size={12} />
+              </Button>
+            </div>
+
+            {/* Scrollable Menu Area */}
+            <div className="flex-grow-1 overflow-auto" style={{ scrollbarWidth: 'thin' }}>
+              {/* Dashboard Link */}
+              <Nav.Link
+                as={Link}
+                to="/admin/dashboard"
+                className="text-white d-flex align-items-center"
+                style={{
+                  ...navLinkStyle(isActive('/admin/dashboard')),
+                  backgroundColor: isActive('/admin/dashboard') ? colors.activeMenu : 'transparent',
+                }}
+              >
+                <FaTachometerAlt className={isCollapsed ? "mx-auto" : "me-3"} size={16} />
+                {!isCollapsed && <span>Dashboard</span>}
+              </Nav.Link>
+
+              <div className="mt-2 mb-2" style={{ borderTop: `1px solid ${colors.border}` }}></div>
+
+              {/* Akademik Menu */}
+              <Nav.Item>
+                <Nav.Link
+                  onClick={() => setOpenAkademik(!openAkademik)}
+                  className="text-white d-flex align-items-center"
+                  style={{
+                    ...navLinkStyle(isSubMenuActive('/admin/dashboard/Dosen') || 
+                                   isSubMenuActive('/admin/dashboard/MataKuliah') ||
+                                   isSubMenuActive('/admin/dashboard/Rps') ||
+                                   isSubMenuActive('/admin/dashboard/KontrakKuliah') ||
+                                   isSubMenuActive('/admin/dashboard/BahanAjar') ||
+                                   isSubMenuActive('/admin/dashboard/Penelitian') ||
+                                   isSubMenuActive('/admin/dashboard/Pengabdian') ||
+                                   isSubMenuActive('/admin/dashboard/Pengajaran')),
+                  }}
                 >
-                    {/* Header/Logo Area */}
-                    <div className="d-flex align-items-center p-3 border-bottom border-secondary">
-                        <img
-                            src="/src/assets/unimal.png"
-                            width="50"
-                            height="50"
-                            className="rounded-circle"
-                            alt="Logo"
-                        />
-                        {!isCollapsed && (
-                            <div className="ms-2 text-white">
-                                <div className="fw-bold" style={{ fontSize: '12px' }}>Sistem Informasi</div>
-                                <div className="text-info" style={{ fontSize: '11px' }}>Akademik Terpadu</div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Navigation Menu */}
-                    <div className="d-flex flex-column h-100">
-                        {/* Toggle Button */}
-                        <div className="d-flex justify-content-end p-2">
-                            <Button
-                                variant="outline-light"
-                                size="sm"
-                                className="d-flex align-items-center justify-content-center p-1"
-                                style={{ width: '28px', height: '28px', borderRadius: '4px' }}
-                                onClick={() => setIsCollapsed(!isCollapsed)}
-                            >
-                                <FaBars size={14} />
-                            </Button>
-                        </div>
-
-                        {/* Dashboard Link */}
-                        <Nav.Link
-                            as={Link}
-                            to="/admin/dashboard"
-                            className="text-white d-flex align-items-center py-2 px-3 mt-1"
-                            style={{
-                                borderRadius: '4px',
-                                margin: '2px 8px',
-                                backgroundColor: 'rgba(255,255,255,0.1)',
-                            }}
-                        >
-                            <FaTachometerAlt className="me-3" />
-                            {!isCollapsed && <span className="fw-medium">Dashboard</span>}
-                        </Nav.Link>
-
-                        <div className="mt-2 mb-2" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}></div>
-
-                        {/* Akademik Menu */}
-                        <Nav.Item className="px-2">
-                            <Nav.Link
-                                onClick={() => setOpenAkademik(!openAkademik)}
-                                className="text-white d-flex align-items-center"
-                                style={{ cursor: "pointer" }}
-                            >
-                                <FaBook className={isCollapsed ? "mx-auto" : "me-2"} style={{ fontSize: isCollapsed ? '1.2rem' : '1rem' }} />
-                                {!isCollapsed && <span>Akademik</span>}
-                                {!isCollapsed && <FaChevronDown className="ms-auto" />}
-                            </Nav.Link>
-                            <Collapse in={openAkademik}>
-                                <div className={isCollapsed ? "d-none" : "ms-4"}>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Dosen" className="text-white py-1">Dosen</Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/MataKuliah" className="text-white py-1">Mata Kuliah</Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Rps" className="text-white py-1">RPS</Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/KontrakKuliah" className="text-white py-1">Kontrak Kuliah</Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/BahanAjar" className="text-white py-1">Bahan Ajar</Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Penelitian" className="text-white py-1">Penelitian</Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Pengabdian" className="text-white py-1">Pengabdian</Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Pengajaran" className="text-white py-1">Pengajaran</Nav.Link>
-                                </div>
-                            </Collapse>
-                        </Nav.Item>
-
-                        {/* Absensi Link */}
-                        <Nav.Item className="px-2">
-                            <Nav.Link
-                                as={Link}
-                                to='/admin/dashboard/Absensi'
-                                className="text-white d-flex align-items-center"
-                            >
-                                <FaCalendarCheck className={isCollapsed ? "mx-auto" : "me-2"} style={{ fontSize: isCollapsed ? '1.2rem' : '1rem' }} />
-                                {!isCollapsed && <span>Absensi</span>}
-                            </Nav.Link>
-                        </Nav.Item>
-
-                        {/* Kegiatan Mahasiswa */}
-                        <Nav.Item className="px-2">
-                            <Nav.Link
-                                onClick={() => setOpenKegiatanMahasiswa(!openKegiatanMahasiswa)}
-                                className="text-white d-flex align-items-center"
-                                style={{ cursor: "pointer" }}
-                            >
-                                <FaClipboardList className={isCollapsed ? "mx-auto" : "me-2"} style={{ fontSize: isCollapsed ? '1.2rem' : '1rem' }} />
-                                {!isCollapsed && <span>Kegiatan Mahasiswa</span>}
-                                {!isCollapsed && <FaChevronDown className="ms-auto" />}
-                            </Nav.Link>
-                            <Collapse in={openKegiatanMahasiswa}>
-                                <div className={isCollapsed ? "d-none" : "ms-4"}>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Msib" className="text-white py-1">MSIB</Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Magangmandiri" className="text-white py-1">Magang Mandiri</Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Prestasi" className="text-white py-1">Prestasi</Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/KerjaPraktik" className="text-white py-1">Kerja Praktik</Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/TugasAkhir" className="text-white py-1">Tugas Akhir</Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Pmm" className="text-white py-1">PMM</Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Kewirausahaan" className="text-white py-1">Kewirausahaan</Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Alumni" className="text-white py-1">Alumni</Nav.Link>
-                                </div>
-                            </Collapse>
-                        </Nav.Item>
-
-                        {/* Users Link */}
-                        <Nav.Item className="px-2">
-                            <Nav.Link
-                                as={Link}
-                                to='/admin/dashboard/UserDosen'
-                                className="text-white d-flex align-items-center"
-                            >
-                                <FaUsers className={isCollapsed ? "mx-auto" : "me-2"} style={{ fontSize: isCollapsed ? '1.2rem' : '1rem' }} />
-                                {!isCollapsed && <span>Users</span>}
-                            </Nav.Link>
-                        </Nav.Item>
-
-                        {/* Logout at bottom */}
-                        <div className="mt-auto mb-3 px-2">
-                            <Button
-                                variant="outline-danger"
-                                className="w-100 d-flex align-items-center justify-content-center"
-                                onClick={handleLogout}
-                            >
-                                <FaSignOutAlt className={isCollapsed ? "" : "me-2"} />
-                                {!isCollapsed && <span>Logout</span>}
-                            </Button>
-                        </div>
-                    </div>
-                </Col>
-
-                {/* Mobile Header with Logo and Menu Button (similar to image) */}
-                <div className="d-md-none w-100 fixed-top" style={{ zIndex: 1040 }}>
-                    {/* University header with logo */}
-                    <div className="d-flex justify-content-between align-items-center p-2 bg-white">
-                        <div className="d-flex align-items-center">
-                            <img
-                                src="/src/assets/unimal.png"
-                                height="40"
-                                alt="University Logo"
-                                className="me-2"
-                            />
-                            <div className="d-flex flex-column">
-                                <span className="fw-bold" style={{ fontSize: '16px', lineHeight: '1' }}>universitas</span>
-                                <span className="fw-bold" style={{ fontSize: '18px', lineHeight: '1' }}>MALIKUSSALEH</span>
-                            </div>
-                        </div>
-
-                        <div className="d-flex align-items-center">
-                            {/* University badge/logo */}
-                            <div className="bg-info rounded-circle d-flex justify-content-center align-items-center me-3" style={{ width: '40px', height: '40px' }}>
-                                <span className="text-white fw-bold">BLU</span>
-                            </div>
-
-                            {/* Menu button */}
-                            <Button
-                                variant="light"
-                                onClick={() => setShowOffcanvas(true)}
-                                className="border-0"
-                            >
-                                <FaBars size={24} />
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Mobile Offcanvas Sidebar - Updated to match reference image */}
-                <Offcanvas
-                    show={showOffcanvas}
-                    onHide={() => setShowOffcanvas(false)}
-                    placement="end"
-                    className="w-75"
-                >
-                    <Offcanvas.Header closeButton className="bg-success text-white">
-                        <Offcanvas.Title className="fw-bold">Menu</Offcanvas.Title>
-                    </Offcanvas.Header>
-                    <Offcanvas.Body className="p-0">
-                        <Nav className="flex-column">
-                            {/* Home Link */}
-                            <Nav.Link
-                                as={Link}
-                                to="/"
-                                className="py-3 px-4 d-flex align-items-center border-bottom"
-                                onClick={() => setShowOffcanvas(false)}
-                            >
-                                <FaHome className="me-3" /> Beranda
-                            </Nav.Link>
-
-                            {/* News Link */}
-                            <Nav.Link
-                                as={Link}
-                                to="/berita"
-                                className="py-3 px-4 d-flex align-items-center border-bottom"
-                                onClick={() => setShowOffcanvas(false)}
-                            >
-                                <FaNewspaper className="me-3" /> Berita
-                            </Nav.Link>
-
-                            {/* Dashboard Link */}
-                            <Nav.Link
-                                as={Link}
-                                to="/admin/dashboard"
-                                className="py-3 px-4 d-flex align-items-center border-bottom"
-                                onClick={() => setShowOffcanvas(false)}
-                            >
-                                <FaTachometerAlt className="me-3" /> Dashboard
-                            </Nav.Link>
-
-                            {/* Akademik Link */}
-                            <Nav.Link
-                                onClick={() => {
-                                    setOpenAkademik(!openAkademik);
-                                }}
-                                className="py-3 px-4 d-flex align-items-center border-bottom"
-                            >
-                                <FaBook className="me-3" /> Akademik
-                                <FaChevronDown className="ms-auto" />
-                            </Nav.Link>
-                            <Collapse in={openAkademik}>
-                                <div>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Dosen"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        Dosen
-                                    </Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/MataKuliah"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        Mata Kuliah
-                                    </Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Rps"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        RPS
-                                    </Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/KontrakKuliah"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        Kontrak Kuliah
-                                    </Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/BahanAjar"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        Bahan Ajar
-                                    </Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Penelitian"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        Penelitian
-                                    </Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Pengabdian"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        Pengabdian
-                                    </Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Pengajaran"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        Pengajaran
-                                    </Nav.Link>
-                                </div>
-                            </Collapse>
-
-                            {/* Absensi Link */}
-                            <Nav.Link
-                                as={Link}
-                                to="/admin/dashboard/Absensi"
-                                className="py-3 px-4 d-flex align-items-center border-bottom"
-                                onClick={() => setShowOffcanvas(false)}
-                            >
-                                <FaCalendarCheck className="me-3" /> Absensi
-                            </Nav.Link>
-
-                            {/* Kegiatan Mahasiswa Link */}
-                            <Nav.Link
-                                onClick={() => {
-                                    setOpenKegiatanMahasiswa(!openKegiatanMahasiswa);
-                                }}
-                                className="py-3 px-4 d-flex align-items-center border-bottom"
-                            >
-                                <FaClipboardList className="me-3" /> Kegiatan Mahasiswa
-                                <FaChevronDown className="ms-auto" />
-                            </Nav.Link>
-                            <Collapse in={openKegiatanMahasiswa}>
-                                <div>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Msib"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        MSIB
-                                    </Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Magangmandiri"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        Magang Mandiri
-                                    </Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Prestasi"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        Prestasi
-                                    </Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/KerjaPraktik"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        Kerja Praktik
-                                    </Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/TugasAkhir"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        Tugas Akhir
-                                    </Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Pmm"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        PMM
-                                    </Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Kewirausahaan"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        Kewirausahaan
-                                    </Nav.Link>
-                                    <Nav.Link as={Link} to="/admin/dashboard/Alumni"
-                                        className="py-2 ps-5 border-bottom"
-                                        onClick={() => setShowOffcanvas(false)}>
-                                        Alumni
-                                    </Nav.Link>
-                                </div>
-                            </Collapse>
-
-                            {/* Users Link */}
-                            <Nav.Link
-                                as={Link}
-                                to="/admin/dashboard/UserDosen"
-                                className="py-3 px-4 d-flex align-items-center border-bottom"
-                                onClick={() => setShowOffcanvas(false)}
-                            >
-                                <FaUsers className="me-3" /> Users
-                            </Nav.Link>
-
-                            <Button
-                                onClick={() => {
-                                    handleLogout();
-                                    setShowOffcanvas(false);
-                                }}
-                                className="py-3 px-4 d-flex align-items-center border-bottom text-danger"
-                            >
-                                <FaSignOutAlt className="me-3" /> Logout
-                            </Button>
-
-                        </Nav>
-                    </Offcanvas.Body>
-                </Offcanvas>
-
-                <Col
-                    className="d-flex flex-column min-vh-100"
-                    style={{
-                        marginLeft: isMobile ? '0' : (isCollapsed ? '80px' : '260px'),
-                        transition: "margin-left 0.3s ease",
-                        width: isMobile ? '100%' : (isCollapsed ? 'calc(100% - 80px)' : 'calc(100% - 260px)'),
-                        marginTop: isMobile ? '60px' : '0'
-                    }}
+                  <FaBook className={isCollapsed ? "mx-auto" : "me-3"} size={16} />
+                  {!isCollapsed && <span>Akademik</span>}
+                  {!isCollapsed && (
+                    <FaChevronDown 
+                      className="ms-auto" 
+                      size={12} 
+                      style={{
+                        transform: openAkademik ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.3s ease'
+                      }}
+                    />
+                  )}
+                </Nav.Link>
+                <Collapse in={openAkademik}>
+                  <div className={isCollapsed ? "d-none" : ""}>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/Dosen" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/Dosen')),
+                        backgroundColor: isActive('/admin/dashboard/Dosen') ? colors.activeMenu : 'transparent',
+                      }}
                     >
-                    <div className="container-fluid py-3">
-                        <div className="row">
-                    { children}
-                            <div className="col-12">
-                            </div>
-                        </div>
-                    </div>
-                </Col>
-            </Row>
-        </Container>
-    );
+                      Dosen
+                    </Nav.Link>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/MataKuliah" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/MataKuliah')),
+                        backgroundColor: isActive('/admin/dashboard/MataKuliah') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      Mata Kuliah
+                    </Nav.Link>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/Rps" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/Rps')),
+                        backgroundColor: isActive('/admin/dashboard/Rps') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      RPS
+                    </Nav.Link>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/KontrakKuliah" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/KontrakKuliah')),
+                        backgroundColor: isActive('/admin/dashboard/KontrakKuliah') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      Kontrak Kuliah
+                    </Nav.Link>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/BahanAjar" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/BahanAjar')),
+                        backgroundColor: isActive('/admin/dashboard/BahanAjar') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      Bahan Ajar
+                    </Nav.Link>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/Penelitian" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/Penelitian')),
+                        backgroundColor: isActive('/admin/dashboard/Penelitian') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      Penelitian
+                    </Nav.Link>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/Pengabdian" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/Pengabdian')),
+                        backgroundColor: isActive('/admin/dashboard/Pengabdian') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      Pengabdian
+                    </Nav.Link>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/Pengajaran" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/Pengajaran')),
+                        backgroundColor: isActive('/admin/dashboard/Pengajaran') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      Pengajaran
+                    </Nav.Link>
+                  </div>
+                </Collapse>
+              </Nav.Item>
+
+              {/* Absensi Link */}
+              <Nav.Item>
+                <Nav.Link
+                  as={Link}
+                  to='/admin/dashboard/Absensi'
+                  className="text-white d-flex align-items-center"
+                  style={{
+                    ...navLinkStyle(isActive('/admin/dashboard/Absensi')),
+                    backgroundColor: isActive('/admin/dashboard/Absensi') ? colors.activeMenu : 'transparent',
+                  }}
+                >
+                  <FaCalendarCheck className={isCollapsed ? "mx-auto" : "me-3"} size={16} />
+                  {!isCollapsed && <span>Absensi</span>}
+                </Nav.Link>
+              </Nav.Item>
+
+              {/* Kegiatan Mahasiswa */}
+              <Nav.Item>
+                <Nav.Link
+                  onClick={() => setOpenKegiatanMahasiswa(!openKegiatanMahasiswa)}
+                  className="text-white d-flex align-items-center"
+                  style={{
+                    ...navLinkStyle(isSubMenuActive('/admin/dashboard/Msib') ||
+                                   isSubMenuActive('/admin/dashboard/Magangmandiri') ||
+                                   isSubMenuActive('/admin/dashboard/Prestasi') ||
+                                   isSubMenuActive('/admin/dashboard/KerjaPraktik') ||
+                                   isSubMenuActive('/admin/dashboard/TugasAkhir') ||
+                                   isSubMenuActive('/admin/dashboard/Pmm') ||
+                                   isSubMenuActive('/admin/dashboard/Kewirausahaan') ||
+                                   isSubMenuActive('/admin/dashboard/Alumni')),
+                  }}
+                >
+                  <FaClipboardList className={isCollapsed ? "mx-auto" : "me-3"} size={16} />
+                  {!isCollapsed && <span>Kegiatan Mahasiswa</span>}
+                  {!isCollapsed && (
+                    <FaChevronDown 
+                      className="ms-auto" 
+                      size={12} 
+                      style={{
+                        transform: openKegiatanMahasiswa ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.3s ease'
+                      }}
+                    />
+                  )}
+                </Nav.Link>
+                <Collapse in={openKegiatanMahasiswa}>
+                  <div className={isCollapsed ? "d-none" : ""}>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/Msib" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/Msib')),
+                        backgroundColor: isActive('/admin/dashboard/Msib') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      MSIB
+                    </Nav.Link>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/Magangmandiri" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/Magangmandiri')),
+                        backgroundColor: isActive('/admin/dashboard/Magangmandiri') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      Magang Mandiri
+                    </Nav.Link>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/Prestasi" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/Prestasi')),
+                        backgroundColor: isActive('/admin/dashboard/Prestasi') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      Prestasi
+                    </Nav.Link>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/KerjaPraktik" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/KerjaPraktik')),
+                        backgroundColor: isActive('/admin/dashboard/KerjaPraktik') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      Kerja Praktik
+                    </Nav.Link>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/TugasAkhir" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/TugasAkhir')),
+                        backgroundColor: isActive('/admin/dashboard/TugasAkhir') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      Tugas Akhir
+                    </Nav.Link>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/Pmm" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/Pmm')),
+                        backgroundColor: isActive('/admin/dashboard/Pmm') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      PMM
+                    </Nav.Link>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/Kewirausahaan" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/Kewirausahaan')),
+                        backgroundColor: isActive('/admin/dashboard/Kewirausahaan') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      Kewirausahaan
+                    </Nav.Link>
+                    <Nav.Link 
+                      as={Link} 
+                      to="/admin/dashboard/Alumni" 
+                      className="text-white" 
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/Alumni')),
+                        backgroundColor: isActive('/admin/dashboard/Alumni') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      Alumni
+                    </Nav.Link>
+                  </div>
+                </Collapse>
+              </Nav.Item>
+
+              {/* Users Link */}
+              <Nav.Item>
+                <Nav.Link
+                  as={Link}
+                  to='/admin/dashboard/UserDosen'
+                  className="text-white d-flex align-items-center"
+                  style={{
+                    ...navLinkStyle(isActive('/admin/dashboard/UserDosen')),
+                    backgroundColor: isActive('/admin/dashboard/UserDosen') ? colors.activeMenu : 'transparent',
+                  }}
+                >
+                  <FaUsers className={isCollapsed ? "mx-auto" : "me-3"} size={16} />
+                  {!isCollapsed && <span>Users</span>}
+                </Nav.Link>
+              </Nav.Item>
+            </div>
+
+            {/* Logout - Always at bottom */}
+            <div className="p-3 mt-auto" style={{ borderTop: `1px solid ${colors.border}` }}>
+              <Button
+                variant="danger"
+                className="w-100 d-flex align-items-center justify-content-center py-2"
+                style={{ borderRadius: '6px', fontSize: '14px' }}
+                onClick={handleLogout}
+              >
+                <FaSignOutAlt className={isCollapsed ? "" : "me-2"} size={16} />
+                {!isCollapsed && <span>Logout</span>}
+              </Button>
+            </div>
+          </div>
+        </Col>
+
+        {/* Mobile Header with Logo and Menu Button */}
+        <div className="d-md-none w-100 fixed-top" style={{ zIndex: 1040 }}>
+          <div className="d-flex justify-content-between align-items-center p-2 bg-white shadow-sm">
+            <div className="d-flex align-items-center">
+              <img
+                src="/src/assets/unimal.png"
+                height="36"
+                alt="University Logo"
+                className="me-2"
+              />
+              <div className="d-flex flex-column">
+                <span style={{ fontSize: '14px', lineHeight: '1', color: colors.textDark }}>universitas</span>
+                <span className="fw-bold" style={{ fontSize: '16px', lineHeight: '1', color: colors.primary }}>MALIKUSSALEH</span>
+              </div>
+            </div>
+
+            <div className="d-flex align-items-center">
+              <div 
+                className="d-flex justify-content-center align-items-center me-3" 
+                style={{ 
+                  width: '36px', 
+                  height: '36px', 
+                  borderRadius: '50%', 
+                  backgroundColor: colors.accent,
+                  color: colors.text,
+                  fontSize: '12px',
+                  fontWeight: 'bold'
+                }}
+              >
+                <span>BLU</span>
+              </div>
+
+              <Button
+                variant="light"
+                onClick={() => setShowOffcanvas(true)}
+                className="border-0 p-1"
+              >
+                <FaBars size={22} color={colors.primary} />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Offcanvas Sidebar */}
+        <Offcanvas
+          show={showOffcanvas}
+          onHide={() => setShowOffcanvas(false)}
+          placement="end"
+          className="w-75"
+        >
+          <Offcanvas.Header closeButton style={{ backgroundColor: colors.primary, color: colors.text }}>
+            <Offcanvas.Title className="fw-bold">Menu</Offcanvas.Title>
+          </Offcanvas.Header>
+          <Offcanvas.Body className="p-0">
+            <Nav className="flex-column">
+              <Nav.Link
+                as={Link}
+                to="/admin/dashboard"
+                className="py-3 px-4 d-flex align-items-center border-bottom"
+                style={{ 
+                  borderColor: '#e5e7eb', 
+                  color: colors.textDark, 
+                  backgroundColor: isActive('/admin/dashboard') ? '#f3f4f6' : 'transparent'
+                }}
+                onClick={() => setShowOffcanvas(false)}
+              >
+                <FaTachometerAlt className="me-3" size={16} /> Dashboard
+              </Nav.Link>
+
+              <Nav.Link
+                onClick={() => {
+                  setOpenAkademik(!openAkademik);
+                }}
+                className="py-3 px-4 d-flex align-items-center border-bottom"
+                style={{ borderColor: '#e5e7eb', color: colors.textDark }}
+              >
+                <FaBook className="me-3" size={16} /> Akademik
+                <FaChevronDown 
+                  className="ms-auto" 
+                  size={12} 
+                  style={{
+                    transform: openAkademik ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.3s ease'
+                  }}
+                />
+              </Nav.Link>
+              <Collapse in={openAkademik}>
+                <div>
+                  {[
+                    { path: "Dosen", label: "Dosen" },
+                    { path: "MataKuliah", label: "Mata Kuliah" },
+                    { path: "Rps", label: "RPS" },
+                    { path: "KontrakKuliah", label: "Kontrak Kuliah" },
+                    { path: "BahanAjar", label: "Bahan Ajar" },
+                    { path: "Penelitian", label: "Penelitian" },
+                    { path: "Pengabdian", label: "Pengabdian" },
+                    { path: "Pengajaran", label: "Pengajaran" }
+                  ].map(item => (
+                    <Nav.Link 
+                      key={item.path}
+                      as={Link} 
+                      to={`/admin/dashboard/${item.path}`}
+                      className="py-2 ps-5 border-bottom"
+                      style={{ 
+                        borderColor: '#e5e7eb', 
+                        color: colors.textDark, 
+                        fontSize: '14px',
+                        backgroundColor: isActive(`/admin/dashboard/${item.path}`) ? '#f3f4f6' : 'transparent'
+                      }}
+                      onClick={() => setShowOffcanvas(false)}
+                    >
+                      {item.label}
+                    </Nav.Link>
+                  ))}
+                </div>
+              </Collapse>
+
+              <Nav.Link
+                as={Link}
+                to="/admin/dashboard/Absensi"
+                className="py-3 px-4 d-flex align-items-center border-bottom"
+                style={{ 
+                  borderColor: '#e5e7eb', 
+                  color: colors.textDark,
+                  backgroundColor: isActive('/admin/dashboard/Absensi') ? '#f3f4f6' : 'transparent'
+                }}
+                onClick={() => setShowOffcanvas(false)}
+              >
+                <FaCalendarCheck className="me-3" size={16} /> Absensi
+              </Nav.Link>
+
+              <Nav.Link
+                onClick={() => {
+                  setOpenKegiatanMahasiswa(!openKegiatanMahasiswa);
+                }}
+                className="py-3 px-4 d-flex align-items-center border-bottom"
+                style={{ borderColor: '#e5e7eb', color: colors.textDark }}
+              >
+                <FaClipboardList className="me-3" size={16} /> Kegiatan Mahasiswa
+                <FaChevronDown 
+                  className="ms-auto" 
+                  size={12} 
+                  style={{
+                    transform: openKegiatanMahasiswa ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.3s ease'
+                  }}
+                />
+              </Nav.Link>
+              <Collapse in={openKegiatanMahasiswa}>
+                <div>
+                  {[
+                    { path: "Msib", label: "MSIB" },
+                    { path: "Magangmandiri", label: "Magang Mandiri" },
+                    { path: "Prestasi", label: "Prestasi" },
+                    { path: "KerjaPraktik", label: "Kerja Praktik" },
+                    { path: "TugasAkhir", label: "Tugas Akhir" },
+                    { path: "Pmm", label: "PMM" },
+                    { path: "Kewirausahaan", label: "Kewirausahaan" },
+                    { path: "Alumni", label: "Alumni" }
+                  ].map(item => (
+                    <Nav.Link 
+                      key={item.path}
+                      as={Link} 
+                      to={`/admin/dashboard/${item.path}`}
+                      className="py-2 ps-5 border-bottom"
+                      style={{ 
+                        borderColor: '#e5e7eb', 
+                        color: colors.textDark, 
+                        fontSize: '14px',
+                        backgroundColor: isActive(`/admin/dashboard/${item.path}`) ? '#f3f4f6' : 'transparent'
+                      }}
+                      onClick={() => setShowOffcanvas(false)}
+                    >
+                      {item.label}
+                    </Nav.Link>
+                  ))}
+                </div>
+              </Collapse>
+
+              <Nav.Link
+                as={Link}
+                to="/admin/dashboard/UserDosen"
+                className="py-3 px-4 d-flex align-items-center border-bottom"
+                style={{ 
+                  borderColor: '#e5e7eb', 
+                  color: colors.textDark,
+                  backgroundColor: isActive('/admin/dashboard/UserDosen') ? '#f3f4f6' : 'transparent'
+                }}
+                onClick={() => setShowOffcanvas(false)}
+              >
+                <FaUsers className="me-3" size={16} /> Users
+              </Nav.Link>
+
+              <Button
+                onClick={() => {
+                  handleLogout();
+                  setShowOffcanvas(false);
+                }}
+                className="py-3 px-4 d-flex align-items-center w-100 text-start rounded-0 border-bottom"
+                style={{ borderColor: '#e5e7eb', color: "#dc3545", backgroundColor: "transparent" }}
+              >
+                <FaSignOutAlt className="me-3" size={16} /> Logout
+              </Button>
+            </Nav>
+          </Offcanvas.Body>
+        </Offcanvas>
+
+        <Col
+          className="d-flex flex-column min-vh-100"
+          style={{
+            marginLeft: isMobile ? '0' : (isCollapsed ? '70px' : '250px'),
+            transition: "margin-left 0.3s ease",
+            width: isMobile ? '100%' : (isCollapsed ? 'calc(100% - 70px)' : 'calc(100% - 250px)'),
+            marginTop: isMobile ? '60px' : '0'
+          }}
+        >
+          <div className="container-fluid py-3">
+            <div className="row">
+              {window.location.pathname === "/admin/dashboard" ? <AdminDashboard /> : children}
+            </div>
+          </div>
+        </Col>
+      </Row>
+    </Container>
+  );
 };
 
 export default SidebarComponents;

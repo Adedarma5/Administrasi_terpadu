@@ -132,7 +132,7 @@ const UserDosen = () => {
                           size="sm"
                           className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
                           title="Edit"
-                          onClick={() => navigate(`/admin/dashboard/dosen/editdosen/${dosen.id}`)}
+                          onClick={() => navigate(`/admin/dashboard/Userdosen/edituserdosen/${user.id}`)}
                         >
                           <FiEdit2 size={15} />
                         </Button>
@@ -141,7 +141,7 @@ const UserDosen = () => {
                           size="sm"
                           className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
                           title="Hapus"
-                          onClick={() => deleteDosen(dosen.id)}
+                          onClick={() => deleteUser(user.id)}
                         >
                           <FiTrash2 size={15} />
                         </Button>

@@ -38,7 +38,6 @@ import './Dist/Sidebar.css'
 import Rps from './Dasboard/Rps.jsx';
 import TambahRps from './Dasboard/TambahRps.jsx';
 import EditRps from './Dasboard/EditRps.jsx';
-import TambahPrestasi from './Dasboard/TambahPrestasi.jsx';
 import Alumni from './Dasboard/Alumni.jsx';
 import Pmm from './Dasboard/Pmm.jsx';
 import Kewirausahaan from './Dasboard/Kewirausahaan.jsx';
@@ -50,7 +49,12 @@ import Penelitian from './Dasboard/Penelitian.jsx';
 import EditPengabdian from './Dasboard/EditPengabdian.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import TambahMsib from './Kema/TambahMsib.jsx';
-
+import TambahMagangMandiri from './Kema/TambahMagangMandiri.jsx';
+import TambahPrestasi from './Kema/TambahPrestasi.jsx';
+import TambahKerjaPraktik from './Kema/TambahKerjaPraktik.jsx';
+import TambahTga from './Kema/Tambahtga.jsx';
+import TammbahPmm from './Kema/TambahPmm.jsx';
+import TambahAlumni from './Kema/TambahAlumni.jsx';
 
 
 function App() {
@@ -117,12 +121,12 @@ function App() {
         <Route path='/akademik' Component={LayoutAkademik}>
           <Route path='dashboard' Component={AkademikDashboard} />
           <Route path='dashboard/Msib/TambahMsib' Component={TambahMsib} />
-          <Route path='dashboard/MagangMandiri/TambahMagangMandiri' Component={TambahPrestasi} />
+          <Route path='dashboard/MagangMandiri/TambahMagangMandiri' Component={TambahMagangMandiri} />
           <Route path='dashboard/Prestasi/TambahPrestasi' Component={TambahPrestasi} />
-          <Route path='dashboard/KerjaPraktik/TambahKerjaPraktik' Component={TambahPrestasi} />
-          <Route path='dashboard/TugasAkhir/TambahTugasAkhir' Component={TambahPrestasi} />
-          <Route path='dashboard/Pmm/TambahPmm' Component={TambahPrestasi} />
-          <Route path='dashboard/Alumni/TambahAlumni' Component={TambahPrestasi} />
+          <Route path='dashboard/KerjaPraktik/TambahKerjaPraktik' Component={TambahKerjaPraktik} />
+          <Route path='dashboard/TugasAkhir/TambahTugasAkhir' Component={TambahTga} />
+          <Route path='dashboard/Pmm/TambahPmm' Component={TammbahPmm} />
+          <Route path='dashboard/Alumni/TambahAlumni' Component={TambahAlumni} />
 
         </Route>
       </Routes>
