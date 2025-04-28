@@ -86,7 +86,7 @@ const KerjaPraktik = () => {
         <Card.Body className="p-2">
           <div className="p-3 border-bottom">
             <Row className="align-items-center g-3">
-              <Col md={{ span: 6, offset: 6 }} lg={{ span: 4, offset: 8 }}>
+              <Col className="ms-auto" md={6} lg={4}>
                 <InputGroup>
                   <InputGroup.Text className="bg-light border-end-0">
                     <FiSearch size={16} />

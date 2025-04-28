@@ -33,7 +33,7 @@ export const verifyToken = (req, res, next) => {
     console.log("Token valid. Data decoded:", decoded);
 
     req.user = {
-      id: decoded.id,
+      id: decoded.userId,
       nip: decoded.nip,
       name: decoded.name,
       role: decoded.role

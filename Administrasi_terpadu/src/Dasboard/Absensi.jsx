@@ -2,30 +2,37 @@ import React, { useState, useEffect } from "react";
 import { Container, Card, Table, Button, Row, Col, Form, InputGroup, Spinner, Alert } from "react-bootstrap";
 import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiEye } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
-import "dayjs/locale/id";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Absensi = () => {
   const navigate = useNavigate();
   const [absensiList, setAbsensiList] = useState([]);
+  const [matakuliahList, setMataKuliahList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedmatakuliah, setSelectedMataKuliah] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     fetchAbsensi();
+    fetchMataKuliah();
   }, []);
 
   const fetchAbsensi = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("http://localhost:5000/absensi");
+      let url = "http://localhost:5000/absensi";
+
+      if (user?.role === "user") {
+        url = `http://localhost:5000/absensi?userId=${user.id}`;
+      }
+
+      const response = await axios.get(url);
       setAbsensiList(response.data);
     } catch (error) {
       setError("Gagal memuat data Absensi.");
@@ -34,71 +41,123 @@ const Absensi = () => {
     setLoading(false);
   };
 
+  const fetchMataKuliah = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get("http://localhost:5000/mata_kuliah");
+      setMataKuliahList(response.data);
+    } catch (error) {
+      setError("Gagal memuat data Mata Kuliah.");
+      console.error("Error fetching data:", error);
+    }
+    setLoading(false);
+  };
+
   const deleteAbsensi = async (id) => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus Absensi ini?")) {
+    const result = await Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: "Data yang dihapus tidak bisa dikembalikan!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, hapus!',
+      cancelButtonText: 'Batal'
+    });
+
+    if (result.isConfirmed) {
       try {
         await axios.delete(`http://localhost:5000/absensi/${id}`);
         fetchAbsensi();
+        Swal.fire({
+          icon: 'success',
+          title: 'Berhasil!',
+          text: 'Data berhasil dihapus.',
+          timer: 2000,
+          showConfirmButton: false,
+        });
       } catch (error) {
-        alert("Gagal menghapus Absensi.");
-        console.error("Error deleting Absensi:", error);
+        console.error("Error deleting:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops!',
+          text: 'Terjadi kesalahan saat menghapus data.',
+        });
       }
     }
   };
 
-  const filteredAbsensi = absensiList.filter((absensi) =>
-    absensi.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    absensi.dosen_pengampu.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredAbsensi = absensiList.filter((absensi) => {
+    const jam_pelajaranMatch = absensi.jam_pelajaran?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matakuliahMatch = selectedmatakuliah === "" || absensi.mata_kuliah?.toString() === selectedmatakuliah;
+    return jam_pelajaranMatch && matakuliahMatch;
+  });
 
   const totalItems = filteredAbsensi.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const paginatedAbsensi = filteredAbsensi.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-  
-  dayjs.extend(utc);
-  dayjs.extend(timezone);
 
 
   return (
     <Container fluid className="p-4">
-      <Card className="mb-4 shadow border-0">
-        <Card.Body className="p-4">
-          <Row className="align-items-center">
-            <Col>
-              <h2 className="mb-1 fw-bold">ABSENSI DOSEN</h2>
-              <p className="text-muted mb-0">
-                Daftar Absensi Dosen Sistem Informasi
-              </p>
-            </Col>
-            <Col xs="auto">
-              <Button variant="primary" onClick={() => navigate("/admin/dashboard/absensi/tambahabsensi")} className="d-flex align-items-center gap-2">
-                <FiPlus size={18} />
-                <span>Tambah Absensi</span>
-              </Button>
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
+      <Row className="align-items-center p-4">
+        <Col>
+          <h2 className="mb-1 fw-bold text-white">ABSENSI DOSEN</h2>
+          <p className="text-muted mb-0">
+            Daftar Absensi Dosen Sistem Informasi
+          </p>
+        </Col>
+        <Col xs="auto">
+          <Button variant="success" onClick={() => navigate("/admin/dashboard/absensi/tambahabsensi")} className=" shadow d-flex align-items-center gap-2">
+            <FiPlus size={18} />
+            <span>Tambah Absensi</span>
+          </Button>
+        </Col>
+      </Row>
+
 
       <Card className="shadow border-0">
         <Card.Body className="p-0">
-          <div className="p-3 border-bottom">
-            <Row className="align-items-center g-3">
-              <Col md={6} lg={4}>
-                <InputGroup>
-                  <InputGroup.Text className="bg-light border-end-0">
-                    <FiSearch size={16} />
+          <Card.Header className="bg-white py-3 border-bottom">
+            <div className="d-flex align-items-center flex-wrap gap-3">
+              <div className="ms-auto col-md-6 col-lg-4">
+                <InputGroup size="sm" className="border rounded overflow-hidden">
+                  <InputGroup.Text className="bg-white border-0">
+                    <FiSearch size={16} className="text-primary" />
                   </InputGroup.Text>
                   <Form.Control
-                    placeholder="Cari Mata Kuliah"
-                    className="border-start-0 bg-light"
+                    size="sm"
+                    placeholder="Cari Jadwal Jam Pelajaran Mata Kuliah"
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="border-0 shadow-none py-1"
                   />
                 </InputGroup>
-              </Col>
-            </Row>
-          </div>
+              </div>
+
+              <div className="col-md-4 col-lg-3">
+                <Form.Select
+                  value={selectedmatakuliah}
+                  onChange={(e) => {
+                    setSelectedMataKuliah(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="shadow-none py-1"
+                >
+                  <option value="">-- Semua Mata Kuliah --</option>
+                  {matakuliahList.map((mata_kuliah) => (
+                    <option key={mata_kuliah.id} value={mata_kuliah.name}>
+                      {mata_kuliah.name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </div>
+            </div>
+          </Card.Header>
 
 
           <div className="table-responsive">
@@ -119,7 +178,6 @@ const Absensi = () => {
                     <th className="py-3">Mata Kuliah</th>
                     <th className="py-3">Jam Pelajaran</th>
                     <th className="py-3">Foto</th>
-                    <th className="py-3">Waktu Input</th>
                     <th className="py-3 text-center">Aksi</th>
                   </tr>
                 </thead>
@@ -140,23 +198,23 @@ const Absensi = () => {
                             Lihat FOTO
                           </a>
                         </td>
-                        <td>{dayjs(absensi.waktu_input).tz("Asia/Jakarta").locale("id").format("dddd, HH:mm")} WIB</td> 
                         <td>
                           <div className="d-flex justify-content-center gap-2">
-                            <Button variant="light" size="sm" title="Lihat Detail">
-                              <FiEye size={16} />
-                            </Button>
                             <Button
-                              variant="light"
+                              variant="outline-success"
                               size="sm"
                               title="Edit"
-                              onClick={() => navigate(`/admin/dashboard/bahanajar/editabsensi/${absensi.id}`)}
-                              
+                              onClick={() => navigate(`/admin/dashboard/absensi/editabsensi/${absensi.id}`)}
+
                             >
-                              <FiEdit2 size={16} />
+                              <FiEdit2 size={15} />
                             </Button>
-                            <Button variant="light" size="sm" title="Hapus" onClick={() => deleteAbsensi(absensi.id)}>
-                              <FiTrash2 size={16} />
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              title="Hapus"
+                              onClick={() => deleteAbsensi(absensi.id)}>
+                              <FiTrash2 size={15} />
                             </Button>
                           </div>
                         </td>

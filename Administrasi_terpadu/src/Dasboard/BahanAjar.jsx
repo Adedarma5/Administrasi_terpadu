@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container, Card, Table, Button, Row, Col, Form, InputGroup, Spinner, Alert
-} from "react-bootstrap";
+import { Container, Card, Table, Button, Row, Col, Form, InputGroup, Spinner, Alert } from "react-bootstrap";
 import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiEye } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";

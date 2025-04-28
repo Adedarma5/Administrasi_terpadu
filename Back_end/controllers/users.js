@@ -18,7 +18,7 @@ export const getUserById = async(req, res) =>{
         const response = await Users.findOne({
             attributes:['nip','name','email','role'],
             where: {
-                nip: req.params.id
+                id: req.params.id
             }
         });
         res.status(200).json(response);
@@ -52,12 +52,12 @@ export const Register = async (req, res) => {
 export const updateUser = async (req, res) => {
     const user = await Users.findOne({
         where: {
-            nip: req.params.id
+            id: req.params.id
         }
     });
     if (!user) return res.status(404).json({ msg: "User tidak ditemukan" });
 
-    const { name, email, password, confPassword, role } = req.body;
+    const { nip, name, email, password, confPassword, role } = req.body;
     let hashPassword = user.password; 
 
     if (password && password !== "") {
@@ -70,6 +70,7 @@ export const updateUser = async (req, res) => {
     try {
         await Users.update(
             {
+                nip: nip,
                 name: name,
                 email: email,
                 password: hashPassword,

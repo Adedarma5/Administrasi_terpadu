@@ -10,6 +10,7 @@ const MataKuliah = () => {
   const [selectedsemester, setSelectedSemester] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [role, setRole] = useState("");
   const itemsPerPage = 10;
 
   const fetchMataKuliah = async () => {
@@ -22,6 +23,8 @@ const MataKuliah = () => {
   };
 
   useEffect(() => {
+    const userRole = localStorage.getItem('role');
+    setRole(userRole?.toLowerCase()); 
     fetchMataKuliah();
   }, []);
 
@@ -58,10 +61,12 @@ const MataKuliah = () => {
 
         </Col>
         <Col xs="auto">
-          <Button variant="success" onClick={() => navigate('/admin/dashboard/MataKuliah/TambahMataKuliah')} className=" shadow d-flex align-items-center gap-2">
-            <FiPlus size={18} />
-            <span>Tambah Mata Kuliah</span>
-          </Button>
+          {role === "admin" && (
+            <Button variant="success" onClick={() => navigate('/admin/dashboard/MataKuliah/TambahMataKuliah')} className=" shadow d-flex align-items-center gap-2">
+              <FiPlus size={18} />
+              <span>Tambah Mata Kuliah</span>
+            </Button>
+          )}
         </Col>
       </Row>
 
@@ -123,7 +128,9 @@ const MataKuliah = () => {
                   <th className="px-3 py-3">Nama Mata Kuliah</th>
                   <th className="px-3 py-3">SKS</th>
                   <th className="px-3 py-3">Semester</th>
+                  {role === "admin" && (
                   <th className="px-3 py-3">Aksi</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -134,6 +141,7 @@ const MataKuliah = () => {
                       <td>{mata_kuliah.name}</td>
                       <td>{mata_kuliah.sks}</td>
                       <td>{mata_kuliah.semester}</td>
+                      { role === "admin" && (
                       <td>
                         <div className="d-flex justify-content-center gap-2">
                           <Button
@@ -156,6 +164,7 @@ const MataKuliah = () => {
                           </Button>
                         </div>
                       </td>
+                      )}
                     </tr>
                   ))
                 ) : (

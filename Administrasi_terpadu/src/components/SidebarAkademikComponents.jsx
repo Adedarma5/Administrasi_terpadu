@@ -30,10 +30,11 @@ const SidebarAkademikComponents = ({ children }) => {
         { icon: <FaUserGraduate />, title: "Alumni", path: "/akademik/dashboard/Alumni/TambahAlumni" }
     ];
 
+    
+
     return (
         <Container fluid className="p-0">
             <Row className="g-0">
-                {/* Sidebar untuk Desktop */}
                 <Col
                     className="d-none d-md-flex flex-column bg-dark text-white min-vh-100 shadow-sm position-fixed"
                     style={{
@@ -42,7 +43,6 @@ const SidebarAkademikComponents = ({ children }) => {
                         zIndex: 1030
                     }}
                 >
-                    {/* Logo dan Tombol Collapse */}
                     <div className="d-flex align-items-center p-3 border-bottom border-secondary">
                         <img
                             src="/src/assets/unimal.png"
@@ -59,7 +59,6 @@ const SidebarAkademikComponents = ({ children }) => {
                         )}
                     </div>
 
-                    {/* Tombol Collapse Sidebar */}
                     <div className="d-flex justify-content-end p-2">
                         <Button
                             variant="outline-light"
@@ -89,7 +88,6 @@ const SidebarAkademikComponents = ({ children }) => {
                     <div className="mt-2 mb-2" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}></div>
 
 
-                    {/* Menu Items */}
                     <div className="overflow-auto flex-grow-1 " style={{ maxHeight: 'calc(100vh - 170px)' }}>
                         {menuItems.map((item, index) => (
                             <Nav.Link
@@ -114,7 +112,6 @@ const SidebarAkademikComponents = ({ children }) => {
                     </div>
                 </Col>
 
-                {/* Navbar untuk Mobile */}
                 <div className="d-md-none w-100 fixed-top" style={{ zIndex: 1040 }}>
                     <div className="d-flex justify-content-between align-items-center p-2 bg-white">
                         <div className="d-flex align-items-center">
@@ -130,7 +127,6 @@ const SidebarAkademikComponents = ({ children }) => {
                             </div>
                         </div>
 
-                        {/* Tombol untuk membuka Offcanvas */}
                         <Button
                             variant="light"
                             onClick={() => setShowOffcanvas(true)}
@@ -141,14 +137,13 @@ const SidebarAkademikComponents = ({ children }) => {
                     </div>
                 </div>
 
-                {/* Offcanvas Menu untuk Mobile */}
                 <Offcanvas
                     show={showOffcanvas}
                     onHide={() => setShowOffcanvas(false)}
                     placement="end"
                     className="w-75"
                 >
-                    <Offcanvas.Header closeButton className="bg-success text-white">
+                    <Offcanvas.Header closeButton className="bg-dark text-white">
                         <Offcanvas.Title className="fw-bold">Menu</Offcanvas.Title>
                     </Offcanvas.Header>
                     <Offcanvas.Body className="p-0">
@@ -158,7 +153,7 @@ const SidebarAkademikComponents = ({ children }) => {
                                     key={index}
                                     as={Link}
                                     to={item.path}
-                                    className="py-3 px-4 d-flex align-items-center border-bottom"
+                                    className="py-3 px-4 d-flex align-items-center border-bottom text-dark"
                                     onClick={() => setShowOffcanvas(false)}
                                 >
                                     <span className="me-3">{item.icon}</span> {item.title}
@@ -168,7 +163,6 @@ const SidebarAkademikComponents = ({ children }) => {
                     </Offcanvas.Body>
                 </Offcanvas>
 
-                {/* Content Area */}
                 <Col
                     className={`min-vh-100 ${window.innerWidth < 768 ? 'p-0' : 'ps-0 pe-3'}`}
                     style={{

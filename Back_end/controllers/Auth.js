@@ -79,12 +79,10 @@ export const logOut = async (req, res) => {
             return res.status(204).json({ msg: "Token tidak ditemukan" });
         }
 
-        // Hapus refresh_token dari database
         await Users.update({ refresh_token: null }, {
             where: { id: user.id }
         });
 
-        // Hapus cookie di client
         res.clearCookie("refreshToken", { httpOnly: true, secure: false });
 
         res.status(200).json({ msg: "Anda telah logout" });

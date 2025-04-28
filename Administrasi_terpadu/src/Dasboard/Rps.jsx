@@ -7,14 +7,16 @@ import axios from "axios"
 const Rps = () => {
     const navigate = useNavigate();
     const [rpsList, setRpsList] = useState([]);
-    const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedsemester, setSelectedSemester] = useState("");
+    const [role, setRole] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
     useEffect(() => {
+        const userRole = localStorage.getItem('role');
+        setRole(userRole?.toLowerCase());
         fetchRps();
     }, []);
 
@@ -64,10 +66,12 @@ const Rps = () => {
                     <p className="text-muted mb-0">Sistem Informasi</p>
                 </Col>
                 <Col xs="auto">
-                    <Button variant="success" className=" shadow d-flex align-items-center gap-2" onClick={() => navigate("/admin/dashboard/Rps/TambahRps")}>
-                        <FiPlus size={18} />
-                        <span >Tambah RPS</span>
-                    </Button>
+                    {role === "admin" && (
+                        <Button variant="success" className=" shadow d-flex align-items-center gap-2" onClick={() => navigate("/admin/dashboard/Rps/TambahRps")}>
+                            <FiPlus size={18} />
+                            <span >Tambah RPS</span>
+                        </Button>
+                    )}
                 </Col>
             </Row>
 
@@ -113,7 +117,9 @@ const Rps = () => {
                                     <th className="py-3">Nama </th>
                                     <th className="py-3">Semester</th>
                                     <th className="py-3">File_Rps</th>
-                                    <th className="py-3">Aksi</th>
+                                    {role === "admin" && (
+                                        <th className="py-3">Aksi</th>
+                                    )}
                                 </tr>
                             </thead>
                             <tbody>
@@ -132,27 +138,29 @@ const Rps = () => {
                                                     Lihat PDF
                                                 </a>
                                             </td>
-                                            <td>
-                                                <div className="d-flex justify-content-center gap-2">
-                                                    <Button
-                                                        variant="outline-success"
-                                                        size="sm"
-                                                        className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
-                                                        title="Edit"
-                                                        onClick={() => navigate(`/admin/dashboard/rps/editrps/${rps.id}`)}
-                                                    >
-                                                        <FiEdit2 size={16} />
-                                                    </Button>
-                                                    <Button
-                                                        variant="outline-danger"
-                                                        size="sm"
-                                                        className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
-                                                        title="Hapus"
-                                                        onClick={() => deleteRps(rps.id)}>
-                                                        <FiTrash2 size={16} />
-                                                    </Button>
-                                                </div>
-                                            </td>
+                                            {role === "admin" && (
+                                                <td>
+                                                    <div className="d-flex justify-content-center gap-2">
+                                                        <Button
+                                                            variant="outline-success"
+                                                            size="sm"
+                                                            className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
+                                                            title="Edit"
+                                                            onClick={() => navigate(`/admin/dashboard/rps/editrps/${rps.id}`)}
+                                                        >
+                                                            <FiEdit2 size={16} />
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline-danger"
+                                                            size="sm"
+                                                            className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
+                                                            title="Hapus"
+                                                            onClick={() => deleteRps(rps.id)}>
+                                                            <FiTrash2 size={16} />
+                                                        </Button>
+                                                    </div>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))
                                 ) : (

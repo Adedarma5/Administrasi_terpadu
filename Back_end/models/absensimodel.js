@@ -10,6 +10,10 @@ const Absensi = db.define('absensi', {
         primaryKey: true,
         autoIncrement: true
     },
+    userId: { 
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
     name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -27,10 +31,6 @@ const Absensi = db.define('absensi', {
         type: DataTypes.STRING,
         allowNull: false,
 
-    },
-    waktu_input:{
-        type: DataTypes.DATE,
-        defaultValue: Sequelize.literal("CONVERT_TZ(NOW(), '+00:00', '+07:00')"), 
     },
 }, {
     freezeTableName: true,

@@ -1,28 +1,25 @@
 import bcrypt from "bcrypt";
 import Absensi from "../models/absensimodel.js";
 import upload from "../middleware/upload.js";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc.js";  // Tambahkan .js di akhir
-import timezone from "dayjs/plugin/timezone.js"; 
-
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
-
 
 
 export const getAbsensi = async (req, res) => {
     try {
-        const absensi = await Absensi.findAll({
-            attributes: ['id', 'name', 'mata_kuliah', 'jam_pelajaran', 'foto', 'waktu_input']
-        });
+        const { role, id } = req.user;
 
-        const formattedAbsensi = absensi.map(item => ({
-            ...item.toJSON(),
-            waktu_input: dayjs.utc(item.waktu_input).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss")
-        }));
+        let absensi;
+        if (role === 'admin') {
+            absensi = await Absensi.findAll({
+                attributes: ['id', 'name', 'mata_kuliah', 'jam_pelajaran', 'foto']
+            });
+        } else if (role === 'user') {
+            absensi = await Absensi.findAll({
+                attributes: ['id', 'name', 'mata_kuliah', 'jam_pelajaran', 'foto'],
+                where: { userId: id }
+            });
+        }
 
-        res.json(formattedAbsensi);
+        res.json(absensi);
     } catch (error) {
         console.log(error);
         res.status(500).json({ msg: "Gagal mengambil data Absensi" });
@@ -31,8 +28,10 @@ export const getAbsensi = async (req, res) => {
 
 export const getAbsensiById = async (req, res) => {
     try {
+        const { role, id } = req.user;
+
         const absensi = await Absensi.findOne({
-            attributes: ['id', 'name', 'mata_kuliah', 'jam_pelajaran', 'foto', 'waktu_input'],
+            attributes: ['id', 'name', 'mata_kuliah', 'jam_pelajaran', 'foto'],
             where: { id: req.params.id }
         });
 
@@ -40,12 +39,11 @@ export const getAbsensiById = async (req, res) => {
             return res.status(404).json({ msg: "Absensi tidak ditemukan" });
         }
 
-        const formattedAbsensi = {
-            ...absensi.toJSON(),
-            waktu_input: dayjs.utc(absensi.waktu_input).tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss")
-        };
+        if (role === 'user' && absensi.userId !== id) {
+            return res.status(403).json({ msg: "Akses ditolak" });
+        }
 
-        res.status(200).json(formattedAbsensi);
+        res.status(200).json(absensi);
     } catch (error) {
         res.status(500).json({ msg: error.message });
     }
@@ -57,23 +55,28 @@ export const createAbsensi = async (req, res) => {
             return res.status(400).json({ msg: "File Foto harus diunggah!" });
         }
 
-        const { name, mata_kuliah, jam_pelajaran } = req.body;
+        const { name, mata_kuliah, jam_pelajaran, userId } = req.body;
+        if (!userId) {
+            return res.status(400).json({ msg: "UserId tidak ditemukan!" });
+        }
+
         const foto = req.file.filename;
-        const waktu_input = dayjs().tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss");
 
         await Absensi.create({
             name,
             mata_kuliah,
             jam_pelajaran,
             foto,
-            waktu_input
+            userId 
         });
 
         res.status(201).json({ msg: "Absensi berhasil dibuat!" });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ msg: error.message });
     }
 };
+
 
 export const updateAbsensi = async (req, res) => {
     try {
@@ -87,9 +90,7 @@ export const updateAbsensi = async (req, res) => {
         if (req.file) {
             foto = req.file.filename;
         }
-        const waktu_input = dayjs().tz("Asia/Jakarta").format("YYYY-MM-DD HH:mm:ss");
-
-        await absensi.update({ name, mata_kuliah, jam_pelajaran, foto, waktu_input });
+        await absensi.update({ name, mata_kuliah, jam_pelajaran, foto });
 
         res.status(200).json({ msg: "Absensi berhasil diperbarui" });
     } catch (error) {

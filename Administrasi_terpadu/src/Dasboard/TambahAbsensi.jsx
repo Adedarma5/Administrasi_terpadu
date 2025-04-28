@@ -59,15 +59,18 @@ const TambahAbsensi = () => {
   }
   return (
     <Container fluid className="p-4">
-      <Card className="mb-4 shadow border-0">
-        <Card.Body className="p-4">
-          <h2 className="mb-1 fw-bold">ABSENSI</h2>
+      <Row className="align-items-center p-4">
+        <Col>
+          <h2 className="mb-1 fw-bold text-white">ABSENSI</h2>
           <p className="text-muted mb-0">Daftar Absensi Dosen Sistem Informasi</p>
-        </Card.Body>
-      </Card>
+        </Col>
+      </Row>
 
       <Card className="shadow border-0">
-        <h4 className="p-4">Tambah Absensi </h4>
+        <Card.Header>
+
+        <h5 className="mb-0 fw-semibold">Tambah Absensi </h5>
+        </Card.Header>
         <Card.Body className="p-4">
 
           <Form onSubmit={TambahAbsensi} >
@@ -104,7 +107,7 @@ const TambahAbsensi = () => {
 
             <Row className="align-items-center mb-3">
               <Col md={3}>
-                <Form.Label >Jam Pelajaran </Form.Label>
+                <Form.Label >Hari dan Jam Pelajaran </Form.Label>
               </Col> :
               <Col md={8}>
                 <Form.Control
@@ -129,15 +132,15 @@ const TambahAbsensi = () => {
                 />
               </Col>
             </Row>
-        <Card.Footer className="bg-white border-0 p-3 d-flex justify-content-end">
-          <Button variant="secondary" size="sm" className="me-2" onClick={() => navigate("/admin/dashboard/absensi")}>
-            Kembali
-          </Button>
-          <Button variant="primary" size="sm" type="submit">
-            Tambah
-          </Button>
-        </Card.Footer>
-        </Form>
+            <Card.Footer className="bg-white border-0 p-3 d-flex justify-content-end">
+              <Button variant="secondary" size="sm" className="me-2" onClick={() => navigate("/admin/dashboard/absensi")}>
+                Kembali
+              </Button>
+              <Button variant="primary" size="sm" type="submit">
+                Tambah
+              </Button>
+            </Card.Footer>
+          </Form>
         </Card.Body>
       </Card>
 

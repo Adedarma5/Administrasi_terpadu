@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
         let folder = "uploads/";
         if (file.fieldname === "file_pendukung") {
             folder += "bahan_ajar/";
-        } else if (file.fieldname === "file_absensi") {
+        } else if (file.fieldname === "foto") {
             folder += "absensi/";
         } else if (
             ["lembar_pengesahan", "laporan", "projek",

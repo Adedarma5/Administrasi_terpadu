@@ -14,9 +14,10 @@ try {
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
         if(err) return res.sendStatus(403);
         const userId = user[0].id;
+        const nip = user[0].nip;
         const name = user[0].name;
         const email = user[0].email;
-        const accessToken = jwt.sign({userId, name, email}, process.env.ACCESS_TOKEN_SECRET ,{
+        const accessToken = jwt.sign({userId, nip, name, email}, process.env.ACCESS_TOKEN_SECRET ,{
             expiresIn: '1d'
         });
         res.json({accessToken});

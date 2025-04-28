@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 
 const Pmm = () => {
   const navigate = useNavigate();
-  const [pmmList, setpmmList] = useState([]);
+  const [pmmList, setPmmList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPmm, setSelectedPmm] = useState(null);
@@ -58,7 +58,7 @@ const Pmm = () => {
 
   const totalItems = filteredPmm.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const paginatedPrestasi = filteredPmm.slice(
+  const paginatedPmm = filteredPmm.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -75,10 +75,10 @@ const Pmm = () => {
               </p>
             </Col>
             <Col xs="auto">
-              <Button variant="primary" className="d-flex align-items-center gap-2" onClick={() => navigate("/admin/dashboard/prestasi/tambahprestasi")}>
+              {/* <Button variant="primary" className="d-flex align-items-center gap-2" onClick={() => navigate("/admin/dashboard/prestasi/tambahprestasi")}>
                 <FiPlus size={18} />
                 <span>Tambah Prestasi</span>
-              </Button>
+              </Button> */}
             </Col>
           </Row>
         </Card.Body>
@@ -88,34 +88,17 @@ const Pmm = () => {
         <Card.Body className="p-0">
           <div className="p-3 border-bottom">
             <Row className="align-items-center g-3">
-              <Col md={6} lg={4}>
+              <Col className="ms-auto" md={6} lg={6}>
                 <InputGroup>
                   <InputGroup.Text className="bg-light border-end-0">
                     <FiSearch size={16} />
                   </InputGroup.Text>
                   <Form.Control
-                    placeholder="Cari dosen berdasarkan nama atau NIP..."
+                    placeholder="Cari mahasiswa..."
                     className="border-start-0 bg-light"
+                    onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </InputGroup>
-              </Col>
-              <Col md={6} lg={3}>
-                <Form.Select className="bg-light">
-                  <option value="">Semua Bidang Keahlian</option>
-                  <option value="Kecerdasan Buatan">Kecerdasan Buatan</option>
-                  <option value="Sistem Informasi">Sistem Informasi</option>
-                  <option value="Algoritma & Pemrograman">Algoritma & Pemrograman</option>
-                  <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
-                  <option value="Jaringan Komputer">Jaringan Komputer</option>
-                </Form.Select>
-              </Col>
-              <Col md={6} lg={3}>
-                <Form.Select className="bg-light">
-                  <option value="">Semua Status</option>
-                  <option value="Aktif">Aktif</option>
-                  <option value="Cuti">Cuti</option>
-                  <option value="Tugas Belajar">Tugas Belajar</option>
-                </Form.Select>
               </Col>
             </Row>
           </div>
@@ -135,48 +118,109 @@ const Pmm = () => {
                 </tr>
               </thead>
               <tbody>
-                {/* {d.map((dosen) => (
-                  <tr key={dosen.id}>
-                    <td className="fw-medium">{dosen.nip}</td>
-                    <td>{dosen.nama}</td>
-                    <td>{dosen.pendidikan}</td>
-                    <td>{dosen.bidang}</td>
-                      <div className="d-flex justify-content-center gap-2">
-                        <Button variant="light" size="sm" title="Lihat Detail">
-                          <FiEye size={16} />
-                        </Button>
-                        <Button variant="light" size="sm" title="Edit">
-                          <FiEdit2 size={16} />
-                        </Button>
-                        <Button variant="light" size="sm" title="Hapus">
-                          <FiTrash2 size={16} />
-                        </Button>
-                      </div>
+                {paginatedPmm.length > 0 ? (
+                  paginatedPmm.map((pmm, index) => (
+                    <tr key={pmm.id}>
+                      <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                      <td>{pmm.nama}</td>
+                      <td>{pmm.nim}</td>
+                      <td>{pmm.stambuk}</td>
+                      <td>{pmm.nama_universitas}</td>
+                      <td>
+                        {pmm.konversi_nilai && (
+                          <Button
+                            size="sm"
+                            variant="link"
+                            onClick={() => handleDownload(pmm.konversi_nilai)}
+                          >
+                            Lihat
+                          </Button>
+                        )}
+                      </td>
+                      <td>
+                        <div className="d-flex justify-content-center gap-2">
+                          <Button
+                            variant="outline-warning"
+                            size="sm"
+                            className="rounded-2 px-2 py-1"
+                            title="Lihat Detail"
+                            onClick={() => handleShowDetail(pmm)}
+                          >
+                            <FiEye size={16} />
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            className="rounded-2 px-2 py-1"
+                            title="Hapus"
+                            onClick={() => deletePmm(pmm.id)}
+                          >
+                            <FiTrash2 size={16} />
+                          </Button>
+                        </div>
+                      </td>
                     </tr>
-                ))} */}
-                <tr>
-                  <td colSpan="10" className="text-center text-muted py-3">
-                    Tidak ada data
-                  </td>
-                </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="text-center py-4">
+                      <div className="d-flex flex-column align-items-center justify-content-center py-4">
+                        <FiFilter size={32} className="text-muted mb-2" />
+                        <p className="text-muted mb-0">Tidak ada data yang tersedia</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </Table>
           </div>
 
-          {/* Pagination section */}
           <div className="p-3 border-top d-flex justify-content-between align-items-center">
-            <div className="small text-muted">Menampilkan 1-5 dari 5 entri</div>
+            <div className="small text-muted">
+              Menampilkan {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
+            </div>
             <div>
-              <Button variant="outline-primary" size="sm" className="me-2" disabled>
+              <Button
+                className="mx-2"
+                variant="outline-primary"
+                size="sm"
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
                 Sebelumnya
               </Button>
-              <Button variant="outline-primary" size="sm" disabled>
+              <Button
+                variant="outline-primary"
+                size="sm"
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
                 Selanjutnya
               </Button>
             </div>
           </div>
         </Card.Body>
       </Card>
+
+      <Modal show={showDetailModal} onHide={handleCloseDetail} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Detail Magang Mandiri</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedPmm && (
+            <div className="">
+              <p><strong>Nama:</strong> {selectedPmm.nama}</p>
+              <p><strong>NIM:</strong> {selectedPmm.nim}</p>
+              <p><strong>Stambuk:</strong> {selectedPmm.stambuk}</p>
+              <p><strong>Nama Universitas:</strong> {selectedPmm.nama_universitas}</p>
+              <p><strong>Konversi Nilai:</strong> <Button variant="link" onClick={() => handleDownload(selectedPmm.konversi_nilai)}>Lihat</Button></p>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseDetail}>Tutup</Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

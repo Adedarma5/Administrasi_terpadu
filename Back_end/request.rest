@@ -2,9 +2,9 @@
 GET http://localhost:5000/users
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsIm5hbWUiOiJBZGUgdXBkYXRlIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJpYXQiOjE3NDUyOTQyMTQsImV4cCI6MTc0NTMwMTQxNH0.IXxIWu13hRP7ydcbz_Tu149cnGP4HoGAErYmxoMqhwI
 
-// Users By UuId //
+// Users By nip //
 ###
-GET http://localhost:5000/users/a935fe23-a707-430f-8e6b-df7f7c720414
+GET http://localhost:5000/users/12345
 
 
 // Register Users dan admin//
@@ -53,7 +53,7 @@ Content-Type: application/json
 GET   http://localhost:5000/token
 
 
-// Delete Users dan Admin Berdasarkan UuId //
+// Delete Users dan Admin Berdasarkan nip //
 ###
 DELETE    http://localhost:5000/users/8a932ec1-f236-4065-a069-ab79df2297e2
 

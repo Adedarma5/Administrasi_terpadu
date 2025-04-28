@@ -4,7 +4,7 @@ import db from "../config/database.js"
 
 const { DataTypes } = Sequelize;
 
-const users = db.define('users', {
+const Users = db.define('users', {
     nip: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -40,4 +40,4 @@ const users = db.define('users', {
     freezeTableName: true
 });
 
-export default users;
+export default Users;

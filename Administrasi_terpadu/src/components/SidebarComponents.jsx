@@ -15,8 +15,10 @@ import {
 } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import AdminDashboard from "../Dasboard/AdminDashboard";
+import ProtectedMenu from "./ProtectedMenu";
 
 const SidebarComponents = ({ children }) => {
+  const [role, setRole] = useState("");
   const [openAkademik, setOpenAkademik] = useState(false);
   const [openKegiatanMahasiswa, setOpenKegiatanMahasiswa] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -25,17 +27,11 @@ const SidebarComponents = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Original dark background color
-  const colors = {
-    primary: "#212529", // Original dark color
-    secondary: "#f3f4f6", // Light gray
-    accent: "#0d6efd", // Bootstrap primary blue
-    activeMenu: "rgba(255, 255, 255, 0.2)", // Highlight for active menu
-    text: "#ffffff", // White text
-    textDark: "#1f2937", // Dark text
-    menuHover: "rgba(255, 255, 255, 0.1)", // Light hover effect
-    border: "rgba(255, 255, 255, 0.15)", // Border color
-  };
+  useEffect(() => {
+    const userRole = localStorage.getItem('role');
+    setRole(userRole);
+  }, []);
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -48,7 +44,22 @@ const SidebarComponents = ({ children }) => {
     };
   }, []);
 
-  // Check if the current path matches a menu item or is a submenu
+
+
+
+  const colors = {
+    primary: "#212529",
+    secondary: "#f3f4f6",
+    accent: "#0d6efd",
+    activeMenu: "rgba(255, 255, 255, 0.2)",
+    text: "#ffffff",
+    textDark: "#1f2937",
+    menuHover: "rgba(255, 255, 255, 0.1)",
+    border: "rgba(255, 255, 255, 0.15)",
+  };
+
+
+
   const isActive = (path) => {
     return location.pathname === path;
   };
@@ -67,7 +78,6 @@ const SidebarComponents = ({ children }) => {
     }
   };
 
-  // Common link style for consistency
   const navLinkStyle = (active = false) => ({
     borderRadius: '6px',
     margin: '3px 8px',
@@ -92,7 +102,6 @@ const SidebarComponents = ({ children }) => {
   return (
     <Container fluid className="p-0">
       <Row className="g-0">
-        {/* Desktop Sidebar */}
         <Col
           className="d-none d-md-flex flex-column min-vh-100 shadow-sm position-fixed"
           style={{
@@ -102,7 +111,6 @@ const SidebarComponents = ({ children }) => {
             backgroundColor: colors.primary,
           }}
         >
-          {/* Header/Logo Area */}
           <div className="d-flex align-items-center p-3 border-bottom" style={{ borderColor: colors.border }}>
             <img
               src="/src/assets/unimal.png"
@@ -119,9 +127,9 @@ const SidebarComponents = ({ children }) => {
             )}
           </div>
 
-          {/* Navigation Menu - Fixed Height with Scrollable Content */}
-          <div className="d-flex flex-column" style={{ height: 'calc(100vh - 72px)' }}> {/* Fixed height minus header */}
-            {/* Toggle Button */}
+
+          <div className="d-flex flex-column" style={{ height: 'calc(100vh - 72px)' }}>
+
             <div className="d-flex justify-content-end p-2">
               <Button
                 variant="outline-light"
@@ -134,9 +142,8 @@ const SidebarComponents = ({ children }) => {
               </Button>
             </div>
 
-            {/* Scrollable Menu Area */}
+
             <div className="flex-grow-1 overflow-auto" style={{ scrollbarWidth: 'thin' }}>
-              {/* Dashboard Link */}
               <Nav.Link
                 as={Link}
                 to="/admin/dashboard"
@@ -152,52 +159,55 @@ const SidebarComponents = ({ children }) => {
 
               <div className="mt-2 mb-2" style={{ borderTop: `1px solid ${colors.border}` }}></div>
 
-              {/* Akademik Menu */}
               <Nav.Item>
                 <Nav.Link
                   onClick={() => setOpenAkademik(!openAkademik)}
                   className="text-white d-flex align-items-center"
                   style={{
-                    ...navLinkStyle(isSubMenuActive('/admin/dashboard/Dosen') || 
-                                   isSubMenuActive('/admin/dashboard/MataKuliah') ||
-                                   isSubMenuActive('/admin/dashboard/Rps') ||
-                                   isSubMenuActive('/admin/dashboard/KontrakKuliah') ||
-                                   isSubMenuActive('/admin/dashboard/BahanAjar') ||
-                                   isSubMenuActive('/admin/dashboard/Penelitian') ||
-                                   isSubMenuActive('/admin/dashboard/Pengabdian') ||
-                                   isSubMenuActive('/admin/dashboard/Pengajaran')),
+                    ...navLinkStyle(isSubMenuActive('/admin/dashboard/Dosen') ||
+                      isSubMenuActive('/admin/dashboard/MataKuliah') ||
+                      isSubMenuActive('/admin/dashboard/Rps') ||
+                      isSubMenuActive('/admin/dashboard/KontrakKuliah') ||
+                      isSubMenuActive('/admin/dashboard/BahanAjar') ||
+                      isSubMenuActive('/admin/dashboard/Penelitian') ||
+                      isSubMenuActive('/admin/dashboard/Pengabdian') ||
+                      isSubMenuActive('/admin/dashboard/Pengajaran')),
                   }}
                 >
                   <FaBook className={isCollapsed ? "mx-auto" : "me-3"} size={16} />
                   {!isCollapsed && <span>Akademik</span>}
                   {!isCollapsed && (
-                    <FaChevronDown 
-                      className="ms-auto" 
-                      size={12} 
+                    <FaChevronDown
+                      className="ms-auto"
+                      size={12}
                       style={{
                         transform: openAkademik ? 'rotate(180deg)' : 'rotate(0deg)',
                         transition: 'transform 0.3s ease'
                       }}
                     />
                   )}
+
                 </Nav.Link>
                 <Collapse in={openAkademik}>
                   <div className={isCollapsed ? "d-none" : ""}>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/Dosen" 
-                      className="text-white" 
-                      style={{
-                        ...subMenuLinkStyle(isActive('/admin/dashboard/Dosen')),
-                        backgroundColor: isActive('/admin/dashboard/Dosen') ? colors.activeMenu : 'transparent',
-                      }}
-                    >
-                      Dosen
-                    </Nav.Link>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/MataKuliah" 
-                      className="text-white" 
+                    {role === "admin" && (
+                      <Nav.Link
+                        as={Link}
+                        to="/admin/dashboard/Dosen"
+                        className="text-white"
+                        style={{
+                          ...subMenuLinkStyle(isActive('/admin/dashboard/Dosen')),
+                          backgroundColor: isActive('/admin/dashboard/Dosen') ? colors.activeMenu : 'transparent',
+                        }}
+                      >
+                        Dosen
+                      </Nav.Link>
+                    )}
+
+                    <Nav.Link
+                      as={Link}
+                      to="/admin/dashboard/MataKuliah"
+                      className="text-white"
                       style={{
                         ...subMenuLinkStyle(isActive('/admin/dashboard/MataKuliah')),
                         backgroundColor: isActive('/admin/dashboard/MataKuliah') ? colors.activeMenu : 'transparent',
@@ -205,10 +215,10 @@ const SidebarComponents = ({ children }) => {
                     >
                       Mata Kuliah
                     </Nav.Link>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/Rps" 
-                      className="text-white" 
+                    <Nav.Link
+                      as={Link}
+                      to="/admin/dashboard/Rps"
+                      className="text-white"
                       style={{
                         ...subMenuLinkStyle(isActive('/admin/dashboard/Rps')),
                         backgroundColor: isActive('/admin/dashboard/Rps') ? colors.activeMenu : 'transparent',
@@ -216,10 +226,10 @@ const SidebarComponents = ({ children }) => {
                     >
                       RPS
                     </Nav.Link>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/KontrakKuliah" 
-                      className="text-white" 
+                    <Nav.Link
+                      as={Link}
+                      to="/admin/dashboard/KontrakKuliah"
+                      className="text-white"
                       style={{
                         ...subMenuLinkStyle(isActive('/admin/dashboard/KontrakKuliah')),
                         backgroundColor: isActive('/admin/dashboard/KontrakKuliah') ? colors.activeMenu : 'transparent',
@@ -227,10 +237,10 @@ const SidebarComponents = ({ children }) => {
                     >
                       Kontrak Kuliah
                     </Nav.Link>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/BahanAjar" 
-                      className="text-white" 
+                    <Nav.Link
+                      as={Link}
+                      to="/admin/dashboard/BahanAjar"
+                      className="text-white"
                       style={{
                         ...subMenuLinkStyle(isActive('/admin/dashboard/BahanAjar')),
                         backgroundColor: isActive('/admin/dashboard/BahanAjar') ? colors.activeMenu : 'transparent',
@@ -238,10 +248,10 @@ const SidebarComponents = ({ children }) => {
                     >
                       Bahan Ajar
                     </Nav.Link>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/Penelitian" 
-                      className="text-white" 
+                    <Nav.Link
+                      as={Link}
+                      to="/admin/dashboard/Penelitian"
+                      className="text-white"
                       style={{
                         ...subMenuLinkStyle(isActive('/admin/dashboard/Penelitian')),
                         backgroundColor: isActive('/admin/dashboard/Penelitian') ? colors.activeMenu : 'transparent',
@@ -249,10 +259,10 @@ const SidebarComponents = ({ children }) => {
                     >
                       Penelitian
                     </Nav.Link>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/Pengabdian" 
-                      className="text-white" 
+                    <Nav.Link
+                      as={Link}
+                      to="/admin/dashboard/Pengabdian"
+                      className="text-white"
                       style={{
                         ...subMenuLinkStyle(isActive('/admin/dashboard/Pengabdian')),
                         backgroundColor: isActive('/admin/dashboard/Pengabdian') ? colors.activeMenu : 'transparent',
@@ -260,10 +270,10 @@ const SidebarComponents = ({ children }) => {
                     >
                       Pengabdian
                     </Nav.Link>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/Pengajaran" 
-                      className="text-white" 
+                    <Nav.Link
+                      as={Link}
+                      to="/admin/dashboard/Pengajaran"
+                      className="text-white"
                       style={{
                         ...subMenuLinkStyle(isActive('/admin/dashboard/Pengajaran')),
                         backgroundColor: isActive('/admin/dashboard/Pengajaran') ? colors.activeMenu : 'transparent',
@@ -275,7 +285,6 @@ const SidebarComponents = ({ children }) => {
                 </Collapse>
               </Nav.Item>
 
-              {/* Absensi Link */}
               <Nav.Item>
                 <Nav.Link
                   as={Link}
@@ -291,41 +300,46 @@ const SidebarComponents = ({ children }) => {
                 </Nav.Link>
               </Nav.Item>
 
-              {/* Kegiatan Mahasiswa */}
+
               <Nav.Item>
-                <Nav.Link
-                  onClick={() => setOpenKegiatanMahasiswa(!openKegiatanMahasiswa)}
-                  className="text-white d-flex align-items-center"
-                  style={{
-                    ...navLinkStyle(isSubMenuActive('/admin/dashboard/Msib') ||
-                                   isSubMenuActive('/admin/dashboard/Magangmandiri') ||
-                                   isSubMenuActive('/admin/dashboard/Prestasi') ||
-                                   isSubMenuActive('/admin/dashboard/KerjaPraktik') ||
-                                   isSubMenuActive('/admin/dashboard/TugasAkhir') ||
-                                   isSubMenuActive('/admin/dashboard/Pmm') ||
-                                   isSubMenuActive('/admin/dashboard/Kewirausahaan') ||
-                                   isSubMenuActive('/admin/dashboard/Alumni')),
-                  }}
-                >
-                  <FaClipboardList className={isCollapsed ? "mx-auto" : "me-3"} size={16} />
-                  {!isCollapsed && <span>Kegiatan Mahasiswa</span>}
-                  {!isCollapsed && (
-                    <FaChevronDown 
-                      className="ms-auto" 
-                      size={12} 
-                      style={{
-                        transform: openKegiatanMahasiswa ? 'rotate(180deg)' : 'rotate(0deg)',
-                        transition: 'transform 0.3s ease'
-                      }}
-                    />
-                  )}
-                </Nav.Link>
+                <ProtectedMenu role={role} allowedRoles={'admin'}>
+                  <Nav.Link
+                    onClick={() => setOpenKegiatanMahasiswa(!openKegiatanMahasiswa)}
+                    className="text-white d-flex align-items-center"
+                    style={{
+                      ...navLinkStyle(isSubMenuActive('/admin/dashboard/Msib') ||
+                        isSubMenuActive('/admin/dashboard/Magangmandiri') ||
+                        isSubMenuActive('/admin/dashboard/Prestasi') ||
+                        isSubMenuActive('/admin/dashboard/KerjaPraktik') ||
+                        isSubMenuActive('/admin/dashboard/TugasAkhir') ||
+                        isSubMenuActive('/admin/dashboard/Pmm') ||
+                        isSubMenuActive('/admin/dashboard/Kewirausahaan') ||
+                        isSubMenuActive('/admin/dashboard/Alumni')),
+                    }}
+                  >
+                    <FaClipboardList className={isCollapsed ? "mx-auto" : "me-3"} size={16} />
+                    {!isCollapsed && <span>Kegiatan Mahasiswa</span>}
+                    {!isCollapsed && (
+                      <FaChevronDown
+                        className="ms-auto"
+                        size={12}
+                        style={{
+                          transform: openKegiatanMahasiswa ? 'rotate(180deg)' : 'rotate(0deg)',
+                          transition: 'transform 0.3s ease'
+                        }}
+                      />
+                    )}
+                  </Nav.Link>
+                </ProtectedMenu>
+
+
+
                 <Collapse in={openKegiatanMahasiswa}>
                   <div className={isCollapsed ? "d-none" : ""}>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/Msib" 
-                      className="text-white" 
+                    <Nav.Link
+                      as={Link}
+                      to="/admin/dashboard/Msib"
+                      className="text-white"
                       style={{
                         ...subMenuLinkStyle(isActive('/admin/dashboard/Msib')),
                         backgroundColor: isActive('/admin/dashboard/Msib') ? colors.activeMenu : 'transparent',
@@ -333,10 +347,10 @@ const SidebarComponents = ({ children }) => {
                     >
                       MSIB
                     </Nav.Link>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/Magangmandiri" 
-                      className="text-white" 
+                    <Nav.Link
+                      as={Link}
+                      to="/admin/dashboard/Magangmandiri"
+                      className="text-white"
                       style={{
                         ...subMenuLinkStyle(isActive('/admin/dashboard/Magangmandiri')),
                         backgroundColor: isActive('/admin/dashboard/Magangmandiri') ? colors.activeMenu : 'transparent',
@@ -344,10 +358,10 @@ const SidebarComponents = ({ children }) => {
                     >
                       Magang Mandiri
                     </Nav.Link>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/Prestasi" 
-                      className="text-white" 
+                    <Nav.Link
+                      as={Link}
+                      to="/admin/dashboard/Prestasi"
+                      className="text-white"
                       style={{
                         ...subMenuLinkStyle(isActive('/admin/dashboard/Prestasi')),
                         backgroundColor: isActive('/admin/dashboard/Prestasi') ? colors.activeMenu : 'transparent',
@@ -355,10 +369,10 @@ const SidebarComponents = ({ children }) => {
                     >
                       Prestasi
                     </Nav.Link>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/KerjaPraktik" 
-                      className="text-white" 
+                    <Nav.Link
+                      as={Link}
+                      to="/admin/dashboard/KerjaPraktik"
+                      className="text-white"
                       style={{
                         ...subMenuLinkStyle(isActive('/admin/dashboard/KerjaPraktik')),
                         backgroundColor: isActive('/admin/dashboard/KerjaPraktik') ? colors.activeMenu : 'transparent',
@@ -366,10 +380,10 @@ const SidebarComponents = ({ children }) => {
                     >
                       Kerja Praktik
                     </Nav.Link>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/TugasAkhir" 
-                      className="text-white" 
+                    <Nav.Link
+                      as={Link}
+                      to="/admin/dashboard/TugasAkhir"
+                      className="text-white"
                       style={{
                         ...subMenuLinkStyle(isActive('/admin/dashboard/TugasAkhir')),
                         backgroundColor: isActive('/admin/dashboard/TugasAkhir') ? colors.activeMenu : 'transparent',
@@ -377,10 +391,10 @@ const SidebarComponents = ({ children }) => {
                     >
                       Tugas Akhir
                     </Nav.Link>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/Pmm" 
-                      className="text-white" 
+                    <Nav.Link
+                      as={Link}
+                      to="/admin/dashboard/Pmm"
+                      className="text-white"
                       style={{
                         ...subMenuLinkStyle(isActive('/admin/dashboard/Pmm')),
                         backgroundColor: isActive('/admin/dashboard/Pmm') ? colors.activeMenu : 'transparent',
@@ -388,21 +402,10 @@ const SidebarComponents = ({ children }) => {
                     >
                       PMM
                     </Nav.Link>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/Kewirausahaan" 
-                      className="text-white" 
-                      style={{
-                        ...subMenuLinkStyle(isActive('/admin/dashboard/Kewirausahaan')),
-                        backgroundColor: isActive('/admin/dashboard/Kewirausahaan') ? colors.activeMenu : 'transparent',
-                      }}
-                    >
-                      Kewirausahaan
-                    </Nav.Link>
-                    <Nav.Link 
-                      as={Link} 
-                      to="/admin/dashboard/Alumni" 
-                      className="text-white" 
+                    <Nav.Link
+                      as={Link}
+                      to="/admin/dashboard/Alumni"
+                      className="text-white"
                       style={{
                         ...subMenuLinkStyle(isActive('/admin/dashboard/Alumni')),
                         backgroundColor: isActive('/admin/dashboard/Alumni') ? colors.activeMenu : 'transparent',
@@ -414,7 +417,6 @@ const SidebarComponents = ({ children }) => {
                 </Collapse>
               </Nav.Item>
 
-              {/* Users Link */}
               <Nav.Item>
                 <Nav.Link
                   as={Link}
@@ -431,7 +433,7 @@ const SidebarComponents = ({ children }) => {
               </Nav.Item>
             </div>
 
-            {/* Logout - Always at bottom */}
+
             <div className="p-3 mt-auto" style={{ borderTop: `1px solid ${colors.border}` }}>
               <Button
                 variant="danger"
@@ -446,7 +448,6 @@ const SidebarComponents = ({ children }) => {
           </div>
         </Col>
 
-        {/* Mobile Header with Logo and Menu Button */}
         <div className="d-md-none w-100 fixed-top" style={{ zIndex: 1040 }}>
           <div className="d-flex justify-content-between align-items-center p-2 bg-white shadow-sm">
             <div className="d-flex align-items-center">
@@ -463,12 +464,12 @@ const SidebarComponents = ({ children }) => {
             </div>
 
             <div className="d-flex align-items-center">
-              <div 
-                className="d-flex justify-content-center align-items-center me-3" 
-                style={{ 
-                  width: '36px', 
-                  height: '36px', 
-                  borderRadius: '50%', 
+              <div
+                className="d-flex justify-content-center align-items-center me-3"
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
                   backgroundColor: colors.accent,
                   color: colors.text,
                   fontSize: '12px',
@@ -489,7 +490,6 @@ const SidebarComponents = ({ children }) => {
           </div>
         </div>
 
-        {/* Mobile Offcanvas Sidebar */}
         <Offcanvas
           show={showOffcanvas}
           onHide={() => setShowOffcanvas(false)}
@@ -505,9 +505,9 @@ const SidebarComponents = ({ children }) => {
                 as={Link}
                 to="/admin/dashboard"
                 className="py-3 px-4 d-flex align-items-center border-bottom"
-                style={{ 
-                  borderColor: '#e5e7eb', 
-                  color: colors.textDark, 
+                style={{
+                  borderColor: '#e5e7eb',
+                  color: colors.textDark,
                   backgroundColor: isActive('/admin/dashboard') ? '#f3f4f6' : 'transparent'
                 }}
                 onClick={() => setShowOffcanvas(false)}
@@ -523,9 +523,9 @@ const SidebarComponents = ({ children }) => {
                 style={{ borderColor: '#e5e7eb', color: colors.textDark }}
               >
                 <FaBook className="me-3" size={16} /> Akademik
-                <FaChevronDown 
-                  className="ms-auto" 
-                  size={12} 
+                <FaChevronDown
+                  className="ms-auto"
+                  size={12}
                   style={{
                     transform: openAkademik ? 'rotate(180deg)' : 'rotate(0deg)',
                     transition: 'transform 0.3s ease'
@@ -544,14 +544,14 @@ const SidebarComponents = ({ children }) => {
                     { path: "Pengabdian", label: "Pengabdian" },
                     { path: "Pengajaran", label: "Pengajaran" }
                   ].map(item => (
-                    <Nav.Link 
+                    <Nav.Link
                       key={item.path}
-                      as={Link} 
+                      as={Link}
                       to={`/admin/dashboard/${item.path}`}
                       className="py-2 ps-5 border-bottom"
-                      style={{ 
-                        borderColor: '#e5e7eb', 
-                        color: colors.textDark, 
+                      style={{
+                        borderColor: '#e5e7eb',
+                        color: colors.textDark,
                         fontSize: '14px',
                         backgroundColor: isActive(`/admin/dashboard/${item.path}`) ? '#f3f4f6' : 'transparent'
                       }}
@@ -567,8 +567,8 @@ const SidebarComponents = ({ children }) => {
                 as={Link}
                 to="/admin/dashboard/Absensi"
                 className="py-3 px-4 d-flex align-items-center border-bottom"
-                style={{ 
-                  borderColor: '#e5e7eb', 
+                style={{
+                  borderColor: '#e5e7eb',
                   color: colors.textDark,
                   backgroundColor: isActive('/admin/dashboard/Absensi') ? '#f3f4f6' : 'transparent'
                 }}
@@ -585,9 +585,9 @@ const SidebarComponents = ({ children }) => {
                 style={{ borderColor: '#e5e7eb', color: colors.textDark }}
               >
                 <FaClipboardList className="me-3" size={16} /> Kegiatan Mahasiswa
-                <FaChevronDown 
-                  className="ms-auto" 
-                  size={12} 
+                <FaChevronDown
+                  className="ms-auto"
+                  size={12}
                   style={{
                     transform: openKegiatanMahasiswa ? 'rotate(180deg)' : 'rotate(0deg)',
                     transition: 'transform 0.3s ease'
@@ -603,17 +603,16 @@ const SidebarComponents = ({ children }) => {
                     { path: "KerjaPraktik", label: "Kerja Praktik" },
                     { path: "TugasAkhir", label: "Tugas Akhir" },
                     { path: "Pmm", label: "PMM" },
-                    { path: "Kewirausahaan", label: "Kewirausahaan" },
                     { path: "Alumni", label: "Alumni" }
                   ].map(item => (
-                    <Nav.Link 
+                    <Nav.Link
                       key={item.path}
-                      as={Link} 
+                      as={Link}
                       to={`/admin/dashboard/${item.path}`}
                       className="py-2 ps-5 border-bottom"
-                      style={{ 
-                        borderColor: '#e5e7eb', 
-                        color: colors.textDark, 
+                      style={{
+                        borderColor: '#e5e7eb',
+                        color: colors.textDark,
                         fontSize: '14px',
                         backgroundColor: isActive(`/admin/dashboard/${item.path}`) ? '#f3f4f6' : 'transparent'
                       }}
@@ -629,8 +628,8 @@ const SidebarComponents = ({ children }) => {
                 as={Link}
                 to="/admin/dashboard/UserDosen"
                 className="py-3 px-4 d-flex align-items-center border-bottom"
-                style={{ 
-                  borderColor: '#e5e7eb', 
+                style={{
+                  borderColor: '#e5e7eb',
                   color: colors.textDark,
                   backgroundColor: isActive('/admin/dashboard/UserDosen') ? '#f3f4f6' : 'transparent'
                 }}
