@@ -47,8 +47,9 @@ const TambahAbsensi = () => {
     formData.append("jam_pelajaran", jam_pelajaran);
     formData.append("foto", foto);
 
+    const token = localStorage.getItem('token');  
     axios.post("http://localhost:5000/absensi", formData, {
-      headers: { "Content-Type": "multipart/form-data" }
+      headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}`  }
     }).then(response => {
       console.log(response.data);
       navigate("/admin/dashboard/absensi");

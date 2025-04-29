@@ -19,52 +19,27 @@ const Login = () => {
 
   const Auth = async (e) => {
     e.preventDefault();
-    if (!nip || !password) {
-      setMsg("NIP dan Password harus diisi!");
-      return;
-    }
-    
-    setLoading(true);
     try {
       const response = await axios.post("http://localhost:5000/login", { nip, password });
+
       const accessToken = response.data.accessToken;
-      
-      // Simpan token ke localStorage
       localStorage.setItem("token", accessToken);
-      
-      // Dekode token untuk mendapatkan informasi user
+      console.log(localStorage.getItem("token"));
+
+
       const decoded = jwtDecode(accessToken);
-      
-      // Simpan informasi penting user ke localStorage
-      localStorage.setItem("userId", decoded.id); // Pastikan menggunakan key yang sama dengan TambahAbsensi
+      localStorage.setItem("userId", decoded.id);
       localStorage.setItem("role", decoded.role);
       localStorage.setItem("nip", decoded.nip);
-      localStorage.setItem("name", decoded.name);
-      
-      // Tambahkan - simpan objek user lengkap untuk kompatibilitas
-      const userData = {
-        id: decoded.id,
-        name: decoded.name,
-        nip: decoded.nip,
-        role: decoded.role
-      };
-      localStorage.setItem("user", JSON.stringify(userData));
-      
-      console.log("Login berhasil, mengalihkan ke dashboard...");
-      
-      // Gunakan navigate untuk redirect (lebih direkomendasikan daripada location.href)
-      navigate("/admin/dashboard");
+      location.href = "/admin/dashboard";
     } catch (error) {
       if (error.response) {
-        setMsg(error.response.data.msg || "Terjadi kesalahan saat login");
-      } else {
-        setMsg("Tidak dapat terhubung ke server");
+        setMsg(error.response.data.msg);
       }
-      console.error("Error login:", error);
-    } finally {
-      setLoading(false);
     }
   };
+
+
   
   return (
     <div>

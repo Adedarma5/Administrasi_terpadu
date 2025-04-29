@@ -5,9 +5,19 @@ import upload from "../middleware/upload.js";
 
 export const getKontrakKuliah = async (req, res) => {
     try {
-        const kontrak_kuliah = await KontrakKuliah.findAll({
+        const  { role, id } = req.user;
+
+        let kontrak_kuliah;
+        if (role === 'admin') {
+        kontrak_kuliah = await KontrakKuliah.findAll({
             attributes: ['id', 'nama_dosen', 'mata_kuliah', 'semester',  'file_kontrak_kuliah']
         });
+    } else if (role === 'user') {
+        kontrak_kuliah = await KontrakKuliah.findAll({
+            attributes: ['id', 'nama_dosen', 'mata_kuliah', 'semester',  'file_kontrak_kuliah'],
+            where: { userId: id }
+        });
+    }
         res.json(kontrak_kuliah);
     } catch (error) {
         console.log(error);
@@ -16,6 +26,7 @@ export const getKontrakKuliah = async (req, res) => {
 
 export const getKontrakKuliahById = async (req, res) => {
     try {
+        const { role, id } = req.user;
         const kontrak_kuliah = await KontrakKuliah.findOne({
             attributes: ['id', 'nama_dosen', 'mata_kuliah', 'semester', 'file_kontrak_kuliah'],
             where: {
@@ -25,6 +36,10 @@ export const getKontrakKuliahById = async (req, res) => {
 
         if (!kontrak_kuliah) {
             return res.status(404).json({ msg: "kontrak kuliah tidak ditemukan" });
+        }
+        
+        if (role === 'user' && absensi.userId !== id) {
+            return res.status(403).json({ msg: "Akses ditolak" });
         }
 
         res.status(200).json(kontrak_kuliah);
@@ -43,6 +58,7 @@ export const createKontrakKuliah = async (req, res) => {
       const file_kontrak_kuliah = req.file.filename; 
   
       await KontrakKuliah.create({
+        userId: req.user.id,
         nama_dosen,
         mata_kuliah,
         semester,

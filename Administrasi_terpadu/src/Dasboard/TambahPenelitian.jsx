@@ -37,8 +37,9 @@ const TambahPenelitian = () => {
         formData.append("anggota_tim", anggota_tim);
         formData.append("file_laporan", file_laporan);
 
+        const token = localStorage.getItem('token');  
         axios.post("http://localhost:5000/penelitian", formData, {
-            headers: { "Content-Type": "multipart/form-data" }
+            headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` }
         }).then(response => {
             console.log(response.data);
             navigate("/admin/dashboard/penelitian");

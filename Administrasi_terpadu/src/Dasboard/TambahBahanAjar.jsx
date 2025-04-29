@@ -49,8 +49,9 @@ const TambahBahanAjar = () => {
     formData.append("pertemuan", pertemuan);
     formData.append("file_pendukung", file_pendukung);
 
+    const token = localStorage.getItem('token'); 
     axios.post("http://localhost:5000/bahan_ajar", formData, {
-      headers: { "Content-Type": "multipart/form-data" }
+      headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` }
     }).then(response => {
       console.log(response.data);
       navigate("/admin/dashboard/bahanajar");

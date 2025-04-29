@@ -19,7 +19,6 @@ const EditPengabdian = () => {
 
     useEffect(() => {
         getDosenList();
-        getPengabdianById();
     }, []);
 
     const getDosenList = async () => {
@@ -31,22 +30,6 @@ const EditPengabdian = () => {
         }
     };
 
-    const getPengabdianById = async () => {
-        try {
-            const response = await axios.get(`http://localhost:5000/pengabdian/${id}`);
-
-            const pengabdian = response.data;
-            setJudulPengabdian(pengabdian.judul_pengabdian);
-            setNamaDosen(pengabdian.nama_dosen);
-            setMitra(pengabdian.mitra);
-            setBentukKegiatan(pengabdian.bentuk_kegiatan);
-            setLokasi(pengabdian.lokasi);
-            setTahun(pengabdian.tahun);
-        } catch (error) {
-            console.error("Gagal mengambil data pengabdian:", error);
-            setMsg("Terjadi kesalahan saat mengambil data pengabdian.");
-        }
-    };
 
     const handleFileChange = (e) => {
         setFileKegiatan(e.target.files[0]);
@@ -151,12 +134,16 @@ const EditPengabdian = () => {
                                 <Form.Label>Bentuk Kegiatan</Form.Label>
                             </Col>
                             <Col md={8}>
-                                <Form.Control
-                                    type="text"
+                                <Form.Select
                                     value={bentuk_kegiatan}
                                     onChange={(e) => setBentukKegiatan(e.target.value)}
-                                    required
-                                />
+                                >
+                                    <option value="">-- Pilih Kegiatan </option>
+                                    <option value="Pelatihan Masyarakat">Pelatihan Masyarakat</option>
+                                    <option value="Workshop">Workshop</option>
+                                    <option value="Seminar/Penyuluhan">Seminar/Penyuluhan</option>
+                                    <option value="	Bimbingan Teknis (Bimtek)">	Bimbingan Teknis (Bimtek)</option>
+                                </Form.Select>
                             </Col>
                         </Row>
 

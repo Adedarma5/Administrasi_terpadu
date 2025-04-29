@@ -5,12 +5,15 @@ import db from "../config/database.js"
 const { DataTypes } = Sequelize;
 
 const KontrakKuliah = db.define('kontrak_kuliah', {
-    id:{
+    id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
     nama_dosen: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -27,7 +30,7 @@ const KontrakKuliah = db.define('kontrak_kuliah', {
 
     },
 
-    file_kontrak_kuliah:{
+    file_kontrak_kuliah: {
         type: DataTypes.STRING,
         allowNull: false,
     },

@@ -46,8 +46,10 @@ const TambahKontrakKuliah = () => {
         formData.append("semester", semester);
         formData.append("file_kontrak_kuliah", file_kontrak_kuliah);
 
+
+        const token = localStorage.getItem('token');
         axios.post("http://localhost:5000/kontrak_kuliah", formData, {
-            headers: { "Content-Type": "multipart/form-data" }
+            headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` }
         }).then(response => {
             console.log(response.data);
             navigate("/admin/dashboard/kontrakkuliah");
@@ -117,7 +119,7 @@ const TambahKontrakKuliah = () => {
                                     type="text"
                                     value={semester}
                                     onChange={(e) => setSemester(e.target.value)}>
-                                        <option value="">-- Pilih Semester --</option>
+                                    <option value="">-- Pilih Semester --</option>
                                     {Array.from({ length: 8 }, (_, i) => (
                                         <option key={i + 1} value={`Semester ${i + 1}`}>
                                             Semester {i + 1}

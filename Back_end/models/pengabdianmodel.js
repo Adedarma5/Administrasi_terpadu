@@ -10,7 +10,10 @@ const Pengabdian = db.define('pengabdian', {
         primaryKey: true,
         autoIncrement: true
     },
-
+    userId: { 
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
     judul_pengabdian: {
         type: DataTypes.STRING,
         allowNull: false,

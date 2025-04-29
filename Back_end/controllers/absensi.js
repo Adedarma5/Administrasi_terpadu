@@ -55,19 +55,16 @@ export const createAbsensi = async (req, res) => {
             return res.status(400).json({ msg: "File Foto harus diunggah!" });
         }
 
-        const { name, mata_kuliah, jam_pelajaran, userId } = req.body;
-        if (!userId) {
-            return res.status(400).json({ msg: "UserId tidak ditemukan!" });
-        }
-
+        const { name, mata_kuliah, jam_pelajaran } = req.body;
         const foto = req.file.filename;
 
         await Absensi.create({
+            userId: req.user.id,
             name,
             mata_kuliah,
             jam_pelajaran,
             foto,
-            userId 
+            
         });
 
         res.status(201).json({ msg: "Absensi berhasil dibuat!" });

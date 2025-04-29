@@ -27,12 +27,18 @@ const Absensi = () => {
     setError(null);
     try {
       let url = "http://localhost:5000/absensi";
-
+  
       if (user?.role === "user") {
         url = `http://localhost:5000/absensi?userId=${user.id}`;
       }
-
-      const response = await axios.get(url);
+  
+      const token = localStorage.getItem('token'); 
+  
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
+      });
       setAbsensiList(response.data);
     } catch (error) {
       setError("Gagal memuat data Absensi.");
@@ -40,6 +46,7 @@ const Absensi = () => {
     }
     setLoading(false);
   };
+  
 
   const fetchMataKuliah = async () => {
     setLoading(true);

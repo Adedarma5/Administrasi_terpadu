@@ -57,6 +57,7 @@ import TammbahPmm from './Kema/TambahPmm.jsx';
 import TambahAlumni from './Kema/TambahAlumni.jsx';
 import EditAbsensi from './Dasboard/EditAbsensi.jsx';
 import EditUserDosen from './Dasboard/EditUserDosen.jsx';
+import EditPengajaran from './Dasboard/EditPengajaran.jsx';
 
 
 function App() {
@@ -102,6 +103,7 @@ function App() {
           <Route path='dashboard/Pengajaran' Component={Pengajaran} />
           <Route path='dashboard/Kewirausahaan' Component={Kewirausahaan} />
           <Route path='dashboard/UserDosen/EditUserDosen/:id' Component={EditUserDosen} />
+          <Route path='dashboard/Pengajaran/EditPengajaran/:id' Component={EditPengajaran} />
           <Route path='dashboard/Dosen/EditDosen/:id' Component={EditDosen} />
           <Route path='dashboard/Absensi/EditAbsensi/:id' Component={EditAbsensi} />
           <Route path='dashboard/Pengabdian/EditPengabdian/:id' Component={EditPengabdian} />

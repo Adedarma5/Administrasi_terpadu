@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Container, Card, Table, Button, Row, Col, Form, InputGroup } from "react-bootstrap";
-import { FiPlus, FiSearch, FiFilter, FiEdit2, FiTrash2 } from "react-icons/fi";
+import { FiPlus, FiSearch, FiFilter, FiEdit2, FiTrash2,  } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -13,6 +13,7 @@ const Pengabdian = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     fetchPengabdian();
@@ -21,7 +22,19 @@ const Pengabdian = () => {
 
   const fetchPengabdian = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/pengabdian");
+      let url = "http://localhost:5000/pengabdian";
+
+      if (user?.role === "user") {
+        url = `http://localhost:5000/pengabdian?userId=${user.id}`;
+      }
+
+      const token = localStorage.getItem('token');
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       setPengabdianList(response.data);
     } catch (error) {
       console.error("Error fetching pengabdian:", error);
@@ -208,9 +221,11 @@ const Pengabdian = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="9" className="text-center py-4">
-                          <FiFilter size={32} className="text-muted mb-2" />
-                          <p className="text-muted">Tidak ada data pengabdian yang tersedia</p>
+                        <td colSpan="8" className="text-center py-4">
+                          <div className="d-flex flex-column align-items-center justify-content-center py-4">
+                            <FiFilter size={32} className="text-muted mb-2" />
+                            <p className="text-muted mb-0">Tidak ada data yang tersedia</p>
+                          </div>
                         </td>
                       </tr>
                     )}

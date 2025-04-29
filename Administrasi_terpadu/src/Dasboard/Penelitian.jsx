@@ -13,6 +13,7 @@ const Penelitian = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     fetchPenelitian();
@@ -21,7 +22,19 @@ const Penelitian = () => {
 
   const fetchPenelitian = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/penelitian");
+      let url = "http://localhost:5000/penelitian";
+
+      if (user?.role === "user") {
+        url = `http://localhost:5000/penelitian?userId=${user.id}`;
+      }
+
+      const token = localStorage.getItem('token');
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       setPenelitianList(response.data);
     } catch (error) {
       console.error("Error fetching penelitian:", error);

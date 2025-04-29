@@ -41,8 +41,9 @@ const TambahPengabdian = () => {
         formData.append("tahun", tahun);
         formData.append("file_kegiatan", file_kegiatan);
 
+        const token = localStorage.getItem('token');
         axios.post("http://localhost:5000/pengabdian", formData, {
-            headers: { "Content-Type": "multipart/form-data" }
+            headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` }
         }).then(response => {
             console.log(response.data);
             navigate("/admin/dashboard/pengabdian");
@@ -63,7 +64,7 @@ const TambahPengabdian = () => {
 
             <Card className="shadow border-0">
                 <Card.Header>
-                <h5 className="fw-semibold mb-0">Tambah Pengabdian </h5>
+                    <h5 className="fw-semibold mb-0">Tambah Pengabdian </h5>
                 </Card.Header>
                 <Card.Body className="p-4">
                     {msg && (

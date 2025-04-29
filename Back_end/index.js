@@ -19,6 +19,7 @@ import Prestasi from "./routes/prestasi.js";
 import KerjaPraktik from "./routes/kerjaprakti.js";
 import TugasAkhir from "./routes/tga.js";
 import Pmm from "./routes/pmm.js";
+import Pengajaran from "./routes/pengajaran.js";
 
 dotenv.config();
 
@@ -61,6 +62,7 @@ app.use(Rps);
 app.use(KontrakKuliah);
 app.use(Penelitian);
 app.use(Pengabdian);
+app.use(Pengajaran);
 app.use(Msib);
 app.use(MagangMandiri);
 app.use(Prestasi);

@@ -4,9 +4,19 @@ import upload from "../middleware/upload.js";
 
 export const getPengabdian = async (req, res) => {
   try {
-    const pengabdian = await Pengabdian.findAll({
-      attributes: ['id', 'judul_pengabdian', 'nama_dosen', 'mitra', 'bentuk_kegiatan', 'lokasi', 'tahun', 'file_kegiatan']
-    });
+    const { role, id } = req.user;
+
+    let pengabdian;
+    if (role === 'admin') {
+      pengabdian = await Pengabdian.findAll({
+        attributes: ['id', 'judul_pengabdian', 'nama_dosen', 'mitra', 'bentuk_kegiatan', 'lokasi', 'tahun', 'file_kegiatan']
+      });
+    } else if (role === 'user') {
+      pengabdian = await Pengabdian.findAll({
+        attributes: ['id', 'judul_pengabdian', 'nama_dosen', 'mitra', 'bentuk_kegiatan', 'lokasi', 'tahun', 'file_kegiatan'],
+        where: { userId: id }
+      });
+    }
     res.json(pengabdian);
   } catch (error) {
     console.log(error);
@@ -16,6 +26,8 @@ export const getPengabdian = async (req, res) => {
 
 export const getPengabdianById = async (req, res) => {
   try {
+    const { role, id } = req.user;
+
     const pengabdian = await Pengabdian.findOne({
       attributes: ['id', 'judul_pengabdian', 'nama_dosen', 'mitra', 'bentuk_kegiatan', 'lokasi', 'tahun', 'file_kegiatan'],
       where: { id: req.params.id }
@@ -24,6 +36,10 @@ export const getPengabdianById = async (req, res) => {
     if (!pengabdian) {
       return res.status(404).json({ msg: "Data tidak ditemukan" });
     }
+
+    if (role === 'user' && absensi.userId !== id) {
+      return res.status(403).json({ msg: "Akses ditolak" });
+  }
 
     res.status(200).json(pengabdian);
   } catch (error) {
@@ -42,6 +58,7 @@ export const createPengabdian = async (req, res) => {
     const file_kegiatan = req.file.filename;
 
     await Pengabdian.create({
+      userId: req.user.id,
       judul_pengabdian,
       nama_dosen,
       mitra,

@@ -12,14 +12,28 @@ const KontrakKuliah = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const user = JSON.parse(localStorage.getItem('user'));
 
+    
     useEffect(() => {
         fetchKontrakKuliah();
     }, []);
 
     const fetchKontrakKuliah = async () => {
         try {
-            const response = await axios.get("http://localhost:5000/kontrak_kuliah");
+            let url = "http://localhost:5000/kontrak_kuliah";
+
+            if (user?.role === "user") {
+                url = `http://localhost:5000/kontrak_kuliah?userId=${user.id}`;
+            }
+
+            const token = localStorage.getItem('token');
+
+            const response = await axios.get(url, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             setKontrakKuliahList(response.data);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -28,7 +42,7 @@ const KontrakKuliah = () => {
 
     const handleSuccess = (message) => {
         setSuccessMessage(message);
-        setTimeout(() => setSuccessMessage(""), 5000); 
+        setTimeout(() => setSuccessMessage(""), 5000);
     };
 
     const deleteKontrakKuliah = async (id) => {

@@ -5,9 +5,20 @@ import upload from "../middleware/upload.js";
 
 export const getPenelitian = async (req, res) => {
     try {
-        const penelitian = await Penelitian.findAll({
+        const { role, id } = req.user;
+
+        let penelitian;
+        if (role === 'admin') {
+             penelitian = await Penelitian.findAll({
             attributes: ['id', 'judul_penelitian', 'nama_dosen',  'ketua_tim', 'anggota_tim',  'file_laporan']
         });
+    } else if (role === 'user') {
+        penelitian = await Penelitian.findAll({
+            attributes: ['id', 'judul_penelitian', 'nama_dosen',  'ketua_tim', 'anggota_tim',  'file_laporan'],
+            where: { userId: id }
+        });
+    }
+
         res.json(penelitian);
     } catch (error) {
         console.log(error);
@@ -16,6 +27,7 @@ export const getPenelitian = async (req, res) => {
 
 export const getPenelitianById = async (req, res) => {
     try {
+        const { role, id } = req.user;
         const penelitian = await Penelitian.findOne({
             attributes: ['id', 'judul_penelitian', 'nama_dosen',  'ketua_tim', 'anggota_tim', 'file_laporan'],
             where: {
@@ -25,6 +37,9 @@ export const getPenelitianById = async (req, res) => {
 
         if (!penelitian) {
             return res.status(404).json({ msg: "Data tidak ditemukan" });
+        }
+        if (role === 'user' && absensi.userId !== id) {
+            return res.status(403).json({ msg: "Akses ditolak" });
         }
 
         res.status(200).json(penelitian);
@@ -43,6 +58,7 @@ export const createPenelitian = async (req, res) => {
       const file_laporan = req.file.filename; 
   
       await Penelitian.create({
+        userId: req.user.id,
         judul_penelitian,
         nama_dosen,
         ketua_tim,

@@ -10,7 +10,10 @@ const Penelitian = db.define('penelitian', {
         primaryKey: true,
         autoIncrement: true
     },
-
+    userId: { 
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
     judul_penelitian: {
         type: DataTypes.STRING,
         allowNull: false,

@@ -15,6 +15,8 @@ const BahanAjar = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  
+  const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     fetchBahanAjar();
@@ -25,7 +27,19 @@ const BahanAjar = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("http://localhost:5000/bahan_ajar");
+      let url = "http://localhost:5000/bahan_ajar";
+  
+      if (user?.role === "user") {
+        url = `http://localhost:5000/bahan_ajar?userId=${user.id}`;
+      }
+  
+      const token = localStorage.getItem('token'); 
+  
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
+      });
       setBahanAjarList(response.data);
     } catch (error) {
       setError("Gagal memuat data bahan ajar.");

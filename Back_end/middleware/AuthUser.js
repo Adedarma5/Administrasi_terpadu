@@ -6,7 +6,7 @@ export const verifyUser = async (req, res, next) => {
 
         const user = await Users.findOne({
             where: {
-                nip: req.user?.nip  
+                id: req.user?.id  
             }
         });
 
@@ -30,7 +30,7 @@ export const adminOnly = async (req, res, next) => {
     try {
         const user = await Users.findOne({
             where: {
-                nip: req.user?.nip  
+                id: req.user?.id  
             }
         });
 
