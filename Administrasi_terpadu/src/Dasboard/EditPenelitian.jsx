@@ -16,7 +16,6 @@
 
         useEffect(() => {
             getDosenList();
-            getPenelitianById();
         }, []);
 
         const getDosenList = async () => {
@@ -28,20 +27,7 @@
             }
         };
 
-        const getPenelitianById = async () => {
-            try {
-                const response = await axios.get(`http://localhost:5000/penelitian/${id}`);
 
-                const penelitian = response.data;
-                setJudulPenelitian(penelitian.judul_penelitian);
-                setNamaDosen(penelitian.nama_dosen);
-                setKetuaTim(penelitian.ketua_tim);
-                setAnggotaTim(penelitian.anggota_tim);
-            } catch (error) {
-                console.error("Gagal mengambil data bahan ajar:", error);
-                setMsg("Terjadi kesalahan saat mengambil data bahan ajar.");
-            }
-        };
 
         const handleFileChange = (e) => {
             setFileLaporan(e.target.files[0]);

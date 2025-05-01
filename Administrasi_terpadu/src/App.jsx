@@ -58,6 +58,8 @@ import TambahAlumni from './Kema/TambahAlumni.jsx';
 import EditAbsensi from './Dasboard/EditAbsensi.jsx';
 import EditUserDosen from './Dasboard/EditUserDosen.jsx';
 import EditPengajaran from './Dasboard/EditPengajaran.jsx';
+import Kemahasiswaan from './Pages/Kemahasiswaan.jsx';
+import TenagaPengajar from './Pages/TenagaPengajar.jsx';
 
 
 function App() {
@@ -79,6 +81,8 @@ function App() {
         <Route path='/Berita' Component={Berita} />
         <Route path='/Kema' Component={Kema} />
         <Route path='/About' Component={About} />
+        <Route path='/Kemahasiswaan' Component={Kemahasiswaan} />
+        <Route path='/TenagaPengajar' Component={TenagaPengajar} />
         <Route path='/admin' Component={LayoutAdmin}>
           <Route path='dashboard' Component={AdminDashboard} />
           <Route path='dashboard/KontrakKuliah' Component={KontrakKuliah} />

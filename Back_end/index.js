@@ -20,6 +20,7 @@ import KerjaPraktik from "./routes/kerjaprakti.js";
 import TugasAkhir from "./routes/tga.js";
 import Pmm from "./routes/pmm.js";
 import Pengajaran from "./routes/pengajaran.js";
+import { getKegiatanMahasiswaStats, getStats } from './controllers/datakegiatanmahasiswa.js';
 
 dotenv.config();
 
@@ -45,12 +46,15 @@ try {
 app.use(cors({ credentials: true, origin: "http://localhost:5173" }))
 app.use(cookieParser());
 app.use(express.json());
+app.get('/api/statistik', getStats);
+app.get('/api/kegiatan-mahasiswa/statistik', getKegiatanMahasiswaStats);
 app.use("/uploads/bahan_ajar", express.static("uploads/bahan_ajar"));
 app.use("/uploads/absensi", express.static("uploads/absensi"));
 app.use("/uploads/rps", express.static("uploads/rps"));
 app.use("/uploads/kontrak_kuliah", express.static("uploads/kontrak_kuliah"));
 app.use("/uploads/penelitian", express.static("uploads/penelitian"));
 app.use("/uploads/pengabdian", express.static("uploads/pengabdian"));
+app.use("/uploads/pengajaran", express.static("uploads/pengajaran"));
 app.use("/uploads/kegiatan_mahasiswa", express.static("uploads/kegiatan_mahasiswa"));
 app.use(router);
 app.use(AuthRoute);

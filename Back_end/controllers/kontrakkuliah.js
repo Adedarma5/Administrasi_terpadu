@@ -5,19 +5,11 @@ import upload from "../middleware/upload.js";
 
 export const getKontrakKuliah = async (req, res) => {
     try {
-        const  { role, id } = req.user;
-
-        let kontrak_kuliah;
-        if (role === 'admin') {
+        const  
         kontrak_kuliah = await KontrakKuliah.findAll({
             attributes: ['id', 'nama_dosen', 'mata_kuliah', 'semester',  'file_kontrak_kuliah']
         });
-    } else if (role === 'user') {
-        kontrak_kuliah = await KontrakKuliah.findAll({
-            attributes: ['id', 'nama_dosen', 'mata_kuliah', 'semester',  'file_kontrak_kuliah'],
-            where: { userId: id }
-        });
-    }
+
         res.json(kontrak_kuliah);
     } catch (error) {
         console.log(error);

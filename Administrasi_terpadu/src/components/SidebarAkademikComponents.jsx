@@ -10,14 +10,20 @@ import {
     FaUniversity,
     FaStore,
     FaUserGraduate,
-    FaTachometerAlt
+    FaTachometerAlt,
+    FaSignOutAlt
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AkademikDashboard from "../Kema/AkademikDashboard";
 
 const SidebarAkademikComponents = ({ children }) => {
+    const navigate = useNavigate();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [showOffcanvas, setShowOffcanvas] = useState(false);
+
+    const handleNavigate = () => {
+        navigate("/kema");
+    };
 
     const menuItems = [
         { icon: <FaGraduationCap />, title: "MSIB", path: "/akademik/dashboard/Msib/TambahMsib" },
@@ -30,7 +36,18 @@ const SidebarAkademikComponents = ({ children }) => {
         { icon: <FaUserGraduate />, title: "Alumni", path: "/akademik/dashboard/Alumni/TambahAlumni" }
     ];
 
-    
+
+    const colors = {
+        primary: "#212529",
+        secondary: "#f3f4f6",
+        accent: "#0d6efd",
+        activeMenu: "rgba(255, 255, 255, 0.2)",
+        text: "#ffffff",
+        textDark: "#1f2937",
+        menuHover: "rgba(255, 255, 255, 0.1)",
+        border: "rgba(255, 255, 255, 0.15)",
+    };
+
 
     return (
         <Container fluid className="p-0">
@@ -108,9 +125,25 @@ const SidebarAkademikComponents = ({ children }) => {
                                 </span>
                                 {!isCollapsed && <span>{item.title}</span>}
                             </Nav.Link>
+
                         ))}
                     </div>
+
+                    <div className="p-3 mt-auto" style={{ borderTop: `1px solid ${colors.border}` }}>
+                        <Button
+                            variant="danger"
+                            className="w-100 d-flex align-items-center justify-content-center py-2 "
+                            style={{ borderRadius: '6px', fontSize: '14px' }}
+                            onClick={handleNavigate}
+                        >
+                            <FaSignOutAlt className={isCollapsed ? "" : "me-2"} size={16} />
+                            {!isCollapsed && <span>Kembali</span>}
+                        </Button>
+                    </div>
                 </Col>
+
+
+
 
                 <div className="d-md-none w-100 fixed-top" style={{ zIndex: 1040 }}>
                     <div className="d-flex justify-content-between align-items-center p-2 bg-white">
@@ -122,8 +155,8 @@ const SidebarAkademikComponents = ({ children }) => {
                                 className="me-2"
                             />
                             <div className="d-flex flex-column">
-                                <span className="fw-bold" style={{ fontSize: '16px', lineHeight: '1' }}>universitas</span>
-                                <span className="fw-bold" style={{ fontSize: '18px', lineHeight: '1' }}>MALIKUSSALEH</span>
+                                <span className="fw-bold" style={{ fontSize: '16px', lineHeight: '1' }}>SATU</span>
+                                <span className="fw-bold" style={{ fontSize: '18px', lineHeight: '1' }}>AKADEMIK</span>
                             </div>
                         </div>
 
@@ -159,9 +192,19 @@ const SidebarAkademikComponents = ({ children }) => {
                                     <span className="me-3">{item.icon}</span> {item.title}
                                 </Nav.Link>
                             ))}
+                                <Button
+                                    onClick={handleNavigate}
+                                    className="py-3 px-4 d-flex align-items-center w-100 text-start rounded-0 border-bottom"
+                                    style={{ borderColor: '#e5e7eb', color: "#dc3545", backgroundColor: "transparent" }}
+                                >
+                                    <FaSignOutAlt className="me-3" size={16} /> Kembali
+                                </Button>
+                            
                         </Nav>
                     </Offcanvas.Body>
                 </Offcanvas>
+
+
 
                 <Col
                     className={`min-vh-100 ${window.innerWidth < 768 ? 'p-0' : 'ps-0 pe-3'}`}

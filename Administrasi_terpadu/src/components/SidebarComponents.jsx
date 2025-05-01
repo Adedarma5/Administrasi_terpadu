@@ -458,26 +458,12 @@ const SidebarComponents = ({ children }) => {
                 className="me-2"
               />
               <div className="d-flex flex-column">
-                <span style={{ fontSize: '14px', lineHeight: '1', color: colors.textDark }}>universitas</span>
-                <span className="fw-bold" style={{ fontSize: '16px', lineHeight: '1', color: colors.primary }}>MALIKUSSALEH</span>
+                <span style={{ fontSize: '14px', lineHeight: '1', color: colors.textDark }}>SATU</span>
+                <span className="fw-bold" style={{ fontSize: '16px', lineHeight: '1', color: colors.primary }}>AKADEMIK</span>
               </div>
             </div>
 
             <div className="d-flex align-items-center">
-              <div
-                className="d-flex justify-content-center align-items-center me-3"
-                style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '50%',
-                  backgroundColor: colors.accent,
-                  color: colors.text,
-                  fontSize: '12px',
-                  fontWeight: 'bold'
-                }}
-              >
-                <span>BLU</span>
-              </div>
 
               <Button
                 variant="light"

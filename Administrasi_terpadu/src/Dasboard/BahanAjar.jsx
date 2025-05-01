@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Container, Card, Table, Button, Row, Col, Form, InputGroup, Spinner, Alert } from "react-bootstrap";
-import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiEye } from "react-icons/fi";
+import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiEye, FiBookOpen, FiFile } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { Modal } from "react-bootstrap";
 
 const BahanAjar = () => {
   const navigate = useNavigate();
@@ -11,12 +12,15 @@ const BahanAjar = () => {
   const [matakuliahList, setMataKuliahList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedmatakuliah, setSelectedMataKuliah] = useState("");
+  const [selectedDetail, setSelectedDetail] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  
   const user = JSON.parse(localStorage.getItem('user'));
+
+  console.log('User from localStorage:', user);
 
   useEffect(() => {
     fetchBahanAjar();
@@ -28,16 +32,12 @@ const BahanAjar = () => {
     setError(null);
     try {
       let url = "http://localhost:5000/bahan_ajar";
-  
-      if (user?.role === "user") {
-        url = `http://localhost:5000/bahan_ajar?userId=${user.id}`;
-      }
-  
-      const token = localStorage.getItem('token'); 
-  
+
+      const token = localStorage.getItem('token');
+
       const response = await axios.get(url, {
         headers: {
-          Authorization: `Bearer ${token}` 
+          Authorization: `Bearer ${token}`
         }
       });
       setBahanAjarList(response.data);
@@ -56,7 +56,6 @@ const BahanAjar = () => {
       console.error("Gagal memuat mata kuliah:", error);
     }
   };
-
 
   const deleteBahanAjar = async (id) => {
     const result = await Swal.fire({
@@ -92,8 +91,19 @@ const BahanAjar = () => {
     }
   };
 
+  const handleShowDetail = (item) => {
+    setSelectedDetail(item);
+    setShowDetailModal(true);
+  };
+
+  const handleCloseDetail = () => {
+    setShowDetailModal(false);
+    setSelectedDetail(null);
+  };
+
+
   const filteredBahanAjar = bahanajarList.filter((bahan_ajar) => {
-    const nameMatch = bahan_ajar.dosen_pengampu?.toLowerCase().includes(searchTerm.toLowerCase());
+    const nameMatch = bahan_ajar.name?.toLowerCase().includes(searchTerm.toLowerCase());
     const matakuliahMatch = selectedmatakuliah === "" || bahan_ajar.name?.toString() === selectedmatakuliah;
     return nameMatch && matakuliahMatch;
   });
@@ -113,7 +123,7 @@ const BahanAjar = () => {
         <Col xs="auto">
           <Button
             variant="success"
-            className=" shadow d-flex align-items-center gap-2"
+            className="shadow d-flex align-items-center gap-2"
             onClick={() => navigate('/admin/dashboard/BahanAjar/TambahBahanAjar')}
           >
             <FiPlus size={18} />
@@ -125,141 +135,199 @@ const BahanAjar = () => {
       <Card className="shadow border-0">
         <Card.Body className="p-0">
           <div className="p-3 border-bottom">
-          <Row className="align-items-center g-3">
-            <Col md={6} lg={5}>
-              <h5 className="mb-0 fw-semibold">Daftar Bahan Ajar Sistem Informasi</h5>
-            </Col>
-          </Row>
-        </div>
+            <Row className="align-items-center g-3">
+              <Col md={6} lg={5}>
+                <h5 className="mb-0 fw-semibold">Daftar Bahan Ajar Sistem Informasi</h5>
+              </Col>
+            </Row>
+          </div>
 
-        <Card.Header className="bg-white py-3 border-bottom">
-          <div className="d-flex align-items-center flex-wrap gap-3">
-            <div className="ms-auto col-md-6 col-lg-4">
-              <InputGroup size="sm" className="border rounded overflow-hidden">
-                <InputGroup.Text className="bg-white border-0">
-                  <FiSearch size={16} className="text-primary" />
-                </InputGroup.Text>
-                <Form.Control
-                  size="sm"
-                  placeholder="Cari nama Dosen..."
-                  value={searchTerm}
+          <Card.Header className="bg-white py-3 border-bottom">
+            <div className="d-flex align-items-center flex-wrap gap-3">
+              <div className="ms-auto col-md-6 col-lg-4">
+                <InputGroup size="sm" className="border rounded overflow-hidden">
+                  <InputGroup.Text className="bg-white border-0">
+                    <FiSearch size={16} className="text-primary" />
+                  </InputGroup.Text>
+                  <Form.Control
+                    size="sm"
+                    placeholder="Cari nama Mata Kuliah..."
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="border-0 shadow-none py-1"
+                  />
+                </InputGroup>
+              </div>
+
+              <div className="col-md-4 col-lg-3">
+                <Form.Select
+                  value={selectedmatakuliah}
                   onChange={(e) => {
-                    setSearchTerm(e.target.value);
+                    setSelectedMataKuliah(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="border-0 shadow-none py-1"
-                />
-              </InputGroup>
+                  className="shadow-none py-1"
+                >
+                  <option value="">-- Semua Mata Kuliah --</option>
+                  {matakuliahList.map((mata_kuliah) => (
+                    <option key={mata_kuliah.id} value={mata_kuliah.name}>
+                      {mata_kuliah.name}
+                    </option>
+                  ))}
+                </Form.Select>
+              </div>
             </div>
+          </Card.Header>
 
-            <div className="col-md-4 col-lg-3">
-              <Form.Select
-                value={selectedmatakuliah}
-                onChange={(e) => {
-                  setSelectedMataKuliah(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="shadow-none py-1"
-              >
-                <option value="">-- Semua Mata Kuliah --</option>
-                {matakuliahList.map((mata_kuliah) => (
-                  <option key={mata_kuliah.id} value={mata_kuliah.name}>
-                    {mata_kuliah.name}
-                  </option>
-                ))}
-              </Form.Select>
-            </div>
-          </div>
-        </Card.Header>
-
-        <div className="table-responsive">
-          {loading ? (
-            <div className="text-center p-4">
-              <Spinner animation="border" />
-            </div>
-          ) : error ? (
-            <Alert variant="danger" className="text-center">
-              {error}
-            </Alert>
-          ) : (
-            <Table striped bordered hover className="align-middle mb-0 text-center" size="sm">
-              <thead className="bg-light">
-                <tr>
-                  <th>No</th>
-                  <th>Nama Mata Kuliah</th>
-                  <th>Judul Materi</th>
-                  <th>Dosen Pengampu</th>
-                  <th>Pertemuan</th>
-                  <th>File Pendukung</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedBahanAjar.length > 0 ? (
-                  paginatedBahanAjar.map((item, index) => (
-                    <tr key={item.id}>
-                      <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                      <td>{item.name}</td>
-                      <td>{item.judul_materi}</td>
-                      <td>{item.dosen_pengampu}</td>
-                      <td>{item.pertemuan}</td>
-                      <td>
-                        <a
-                          href={`http://localhost:5000/uploads/bahan_ajar/${item.file_pendukung}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Lihat PDF
-                        </a>
-                      </td>
-                      <td>
-                        <div className="d-flex justify-content-center gap-2">
-                          <Button
-                            variant="outline-success"
-                            size="sm"
-                            title="Edit"
-                            onClick={() => navigate(`/admin/dashboard/bahanajar/editbahanajar/${item.id}`)}
+          <div className="table-responsive">
+            {loading ? (
+              <div className="text-center p-4">
+                <Spinner animation="border" />
+              </div>
+            ) : error ? (
+              <Alert variant="danger" className="text-center">
+                {error}
+              </Alert>
+            ) : (
+              <Table striped bordered hover className="align-middle mb-0 text-center" size="sm">
+                <thead className="bg-light">
+                  <tr>
+                    <th>No</th>
+                    <th>Nama Mata Kuliah</th>
+                    <th>Judul Materi</th>
+                    <th>Pertemuan</th>
+                    <th>File Pendukung</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedBahanAjar.length > 0 ? (
+                    paginatedBahanAjar.map((item, index) => (
+                      <tr key={item.id}>
+                        <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                        <td>{item.name}</td>
+                        <td>{item.judul_materi}</td>
+                        <td>{item.pertemuan}</td>
+                        <td>
+                          <a
+                            href={`http://localhost:5000/uploads/bahan_ajar/${item.file_pendukung}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
                           >
-                            <FiEdit2 size={16} />
-                          </Button>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => deleteBahanAjar(item.id)}>
-                            <FiTrash2 size={16} />
-                          </Button>
-                        </div>
+                            Lihat PDF
+                          </a>
+                        </td>
+                        <td>
+                          <div className="d-flex justify-content-center gap-2">
+                            <Button
+                              variant="outline-warning"
+                              size="sm"
+                              title="Lihat Detail"
+                              onClick={() => handleShowDetail(item)}
+                            >
+                              <FiEye size={16} />
+                            </Button>
+                            <Button
+                              variant="outline-success"
+                              size="sm"
+                              title="Edit"
+                              onClick={() => navigate(`/admin/dashboard/bahanajar/editbahanajar/${item.id}`)}
+                            >
+                              <FiEdit2 size={16} />
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => deleteBahanAjar(item.id)}
+                            >
+                              <FiTrash2 size={16} />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="text-center text-muted py-3">
+                        Tidak ada data
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7" className="text-center text-muted py-3">
-                      Tidak ada data
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
-          )}
-        </div>
-      </Card.Body>
+                  )}
+                </tbody>
 
-      <div className="p-3 border-top d-flex justify-content-between align-items-center">
-        <div className="small text-muted">
-          Menampilkan {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
+              </Table>
+            )}
+          </div>
+        </Card.Body>
+
+        <div className="p-3 border-top d-flex justify-content-between align-items-center">
+          <div className="small text-muted">
+            Menampilkan {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
+          </div>
+          <div>
+            <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="mx-4">
+              Sebelumnya
+            </Button>
+            <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+              Selanjutnya
+            </Button>
+          </div>
         </div>
-        <div>
-          <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="mx-4">
-            Sebelumnya
+      </Card>
+
+      <Modal show={showDetailModal} onHide={handleCloseDetail} centered>
+        <Modal.Header closeButton>
+          <Modal.Title className="fw-semibold ">
+             <FiBookOpen className="mx-2" /> 
+             Detail Bahan Ajar
+          </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          {selectedDetail && (
+            <ul className="list-group list-group-flush">
+              <li className="list-group-item">
+                <strong className="text-secondary">Dosen Pengampu:</strong><br />
+                {selectedDetail.dosen_pengampu}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Mata Kuliah:</strong><br />
+                {selectedDetail.name}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Judul Materi:</strong><br />
+                {selectedDetail.judul_materi}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Pertemuan Ke-:</strong> {selectedDetail.pertemuan}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">File Pendukung:</strong><br />
+                <a
+                  href={`http://localhost:5000/uploads/bahan_ajar/${selectedDetail.file_pendukung}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-sm btn-outline-primary mt-2"
+                >
+                <FiFile className="mx-2 mb-1" />
+                   Lihat File PDF
+                </a>
+              </li>
+            </ul>
+          )}
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleCloseDetail}>
+            Tutup
           </Button>
-          <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
-            Selanjutnya
-          </Button>
-        </div>
-      </div>
-    </Card>
-    </Container >
+        </Modal.Footer>
+      </Modal>
+
+    </Container>
   );
 };
 

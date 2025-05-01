@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
             ["lembar_pengesahan", "laporan", "projek",
                 "sertifikat", "pengesahan_prodi", "pengesahan_pembimbing",
                 "nilai_perusahaan", "daftar_hadir", "krs_terakhir", "konversi_nilai",
-                "skripsi", "program_tga", "jurnal_sisfo", "file_pengajaran"].includes(file.fieldname)
+                "skripsi", "program_tga", "jurnal_sisfo"].includes(file.fieldname)
         ) {
             folder += "kegiatan_mahasiswa/";
         } else if (file.fieldname === "file_rps") {
@@ -30,6 +30,8 @@ const storage = multer.diskStorage({
             folder += "penelitian/";
         } else if (file.fieldname === "file_kegiatan") {
             folder += "pengabdian/";
+        } else if (file.fieldname === "file_pengajaran") {
+            folder += "pengajaran/";
         } else {
             folder += "misc/";
         }

@@ -5,7 +5,7 @@ import FooterEnd from '../components/FooterEnd';
 import Footer from '../components/FooterComponents';
 import NavbarComponents from '../components/NavbarComponents';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
 import Alert from 'react-bootstrap/Alert';
@@ -16,6 +16,17 @@ const Login = () => {
   const [msg, setMsg] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decoded = jwtDecode(token);
+      localStorage.setItem("userId", decoded.userId);
+      localStorage.setItem("role", decoded.role);
+      localStorage.setItem("nip", decoded.nip);
+      navigate("/admin/dashboard");
+    }
+  }, [navigate]);
 
   const Auth = async (e) => {
     e.preventDefault();

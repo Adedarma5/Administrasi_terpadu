@@ -12,7 +12,6 @@ const KontrakKuliah = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
-    const user = JSON.parse(localStorage.getItem('user'));
 
     
     useEffect(() => {
@@ -21,24 +20,12 @@ const KontrakKuliah = () => {
 
     const fetchKontrakKuliah = async () => {
         try {
-            let url = "http://localhost:5000/kontrak_kuliah";
-
-            if (user?.role === "user") {
-                url = `http://localhost:5000/kontrak_kuliah?userId=${user.id}`;
-            }
-
-            const token = localStorage.getItem('token');
-
-            const response = await axios.get(url, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            setKontrakKuliahList(response.data);
+          const response = await axios.get("http://localhost:5000/kontrak_kuliah");
+          setKontrakKuliahList(response.data);
         } catch (error) {
-            console.error("Error fetching data:", error);
+          console.error("Error fetching mata kuliah data:", error);
         }
-    };
+      };
 
     const handleSuccess = (message) => {
         setSuccessMessage(message);
@@ -81,7 +68,7 @@ const KontrakKuliah = () => {
     };
 
     const filteredKontrakKuliah = kontrakkuliahList.filter((kontrak_kuliah) => {
-        const nameMatch = kontrak_kuliah.nama_dosen?.toLowerCase().includes(searchTerm.toLowerCase());
+        const nameMatch = kontrak_kuliah.mata_kuliah?.toLowerCase().includes(searchTerm.toLowerCase());
         const semesterMatch = selectedsemester === "" || kontrak_kuliah.semester?.toLowerCase() === `semester ${selectedsemester}`.toLowerCase();
         return nameMatch && semesterMatch;
     });
@@ -132,7 +119,7 @@ const KontrakKuliah = () => {
                                         </InputGroup.Text>
                                         <Form.Control
                                             size="sm"
-                                            placeholder="Cari nama Dosen..."
+                                            placeholder="Cari nama Mata Kuliah..."
                                             value={searchTerm}
                                             onChange={(e) => {
                                                 setSearchTerm(e.target.value);

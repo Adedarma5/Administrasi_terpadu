@@ -127,7 +127,7 @@ const TambahMsib = () => {
                             </Col>
                             <Col md={9}>
                                 <Form.Control
-                                    type="text"
+                                    type="number"
                                     placeholder="Masukkan NIM"
                                     name="nim"
                                     value={formData.nim}
@@ -155,8 +155,8 @@ const TambahMsib = () => {
                             <Col md={9}>
                                 <Form.Control
                                     type="text"
-                                    placeholder="Masukkan judul" n
-                                    ame="judul"
+                                    placeholder="Masukkan judul" 
+                                    name="judul"
                                     value={formData.judul}
                                     onChange={handleChange}
                                     required /></Col>

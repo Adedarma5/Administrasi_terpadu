@@ -13,6 +13,26 @@ export const getMsib = async (req, res) => {
   }
 };
 
+export const getMsibStats = async (req, res) => {
+  try {
+    const data = await Msib.findAll({ attributes: ['program'] });
+
+    const countByProgram = data.reduce((acc, cur) => {
+      acc[cur.program] = (acc[cur.program] || 0) + 1;
+      return acc;
+    }, {});
+
+    const result = Object.entries(countByProgram).map(([program, jumlah]) => ({
+      program,
+      jumlah
+    }));
+
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+};
+
 
 export const getMsibById = async (req, res) => {
   try {

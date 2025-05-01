@@ -1,22 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const TambahRps = () => {
+
+    const [mataKuliahList, setMataKuliahList] = useState([]);
     const [name, setName] = useState("");
     const [semester, setSemester] = useState("");
     const [file_rps, setFileRps] = useState(null);
     const [msg, setMsg] = useState("");
     const navigate = useNavigate();
 
+    useEffect(() => {
+        getMataKuliah();
+    }, []);
+
+    const getMataKuliah = async () => {
+        try {
+            const response = await axios.get("http://localhost:5000/mata_kuliah");
+            setMataKuliahList(response.data);
+        } catch (error) {
+            console.error("Gagal mengambil data mata kuliah:", error);
+        }
+    };
+
     const TambahRps = async (e) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append("name", name);
         formData.append("semester", semester);
-        formData.append("file_rps", file_rps); 
+        formData.append("file_rps", file_rps);
 
         try {
             const response = await axios.post("http://localhost:5000/rps", formData, {
@@ -32,16 +47,16 @@ const TambahRps = () => {
 
     return (
         <Container fluid className="p-4">
-                    <Row className="align-items-center p-4">
-                        <Col>
-                            <h2 className="mb-1 fw-bold text-white">Rencana Pembelajaran Semester</h2>
-                            <p className="text-muted mb-0">Daftar RPS Sistem Informasi</p>
-                        </Col>
-                    </Row>
+            <Row className="align-items-center p-4">
+                <Col>
+                    <h2 className="mb-1 fw-bold text-white">Rencana Pembelajaran Semester</h2>
+                    <p className="text-muted mb-0">Daftar RPS Sistem Informasi</p>
+                </Col>
+            </Row>
 
             <Card className="shadow border-0">
                 <Card.Header className="bg-white">
-                <h5 className="mb-0 fw-semibold">Tambah Rencana Pembelajaran Semester</h5>
+                    <h5 className="mb-0 fw-semibold">Tambah Rencana Pembelajaran Semester</h5>
                 </Card.Header>
                 <Card.Body className="p-4">
                     {msg && <Alert variant="danger" className="mb-4">{msg}</Alert>}
@@ -52,13 +67,14 @@ const TambahRps = () => {
                                 <Form.Label>Nama</Form.Label>
                             </Col>
                             <Col md={8}>
-                                <Form.Control
-                                    type="text"
+                                <Form.Select
                                     value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    placeholder="Masukkan Nama RPS"
-                                    required
-                                />
+                                    onChange={(e) => setName(e.target.value)} required>
+                                    <option value="">-- Pilih Mata Kuliah --</option>
+                                    {mataKuliahList.map((mata_kuliah) => (
+                                        <option key={mata_kuliah.id} value={mata_kuliah.name}>{mata_kuliah.name}</option>
+                                    ))}
+                                </Form.Select>
                             </Col>
                         </Row>
 

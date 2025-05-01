@@ -15,7 +15,7 @@ const router = express.Router();
 router.get('/absensi', verifyToken,  getAbsensi);
 router.get('/absensi/:id',  getAbsensiById);
 router.post('/absensi', upload.single("foto"),verifyToken, createAbsensi);
-router.patch('/absensi/:id', upload.single("foto"), updateAbsensi);
+router.patch('/absensi/:id', upload.single("foto"),verifyToken, updateAbsensi);
 router.delete('/absensi/:id', deleteAbsensi );
 
 export default router;

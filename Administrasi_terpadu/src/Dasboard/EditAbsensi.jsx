@@ -52,8 +52,9 @@ const EditAbsensi = () => {
                 formData.append("foto", foto);
             }
 
+            const token = localStorage.getItem("token"); 
             await axios.patch(`http://localhost:5000/absensi/${id}`, formData, {
-                headers: { "Content-Type": "multipart/form-data" },
+                headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
             });
 
             navigate("/admin/dashboard/absensi");
@@ -139,7 +140,7 @@ const EditAbsensi = () => {
                         </Row>
 
                         <Card.Footer className="bg-white border-0 p-3 d-flex justify-content-end">
-                            <Button variant="secondary" size="sm" className="me-2" onClick={() => navigate("/admin/dashboard/rps")}>
+                            <Button variant="secondary" size="sm" className="me-2" onClick={() => navigate("/admin/dashboard/absensi")}>
                                 Kembali
                             </Button>
                             <Button variant="primary" size="sm" type="submit">

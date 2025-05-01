@@ -11,7 +11,7 @@ import { verifyToken } from "../middleware/verifytoken.js";
 
 const router = express.Router();
 
-router.get('/kontrak_kuliah', verifyToken,  getKontrakKuliah);
+router.get('/kontrak_kuliah',   getKontrakKuliah);
 router.get('/kontrak_kuliah/:id',  getKontrakKuliahById);
 router.post('/kontrak_kuliah', upload.single("file_kontrak_kuliah"), verifyToken, createKontrakKuliah);
 router.patch('/kontrak_kuliah/:id', upload.single("file_kontrak_kuliah"), updateKontrakKuliah);

@@ -130,20 +130,11 @@ const Msib = () => {
                       <td>
                         <div className="d-flex justify-content-center gap-2">
                           <Button
-                            variant="outline-success"
-                            size="sm"
-                            className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
-                            title="Edit"
-                            onClick={() => navigate(`/admin/dashboard/msib/editmsib/${msib.id}`)}
-                          >
-                            <FiEdit2 size={16} />
-                          </Button>
-                          <Button
                             variant="outline-warning"
                             size="sm"
                             className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
                             title="Edit"
-                            onClick={() => navigate(`/admin/dashboard/msib/lihatmsib/${msib.id}`)}
+                            onClick={() => navigate(`/admin/dashboard/msib/${item.id}`)}
                           >
                             <FiEye size={16} />
                           </Button>
@@ -152,7 +143,7 @@ const Msib = () => {
                             size="sm"
                             className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
                             title="Hapus"
-                            onClick={() => deleteMsib(msib.id)}
+                            onClick={() => deleteMsib(item.id)}
                           >
                             <FiTrash2 size={16} />
                           </Button>

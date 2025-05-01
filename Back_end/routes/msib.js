@@ -1,6 +1,7 @@
 import express from "express";
 import { 
-    getMsib, 
+    getMsib,
+    getMsibStats, 
     getMsibById, 
     createMsib, 
     updateMsib, 
@@ -21,6 +22,7 @@ router.post('/msib', upload.fields([
 
 
 router.get('/msib', getMsib);
+router.get("/msib/statistik", getMsibStats);
 
 
 router.get('/msib/:id', getMsibById);

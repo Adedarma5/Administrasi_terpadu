@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { Container, Card, Table, Button, Row, Col, Form, InputGroup } from "react-bootstrap";
-import { FiPlus, FiSearch, FiFilter, FiEdit2, FiTrash2,  } from "react-icons/fi";
+import { Container, Card, Table, Button, Row, Col, Form, InputGroup, Modal } from "react-bootstrap";
+import { FiPlus, FiSearch, FiFilter, FiEdit2, FiTrash2, FiBookOpen, FiEye, FiFile } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -11,6 +11,8 @@ const Pengabdian = () => {
   const [selectedDosen, setSelectedDosen] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedDetail, setSelectedDetail] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const itemsPerPage = 10;
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
@@ -82,6 +84,16 @@ const Pengabdian = () => {
         });
       }
     }
+  };
+
+  const handleShowDetail = (pengabdian) => {
+    setSelectedDetail(pengabdian);
+    setShowDetailModal(true);
+  };
+
+  const handleCloseDetail = () => {
+    setShowDetailModal(false);
+    setSelectedDetail(null);
   };
 
   const filteredPengabdian = pengabdianList.filter((pengabdian) => {
@@ -202,6 +214,14 @@ const Pengabdian = () => {
                           <td>
                             <div className="d-flex justify-content-center gap-2">
                               <Button
+                                variant="outline-warning"
+                                size="sm"
+                                title="Lihat Detail"
+                                onClick={() => handleShowDetail(pengabdian)}
+                              >
+                                <FiEye size={16} />
+                              </Button>
+                              <Button
                                 variant="outline-success"
                                 size="sm"
                                 onClick={() => navigate(`/admin/dashboard/pengabdian/editpengabdian/${pengabdian.id}`)}
@@ -262,6 +282,64 @@ const Pengabdian = () => {
           </Card>
         </Card.Body>
       </Card>
+
+      <Modal show={showDetailModal} onHide={handleCloseDetail} centered>
+        <Modal.Header closeButton>
+          <Modal.Title className="fw-semibold ">
+            <FiBookOpen className="mx-2" />
+            Detail Pengabdian
+          </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          {selectedDetail && (
+            <ul className="list-group list-group-flush">
+              <li className="list-group-item">
+                <strong className="text-secondary">Judul Pengabdian:</strong><br />
+                {selectedDetail.judul_pengabdian}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Nama Dosen:</strong><br />
+                {selectedDetail.nama_dosen}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Mitra:</strong><br />
+                {selectedDetail.mitra}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Bentuk Kegiatana:</strong> <br />
+                {selectedDetail.bentuk_kegiatan}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Lokasi:</strong> <br />
+                {selectedDetail.lokasi}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Tahun:</strong> <br />
+                {selectedDetail.tahun}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">File Kegiatan:</strong><br />
+                <a
+                  href={`http://localhost:5000/uploads/pengabdian/${selectedDetail.file_kegiatan}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-sm btn-outline-primary mt-2"
+                >
+                  <FiFile className="mx-2 mb-1" />
+                  Lihat File PDF
+                </a>
+              </li>
+            </ul>
+          )}
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleCloseDetail}>
+            Tutup
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

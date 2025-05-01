@@ -17,8 +17,9 @@ const EditKontrakKuliah = () => {
   useEffect(() => {
     getDosen();
     getMataKuliah();
-    getKontrakKuliahById();
   }, []);
+
+
 
   const getDosen = async () => {
     const response = await axios.get("http://localhost:5000/dosen");
@@ -30,17 +31,7 @@ const EditKontrakKuliah = () => {
     setMataKuliahList(response.data);
   };
 
-  const getKontrakKuliahById = async () => {
-    try {
-      const response = await axios.get(`http://localhost:5000/kontrak_kuliah/${id}`);
-      const data = response.data;
-      setNamaDosen(data.nama_dosen);
-      setMataKuliah(data.mata_kuliah);
-      setSemester(data.semester);
-    } catch (error) {
-      setMsg("Gagal memuat data kontrak kuliah.");
-    }
-  };
+ 
 
   const updateKontrakKuliah = async (e) => {
     e.preventDefault();

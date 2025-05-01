@@ -5,43 +5,27 @@ import upload from "../middleware/upload.js";
 
 export const getBahanAjar = async (req, res) => {
     try {
-        const { role, id } = req.user;
-
-        let bahan_ajar;
-        if (role === 'admin') {
+        const
             bahan_ajar = await BahanAjar.findAll({
                 attributes: ['id', 'name', 'judul_materi', 'dosen_pengampu', 'pertemuan', 'file_pendukung']
             });
-        } else if (role === 'user') {
-            bahan_ajar = await BahanAjar.findAll({
-                attributes: ['id', 'name', 'judul_materi', 'dosen_pengampu', 'pertemuan', 'file_pendukung'],
-                where: { userId: id }
-            });
-        }
 
         res.json(bahan_ajar);
     } catch (error) {
         console.log(error);
+        res.status(500).json({ msg: "Gagal memuat data bahan ajar." });
     }
 }
 
 export const getBahanAjarById = async (req, res) => {
     try {
-        const { role, id } = req.user;
-
         const bahan_ajar = await BahanAjar.findOne({
             attributes: ['id', 'name', 'judul_materi', 'dosen_pengampu', 'pertemuan', 'file_pendukung'],
-            where: {
-                id: req.params.id
-            }
+            where: { id: req.params.id }
         });
 
         if (!bahan_ajar) {
             return res.status(404).json({ msg: "Bahan Ajar tidak ditemukan" });
-        }
-
-        if (role === 'user' && bahan_ajar.userId !== id) {
-            return res.status(403).json({ msg: "Akses ditolak" });
         }
 
         res.status(200).json(bahan_ajar);

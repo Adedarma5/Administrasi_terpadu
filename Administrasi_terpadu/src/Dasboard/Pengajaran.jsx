@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Container, Card, Table, Button, Row, Col, Form, InputGroup, Spinner, Alert } from "react-bootstrap";
-import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiEye, FiFilter } from "react-icons/fi";
+import { Container, Card, Table, Button, Row, Col, Form, InputGroup, Modal } from "react-bootstrap";
+import { FiPlus, FiSearch, FiFilter, FiEdit2, FiTrash2, FiBookOpen, FiEye, FiFile } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -12,6 +12,8 @@ const Pengajaran = () => {
   const [matakuliahList, setMataKuliahList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedmatakuliah, setSelectedMataKuliah] = useState("");
+  const [selectedDetail, setSelectedDetail] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -91,7 +93,7 @@ const Pengajaran = () => {
     if (result.isConfirmed) {
       try {
         await axios.delete(`http://localhost:5000/pengajaran/${id}`);
-        fetchAbsensi();
+        fetchPengajaran();
         Swal.fire({
           icon: 'success',
           title: 'Berhasil!',
@@ -110,6 +112,15 @@ const Pengajaran = () => {
     }
   };
 
+  const handleShowDetail = (item) => {
+    setSelectedDetail(item);
+    setShowDetailModal(true);
+  };
+
+  const handleCloseDetail = () => {
+    setShowDetailModal(false);
+    setSelectedDetail(null);
+  };
 
   const filteredPengajaran = pengajaranList.filter((pengajaran) => {
     const nameMatch = pengajaran.nama_dosen?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -224,15 +235,24 @@ const Pengajaran = () => {
                           <td>{item.institusi_praktisi}</td>
                           <td>
                             <a
-                              href={`http://localhost:5000/uploads/kegiatan_mahasiswa/${item.file_pengajaran}`}
+                              href={`http://localhost:5000/uploads/pengajaran/${item.file_pengajaran}`}
                               target="_blank"
                               rel="noopener noreferrer"
+                              
                             >
-                              Lihat File
+                              Lihat PDF
                             </a>
                           </td>
                           <td>
                             <div className="d-flex justify-content-center gap-2">
+                              <Button
+                                variant="outline-warning"
+                                size="sm"
+                                title="Lihat Detail"
+                                onClick={() => handleShowDetail(item)}
+                              >
+                                <FiEye size={16} />
+                              </Button>
                               <Button
                                 variant="outline-success"
                                 size="sm"
@@ -282,6 +302,72 @@ const Pengajaran = () => {
           </Card>
         </Card.Body>
       </Card>
+
+      <Modal show={showDetailModal} onHide={handleCloseDetail} centered>
+        <Modal.Header closeButton>
+          <Modal.Title className="fw-semibold ">
+            <FiBookOpen className="mx-2" />
+            Detail Pengajaran
+          </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          {selectedDetail && (
+            <ul className="list-group list-group-flush">
+              <li className="list-group-item">
+                <strong className="text-secondary">Nama Dosen:</strong><br />
+                {selectedDetail.nama_dosen}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Mata Kuliah:</strong><br />
+                {selectedDetail.mata_kuliah}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Semester:</strong><br />
+                {selectedDetail.semester}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Kelas:</strong> <br />
+                {selectedDetail.kelas}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Metode Pengajaran:</strong> <br />
+                {selectedDetail.metode_pengajaran}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Keterlibatan Praktisi:</strong> <br />
+                {selectedDetail.keterlibatan_praktisi}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Nama Praktisi:</strong> <br />
+                {selectedDetail.nama_praktisi}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Institusi Praktisi:</strong> <br />
+                {selectedDetail.institusi_praktisi}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">File Pengajaran:</strong><br />
+                <a
+                  href={`http://localhost:5000/uploads/pengajaran/${selectedDetail.file_pengajaran}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-sm btn-outline-primary mt-2"
+                >
+                  <FiFile className="mx-2 mb-1" />
+                  Lihat File PDF
+                </a>
+              </li>
+            </ul>
+          )}
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleCloseDetail}>
+            Tutup
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

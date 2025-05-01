@@ -50,7 +50,7 @@ const EditRps = () => {
     }
   };
 
-  const semesters = [...Array(17)].map((_, i) => ({
+  const semesters = [...Array(9)].map((_, i) => ({
     semester: `Semester ${i + 0}`
   }));
 

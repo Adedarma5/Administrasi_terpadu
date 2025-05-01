@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Container, Card, Table, Button, Row, Col, Form, } from "react-bootstrap";
-import { FiPlus, FiFilter, FiEdit2, FiTrash2 } from "react-icons/fi";
+import { Container, Card, Table, Button, Row, Col, Form, InputGroup } from "react-bootstrap";
+import { FiPlus, FiFilter, FiEdit2, FiTrash2, FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"
 
@@ -10,6 +10,7 @@ const Rps = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedsemester, setSelectedSemester] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
     const [role, setRole] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
@@ -48,9 +49,16 @@ const Rps = () => {
 
 
     const filteredRps = rpsList.filter((rps) => {
+        const nameMatch = rps.name.toLowerCase().includes(searchTerm.toLowerCase());
         const semesterMatch = selectedsemester === "" || rps.semester.toLowerCase() === `semester ${selectedsemester}`.toLowerCase();
-        return semesterMatch;
-    });
+        return nameMatch && semesterMatch;
+    })
+        .sort((a, b) => {
+            const semesterA = parseInt(a.semester.replace(/\D/g, '')) || 0;
+            const semesterB = parseInt(b.semester.replace(/\D/g, '')) || 0;
+            return semesterA - semesterB;
+        });
+
 
     const totalItems = filteredRps.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -81,14 +89,32 @@ const Rps = () => {
                     <div className="p-3 border-bottom">
                         <Row className="align-items-center g-3">
                             <Col md={6} lg={4}>
-                                <h5 className="mb-0 fw-semibold">Daftar Mata Kuliah Sistem Informasi</h5>
+                                <h5 className="mb-0 fw-semibold">Daftar RPS Sistem Informasi</h5>
                             </Col>
                         </Row>
                     </div>
 
                     <Card.Header className="bg-white py-3 border-bottom">
                         <div className="d-flex  align-items-center flex-wrap gap-3 ">
-                            <div className=" ms-auto col-md-4 col-lg-3">
+                            <div className=" ms-auto col-md-6 col-lg-4">
+                                <InputGroup size="sm" className="border rounded overflow-hidden">
+                                    <InputGroup.Text className="bg-white border-0">
+                                        <FiSearch size={16} className="text-primary" />
+                                    </InputGroup.Text>
+                                    <Form.Control
+                                        size="sm"
+                                        placeholder="Cari nama mata kuliah..."
+                                        value={searchTerm}
+                                        onChange={(e) => {
+                                            setSearchTerm(e.target.value);
+                                            setCurrentPage(1);
+                                        }}
+                                        className="border-0 shadow-none py-1"
+                                    />
+                                </InputGroup>
+                            </div>
+
+                            <div className=" col-md-4 col-lg-3">
                                 <Form.Select
                                     value={selectedsemester}
                                     onChange={(e) => {

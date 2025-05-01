@@ -15,6 +15,8 @@ const EditUserDosen = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const userRole = localStorage.getItem('role');
+    setRole(userRole?.toLowerCase());
     getUserById();
   }, []);
 
@@ -134,7 +136,7 @@ const EditUserDosen = () => {
 
             <Row className="align-items-center mb-3">
               <Col md={3}>
-                <Form.Label>Konfirmasi Password (opsional)</Form.Label>
+                <Form.Label>Konfirmasi Password</Form.Label>
               </Col>
               <Col md={8}>
                 <Form.Control
@@ -146,23 +148,26 @@ const EditUserDosen = () => {
               </Col>
             </Row>
 
-            <Row className="align-items-center mb-4">
-              <Col md={3}>
-                <Form.Label>Role</Form.Label>
-              </Col>
-              <Col md={8}>
-                <Form.Select 
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  required
-                >
-                  <option value="">-- Pilih Role --</option>
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
-                </Form.Select>
-              </Col>
-            </Row>
 
+            {role === "admin" && (
+              <Row className="align-items-center mb-4">
+                <Col md={3}>
+                  <Form.Label>Role</Form.Label>
+                </Col>
+                <Col md={8}>
+                  <Form.Select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    required
+                  >
+                    <option value="">-- Pilih Role --</option>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </Form.Select>
+                </Col>
+              </Row>
+            )}
+            
             <Card.Footer className="bg-white border-0 p-3 d-flex justify-content-end">
               <Button variant="secondary" size="sm" className="me-2" onClick={() => navigate("/admin/dashboard/userdosen")}>
                 Kembali
