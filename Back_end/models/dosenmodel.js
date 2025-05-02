@@ -10,6 +10,10 @@ const Dosen = db.define('dosen', {
         primaryKey: true,
         autoIncrement: true
     },
+    foto_dosen: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     nip: {
         type: DataTypes.STRING,
         allowNull: false,

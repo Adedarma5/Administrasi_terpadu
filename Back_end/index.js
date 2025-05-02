@@ -55,6 +55,7 @@ app.use("/uploads/kontrak_kuliah", express.static("uploads/kontrak_kuliah"));
 app.use("/uploads/penelitian", express.static("uploads/penelitian"));
 app.use("/uploads/pengabdian", express.static("uploads/pengabdian"));
 app.use("/uploads/pengajaran", express.static("uploads/pengajaran"));
+app.use("/uploads/dosen", express.static("uploads/dosen"));
 app.use("/uploads/kegiatan_mahasiswa", express.static("uploads/kegiatan_mahasiswa"));
 app.use(router);
 app.use(AuthRoute);

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Card, Form, Button, Alert, CardHeader } from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Button, Alert, CardHeader, Image } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -11,20 +11,47 @@ const TambahDosen = () => {
   const [Jabatan_struktural, setJabatan_Strukrural] = useState("");
   const [jabatan_fungsional, setJabatan_Fungsional] = useState("");
   const [status, setStatus] = useState("");
+  const [foto, setFoto] = useState(null);
+  const [previewFoto, setPreviewFoto] = useState(null);
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
+
+  const handleFotoChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFoto(selectedFile);
+    
+    if (selectedFile) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewFoto(reader.result);
+      };
+      reader.readAsDataURL(selectedFile);
+    } else {
+      setPreviewFoto(null);
+    }
+  };
 
   const TambahDosen = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/dosen', {
-        nip: nip,
-        name: name,
-        keahlian: keahlian,
-        jabatan_struktural: Jabatan_struktural,
-        jabatan_fungsional: jabatan_fungsional,
-        status: status,
+      const formData = new FormData();
+      formData.append("nip", nip);
+      formData.append("name", name);
+      formData.append("keahlian", keahlian);
+      formData.append("jabatan_struktural", Jabatan_struktural);
+      formData.append("jabatan_fungsional", jabatan_fungsional);
+      formData.append("status", status);
+      
+      if (foto) {
+        formData.append("foto_dosen", foto);
+      }
+
+      await axios.post('http://localhost:5000/dosen', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
+      
       navigate("/admin/dashboard/dosen");
     } catch (error) {
       if (error.response) {
@@ -56,7 +83,7 @@ const TambahDosen = () => {
           <Form onSubmit={TambahDosen}>
             <Row className="align-items-center mb-3">
               <Col md={3}>
-                <Form.Label >NIP </Form.Label>
+                <Form.Label>NIP </Form.Label>
               </Col> :
               <Col md={8}>
                 <Form.Control
@@ -71,7 +98,7 @@ const TambahDosen = () => {
 
             <Row className="align-items-center mb-3">
               <Col md={3}>
-                <Form.Label >Nama </Form.Label>
+                <Form.Label>Nama </Form.Label>
               </Col> :
               <Col md={8}>
                 <Form.Control
@@ -86,7 +113,7 @@ const TambahDosen = () => {
 
             <Row className="align-items-center mb-3">
               <Col md={3}>
-                <Form.Label >Bidang Keahlian </Form.Label>
+                <Form.Label>Bidang Keahlian </Form.Label>
               </Col> :
               <Col md={8}>
                 <Form.Control
@@ -101,11 +128,10 @@ const TambahDosen = () => {
 
             <Row className="align-items-center mb-3">
               <Col md={3}>
-                <Form.Label >Jabatan Struktural </Form.Label>
+                <Form.Label>Jabatan Struktural </Form.Label>
               </Col> :
               <Col md={8}>
                 <Form.Select
-                  type="text"
                   value={Jabatan_struktural}
                   onChange={(e) => setJabatan_Strukrural(e.target.value)}
                 >
@@ -121,11 +147,10 @@ const TambahDosen = () => {
 
             <Row className="align-items-center mb-3">
               <Col md={3}>
-                <Form.Label >Jabatan Fungsional </Form.Label>
+                <Form.Label>Jabatan Fungsional </Form.Label>
               </Col> :
               <Col md={8}>
                 <Form.Select
-                  type="text"
                   value={jabatan_fungsional}
                   onChange={(e) => setJabatan_Fungsional(e.target.value)}
                 >
@@ -141,7 +166,7 @@ const TambahDosen = () => {
 
             <Row className="align-items-center mb-3">
               <Col md={3}>
-                <Form.Label >Status </Form.Label>
+                <Form.Label>Status </Form.Label>
               </Col> :
               <Col md={8}>
                 <Form.Select
@@ -152,6 +177,32 @@ const TambahDosen = () => {
                   <option value="Aktif">Aktif</option>
                   <option value="Cuti">Cuti</option>
                 </Form.Select>
+              </Col>
+            </Row>
+
+            <Row className="align-items-center mb-3">
+              <Col md={3}>
+                <Form.Label>Foto Dosen </Form.Label>
+              </Col> :
+              <Col md={8}>
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFotoChange}
+                />
+                <small className="text-muted">Format: JPG, JPEG, PNG. Maks. 2MB</small>
+                
+                {previewFoto && (
+                  <div className="mt-3">
+                    <p>Preview Foto:</p>
+                    <Image 
+                      src={previewFoto} 
+                      alt="Preview Foto Dosen" 
+                      thumbnail 
+                      style={{ maxHeight: "200px" }} 
+                    />
+                  </div>
+                )}
               </Col>
             </Row>
           </Form>
@@ -169,7 +220,6 @@ const TambahDosen = () => {
 
     </Container>
   );
-
 };
 
-export default TambahDosen;
+export default TambahDosen; 

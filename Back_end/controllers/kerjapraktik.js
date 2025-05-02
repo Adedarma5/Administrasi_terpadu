@@ -5,7 +5,7 @@ import upload from "../middleware/upload.js";
 export const getKerjaPraktik = async (req, res) => {
     try {
         const kerja_praktik = await KerjaPraktik.findAll({
-            attributes: ['id', 'nama', 'nim', 'dosen_pembimbing', 'judul', 'tempat_kp', 'tanggal_mulai', 'tanggal_selesai', 'krs_terakhir', 'pengesahan_prodi', 'pengesahan_pembimbing', 'nilai_perusahaan', 'daftar_hadir', 'laporan', 'Projek'],
+            attributes: ['id', 'nama', 'nim', 'dosen_pembimbing', 'judul', 'tempat_kp', 'tanggal_mulai', 'tanggal_selesai', 'krs_terakhir', 'pengesahan_prodi', 'pengesahan_pembimbing', 'nilai_perusahaan', 'daftar_hadir', 'laporan', 'projek'],
         });
         res.json(kerja_praktik);
     } catch (error) {
@@ -17,7 +17,7 @@ export const getKerjaPraktik = async (req, res) => {
 export const getKerjaPraktikById = async (req, res) => {
     try {
         const kerja_praktik = await KerjaPraktik.findOne({
-            attributes: ['id', 'nama', 'nim', 'dosen_pembimbing', 'judul', 'tempat_kp', 'tanggal_mulai', 'tanggal_selesai', 'krs_terakhir', 'pengesahan_prodi', 'pengesahan_pembimbing', 'nilai_perusahaan', 'daftar_hadir', 'laporan', 'Projek'],
+            attributes: ['id', 'nama', 'nim', 'dosen_pembimbing', 'judul', 'tempat_kp', 'tanggal_mulai', 'tanggal_selesai', 'krs_terakhir', 'pengesahan_prodi', 'pengesahan_pembimbing', 'nilai_perusahaan', 'daftar_hadir', 'laporan', 'projek'],
             where: { id: req.params.id },
         });
 

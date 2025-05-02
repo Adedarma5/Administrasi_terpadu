@@ -105,10 +105,16 @@ const AdminDashboard = () => {
                 <Card className="mt-5 shadow border-0">
                     <Card.Body>
                         <h5 className="fw-semibold text-uppercase mb-3">Statistik Kegiatan Mahasiswa</h5>
-                        <ResponsiveContainer width="65%" height={250}>
-                            <BarChart data={kegiatandata}>
+                        <ResponsiveContainer width="80%" height={300}>
+                            <BarChart data={kegiatandata} margin={{bottom: 63}}>
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="nama" />
+                                <XAxis 
+                                dataKey="nama"
+                                angle={-35}
+                                textAnchor="end"
+                                dy={10}
+                                interval={0}
+                                 />
                                 <YAxis allowDecimals={false} />
                                 <Tooltip />
                                 <Bar dataKey="jumlah" fill="#8884d8" />

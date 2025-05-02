@@ -27,13 +27,20 @@ const Berita = () => {
             description: "Dosen dan mahasiswa aktif melaksanakan kegiatan pengabdian di berbagai desa.",
             image: "/src/assets/konten 1.jpg",
             link: "https://news.unimal.ac.id/"
+        },
+        {
+            id: 4,
+            title: "Pengabdian Masyarakat di Desa Binaan",
+            description: "Dosen dan mahasiswa aktif melaksanakan kegiatan pengabdian di berbagai desa.",
+            image: "/src/assets/foto konten.jpg",
+            link: "https://news.unimal.ac.id/"
         }
     ];
     return (
         <div>
             <NavbarComponents />
             <Container className="my-4">
-                <h2 className="text-center mb-4 fw-bold" style={{ color: 'darkblue' }}>
+                <h2 className="text-center mb-4 fw-bold text-uppercase" style={{ color: 'darkblue' }}>
                     Portal Berita
                 </h2>
                 <Row className="g-4">

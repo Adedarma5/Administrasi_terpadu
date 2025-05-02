@@ -149,7 +149,7 @@ const TambahKerjaPraktik = () => {
                             </Col> :
                             <Col md={8}>
                                 <Form.Control
-                                    type="text"
+                                    type="number"
                                     placeholder="Masukkan Nim"
                                     name="nim"
                                     value={formData.nim}

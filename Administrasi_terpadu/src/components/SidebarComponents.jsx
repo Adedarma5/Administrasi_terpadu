@@ -400,7 +400,7 @@ const SidebarComponents = ({ children }) => {
                         backgroundColor: isActive('/admin/dashboard/Pmm') ? colors.activeMenu : 'transparent',
                       }}
                     >
-                      PMM
+                      Student Mobility
                     </Nav.Link>
                     <Nav.Link
                       as={Link}

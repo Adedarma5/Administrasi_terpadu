@@ -1,20 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { Container, Card, Table, Button, Row, Col, Form, InputGroup, Modal } from "react-bootstrap";
-import { FiPlus, FiSearch, FiFilter, FiEye, FiTrash2 } from "react-icons/fi";
+import { FiPlus, FiSearch, FiFilter, FiEye, FiTrash2, FiFile } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
+import "../Dist/Home.css"
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const KerjaPraktik = () => {
   const navigate = useNavigate();
   const [kerjapraktikList, setKerjaPraktikList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedKerjaPraktik, setSelectedKerjaPraktik] = useState(null);
+  const [selectedDetail, setSelectedDetail] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const itemsPerPage = 10;
+  const printRef = useRef();
 
   useEffect(() => {
     fetchKerjaPraktik();
+
   }, []);
 
   const fetchKerjaPraktik = async () => {
@@ -26,30 +34,130 @@ const KerjaPraktik = () => {
     }
   };
 
-  const deleteMagangMandiri = async (id) => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus Magang Mandiri ini?")) {
-      try {
-        await axios.delete(`http://localhost:5000/kerja_praktik/${id}`);
-        fetchKerjaPraktik();
-      } catch (error) {
-        console.error("Error deleting magang mandiri:", error);
-      }
-    }
-  };
 
   const handleDownload = (filename) => {
     if (!filename) return;
     window.open(`http://localhost:5000/uploads/kegiatan_mahasiswa/${filename}`, "_blank");
   };
 
+  const deleteMagangMandiri = async (id) => {
+    const result = await Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: "Data yang dihapus tidak bisa dikembalikan!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, hapus!',
+      cancelButtonText: 'Batal'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:5000/kerja_praktik/${id}`);
+        fetchKerjaPraktik();
+        Swal.fire({
+          icon: 'success',
+          title: 'Berhasil!',
+          text: 'Data berhasil dihapus.',
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      } catch (error) {
+        console.error("Error deleting:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops!',
+          text: 'Terjadi kesalahan saat menghapus data.',
+        });
+      }
+    }
+  };
+
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: "kerja praktik",
+    onBeforeGetContent: () => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 100);
+      });
+    },
+  });
+
+  const exportToExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("kerja praktik");
+
+    worksheet.addRow([
+      "No", "Nama", "NIM", "Dosen Pembimbing", "Judul", "Tempat KP",
+      "Tanggal Mulai", "Tanggal Selesai",
+      "KRS Terakhir", "Pengesahan Prodi", "Pengesahan Pembimbing", "Nilai Dari Perusahaan", "Daftar Hadir", "Laporan", "Projek"
+    ]);
+
+    const dataWithFiles = filteredKerjaPraktik.filter(kerja_praktik =>
+      kerja_praktik.krs_terakhir || kerja_praktik.pengesahan_prodi || kerja_praktik.pengesahan_pembimbing || kerja_praktik.nilai_perusahaan || kerja_praktik.daftar_hadir || kerja_praktik.daftar_hadir || kerja_praktik.laporan || kerja_praktik.projek
+    );
+
+    dataWithFiles.forEach((kerja_praktik, index) => {
+      const row = worksheet.addRow([
+        index + 1,
+        kerja_praktik.nama,
+        kerja_praktik.nim,
+        kerja_praktik.dosen_pembimbing,
+        kerja_praktik.judul,
+        kerja_praktik.tempat_kp,
+        kerja_praktik.tanggal_mulai?.slice(0, 10),
+        kerja_praktik.tanggal_selesai?.slice(0, 10),
+        kerja_praktik.krs_terakhir ? { text: "Lihat", hyperlink: `http://localhost:5000/uploads/kegiatan_mahasiswa/${kerja_praktik.krs_terakhir}` } : "",
+        kerja_praktik.pengesahan_prodi ? { text: "Lihat", hyperlink: `http://localhost:5000/uploads/kegiatan_mahasiswa/${kerja_praktik.pengesahan_prodi}` } : "",
+        kerja_praktik.pengesahan_pembimbing ? { text: "Lihat", hyperlink: `http://localhost:5000/uploads/kegiatan_mahasiswa/${kerja_praktik.pengesahan_pembimbing}` } : "",
+        kerja_praktik.nilai_perusahaan ? { text: "Lihat", hyperlink: `http://localhost:5000/uploads/kegiatan_mahasiswa/${kerja_praktik.nilai_perusahaan}` } : "",
+        kerja_praktik.daftar_hadir ? { text: "Lihat", hyperlink: `http://localhost:5000/uploads/kegiatan_mahasiswa/${kerja_praktik.daftar_hadir}` } : "",
+        kerja_praktik.laporan ? { text: "Lihat", hyperlink: `http://localhost:5000/uploads/kegiatan_mahasiswa/${kerja_praktik.laporan}` } : "",
+        kerja_praktik.projek ? { text: "Lihat", hyperlink: `http://localhost:5000/uploads/kegiatan_mahasiswa/${kerja_praktik.projek}` } : "",
+      ]);
+
+      for (let i = 9; i <= 13; i++) {
+        if (row.getCell(i).value?.hyperlink) {
+          row.getCell(i).font = { color: { argb: "FF0000FF" }, underline: true };
+        }
+      }
+    });
+
+    worksheet.columns = [
+      { width: 5 },
+      { width: 25 },
+      { width: 15 },
+      { width: 15 },
+      { width: 30 },
+      { width: 25 },
+      { width: 15 },
+      { width: 15 },
+      { width: 20 },
+      { width: 20 },
+      { width: 20 },
+      { width: 20 },
+      { width: 20 }
+    ];
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, "kerja praktik.xlsx");
+  };
+
+
   const handleShowDetail = (kerja_praktik) => {
-    setSelectedKerjaPraktik(kerja_praktik);
+    setSelectedDetail(kerja_praktik);
     setShowDetailModal(true);
   };
 
   const handleCloseDetail = () => {
     setShowDetailModal(false);
-    setSelectedKerjaPraktik(null);
+    setSelectedDetail(null);
   };
 
   const filteredKerjaPraktik = kerjapraktikList.filter((kerja_praktik) => {
@@ -65,28 +173,34 @@ const KerjaPraktik = () => {
 
   return (
     <Container fluid className="p-4">
-      <Card className="mb-4 shadow border-0">
-        <Card.Body className="p-3">
-          <Row className="align-items-center">
-            <Col>
-              <h4 className="fw-bold">Kerja Praktik</h4>
-              <p className="text-muted mb-0 small">Daftar Kerja Praktik Mahasiswa Sistem Informasi</p>
-            </Col>
-            <Col xs="auto">
-              <Button variant="primary" size="sm" className="d-flex align-items-center gap-2">
-                <FiPlus size={16} />
-                <span>Tambah Data</span>
-              </Button>
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
+      <Row className="align-items-center p-4">
+        <Col>
+          <h2 className="fw-bold mb-1 text-white">Kerja Praktik</h2>
+          <p className="text-muted mb-0">Daftar Kerja Praktik Mahasiswa Sistem Informasi</p>
+        </Col>
+      </Row>
+
 
       <Card className="shadow border-0">
-        <Card.Body className="p-2">
+        <Card.Body className="p-0">
           <div className="p-3 border-bottom">
             <Row className="align-items-center g-3">
-              <Col className="ms-auto" md={6} lg={4}>
+              <Col md={6} lg={5}>
+                <h5 className="mb-0 fw-semibold">Daftar Kerja Praktik Mahasiswa Sistem Informasi</h5>
+              </Col>
+            </Row>
+          </div>
+
+
+          <Card.Header className="bg-white py-3 border-bottom">
+            <div className="d-flex align-items-center flex-wrap gap-3">
+              <Button variant="danger" size="sm" onClick={handlePrint}>
+                Cetak Laporan PDF
+              </Button>
+              <Button variant="secondary" size="sm" onClick={exportToExcel} className="ms-2">
+                Ekspor ke Excel
+              </Button>
+              <div className="ms-auto col-lg-4 col-12">
                 <InputGroup>
                   <InputGroup.Text className="bg-light border-end-0">
                     <FiSearch size={16} />
@@ -97,11 +211,15 @@ const KerjaPraktik = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </InputGroup>
-              </Col>
-            </Row>
-          </div>
+              </div>
+            </div>
+          </Card.Header>
 
-          <div className="table-responsive">
+          <div className="table-responsive" ref={printRef}>
+            <div className="print-only">
+              <h4 className="text-uppercase">Magang Mandiri</h4>
+              <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
+            </div>
             <Table striped bordered hover className="text-center small">
               <thead className="bg-light">
                 <tr>
@@ -111,16 +229,16 @@ const KerjaPraktik = () => {
                   <th className="px-5">Dosen Pembimbing</th>
                   <th className="px-5">Judul</th>
                   <th className="px-3">Tempat KP</th>
-                  <th>Tgl Mulai</th>
-                  <th>Tgl Selesai</th>
-                  <th>KRS Terakhir</th>
-                  <th>Pengesahan Prodi</th>
-                  <th>Pengesahan Pembimbing</th>
-                  <th>Nilai Perusahaan</th>
-                  <th>Daftar Hadir</th>
-                  <th>Laporan</th>
-                  <th>projek</th>
-                  <th>Aksi</th>
+                  <th className="px-5">Tgl Mulai</th>
+                  <th className="px-5">Tgl Selesai</th>
+                  <th className="px-3">KRS Terakhir</th>
+                  <th className="px-3">Pengesahan Prodi</th>
+                  <th className="px-3">Pengesahan Pembimbing</th>
+                  <th className="px-3">Nilai Perusahaan</th>
+                  <th className="px-3">Daftar Hadir</th>
+                  <th className="px-3">Laporan</th>
+                  <th className="px-3">projek</th>
+                  <th className="no-print ">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -207,15 +325,14 @@ const KerjaPraktik = () => {
                             size="sm"
                             variant="link"
                             onClick={() => handleDownload(kerja_praktik.projek)}
-                            
                           >
                             Lihat
                           </Button>
                         ) : (
-                          <span className="text-muted">Tidak ada file</span> 
+                          <span>Tidak ada File</span>
                         )}
                       </td>
-                      <td>
+                      <td className="no-print">
                         <div className="d-flex justify-content-center gap-2">
                           <Button
                             variant="outline-warning"
@@ -241,7 +358,7 @@ const KerjaPraktik = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="8" className="text-center py-4">
+                    <td colSpan="16" className="text-center py-4">
                       <div className="d-flex flex-column align-items-center justify-content-center py-4">
                         <FiFilter size={32} className="text-muted mb-2" />
                         <p className="text-muted mb-0">Tidak ada data yang tersedia</p>
@@ -257,9 +374,9 @@ const KerjaPraktik = () => {
             <div className="small text-muted">
               Menampilkan {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
             </div>
-            <div>
+            <div className="mx-4">
               <Button
-                className="mx-2"
+                className="mx-2 mb-2"
                 variant="outline-primary"
                 size="sm"
                 onClick={() => setCurrentPage(currentPage - 1)}
@@ -268,6 +385,7 @@ const KerjaPraktik = () => {
                 Sebelumnya
               </Button>
               <Button
+                className="mx-2 mb-2"
                 variant="outline-primary"
                 size="sm"
                 onClick={() => setCurrentPage(currentPage + 1)}
@@ -280,28 +398,128 @@ const KerjaPraktik = () => {
         </Card.Body>
       </Card>
 
-      <Modal show={showDetailModal} onHide={handleCloseDetail} size="lg">
+      <Modal show={showDetailModal} onHide={handleCloseDetail} centered>
         <Modal.Header closeButton>
           <Modal.Title>Detail Magang Mandiri</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {selectedKerjaPraktik && (
-            <div className="">
-              <p><strong>Nama:</strong> {selectedKerjaPraktik.nama}</p>
-              <p><strong>NIM:</strong> {selectedKerjaPraktik.nim}</p>
-              <p><strong>Dosen Pembimbing:</strong> {selectedKerjaPraktik.dosen_pembimbing}</p>
-              <p><strong>Judul:</strong> {selectedKerjaPraktik.judul}</p>
-              <p><strong>Tempat KP:</strong> {selectedKerjaPraktik.tempat_kp}</p>
-              <p><strong>Tanggal Mulai:</strong> {selectedKerjaPraktik.tanggal_mulai?.slice(0, 10)}</p>
-              <p><strong>Tanggal Selesai:</strong> {selectedKerjaPraktik.tanggal_selesai?.slice(0, 10)}</p>
-              <p><strong>Krs Terakhir:</strong> <Button variant="link" onClick={() => handleDownload(selectedKerjaPraktik.krs_terakhir)}>Lihat</Button></p>
-              <p><strong>Pengesahan Prodi:</strong> <Button variant="link" onClick={() => handleDownload(selectedKerjaPraktik.pengesahan_prodi)}>Lihat</Button></p>
-              <p><strong>Pengesahan Pembimbing:</strong> <Button variant="link" onClick={() => handleDownload(selectedKerjaPraktik.pengesahan_pembimbing)}>Lihat</Button></p>
-              <p><strong>Nilai Dari Perusahaan:</strong> <Button variant="link" onClick={() => handleDownload(selectedKerjaPraktik.nilai_perusahaan)}>Lihat</Button></p>
-              <p><strong>Daftar Hadir Tempat KP:</strong> <Button variant="link" onClick={() => handleDownload(selectedKerjaPraktik.daftar_hadir)}>Lihat</Button></p>
-              <p><strong>Laporan:</strong> <Button variant="link" onClick={() => handleDownload(selectedKerjaPraktik.laporan)}>Lihat</Button></p>
-              <p><strong>Projek:</strong> <Button variant="link" onClick={() => handleDownload(selectedKerjaPraktik.projek)}>Lihat</Button></p>
-            </div>
+          {selectedDetail && (
+            <ul className="list-group list-group-flush" >
+              <li className="list-group-item">
+                <strong className="text-secondary">Nama:</strong><br />
+                {selectedDetail.nama}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Nim:</strong><br />
+                {selectedDetail.nim}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Dosen Pembimbing:</strong><br />
+                {selectedDetail.dosen_pembimbing}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Judul:</strong><br />
+                {selectedDetail.judul}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Tempat KP:</strong><br />
+                {selectedDetail.tempat_kp}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Tanggal Mulai:</strong> <br />
+                {selectedDetail.tanggal_mulai?.slice(0, 10)}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">Tanggal Selesai:</strong> <br />
+                {selectedDetail.tanggal_selesai?.slice(0, 10)}
+              </li>
+              <li className="list-group-item">
+                <strong className="text-secondary">File Pendukung:</strong>
+                <div className="mt-2 d-flex flex-column gap-2">
+
+                  {selectedDetail.krs_terakhir && (
+                    <a
+                      href={`http://localhost:5000/uploads/kegiatan_mahasiswa/${selectedDetail.krs_terakhir}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-outline-primary"
+                    >
+                      <FiFile className="me-2" />
+                      KRS Terakhir
+                    </a>
+                  )}
+                  {selectedDetail.pengesahan_prodi && (
+                    <a
+                      href={`http://localhost:5000/uploads/kegiatan_mahasiswa/${selectedDetail.pengesahan_prodi}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-outline-primary"
+                    >
+                      <FiFile className="me-2" />
+                      Pengesahan Prodi
+                    </a>
+                  )}
+                  {selectedDetail.pengesahan_pembimbing && (
+                    <a
+                      href={`http://localhost:5000/uploads/kegiatan_mahasiswa/${selectedDetail.pengesahan_pembimbing}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-outline-primary"
+                    >
+                      <FiFile className="me-2" />
+                      Pengesahan Pembimbing
+                    </a>
+                  )}
+                  {selectedDetail.nilai_perusahaan && (
+                    <a
+                      href={`http://localhost:5000/uploads/kegiatan_mahasiswa/${selectedDetail.nilai_perusahaan}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-outline-primary"
+                    >
+                      <FiFile className="me-2" />
+                      Nilai Perusahaan
+                    </a>
+                  )}
+                  {selectedDetail.daftar_hadir && (
+                    <a
+                      href={`http://localhost:5000/uploads/kegiatan_mahasiswa/${selectedDetail.daftar_hadir}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-outline-primary"
+                    >
+                      <FiFile className="me-2" />
+                      Daftar Hadir
+                    </a>
+                  )}
+                  {selectedDetail.laporan && (
+                    <a
+                      href={`http://localhost:5000/uploads/kegiatan_mahasiswa/${selectedDetail.laporan}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-outline-primary"
+                    >
+                      <FiFile className="me-2" />
+                      Laporan
+                    </a>
+                  )}
+                  {selectedDetail.projek && (
+                    <a
+                      href={`http://localhost:5000/uploads/kegiatan_mahasiswa/${selectedDetail.projek}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-outline-primary"
+                    >
+                      <FiFile className="me-2" />
+                      Projek
+                    </a>
+                  )}
+                  {!selectedDetail.krs_terakhir && !selectedDetail.pengesahan_prodi && !selectedDetail.pengesahan_pembimbing && !selectedDetail.nilai_perusahaan && !selectedDetail.daftar_hadir && !selectedDetail.laporan && !selectedDetail.projek && (
+                    <span className="text-muted">Tidak ada file</span>
+                  )}
+                </div>
+              </li>
+            </ul>
           )}
         </Modal.Body>
         <Modal.Footer>
