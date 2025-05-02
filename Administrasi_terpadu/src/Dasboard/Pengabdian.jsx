@@ -4,6 +4,11 @@ import { Container, Card, Table, Button, Row, Col, Form, InputGroup, Modal } fro
 import { FiPlus, FiSearch, FiFilter, FiEdit2, FiTrash2, FiBookOpen, FiEye, FiFile } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
+import "../Dist/Home.css"
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const Pengabdian = () => {
   const [pengabdianList, setPengabdianList] = useState([]);
@@ -16,6 +21,7 @@ const Pengabdian = () => {
   const itemsPerPage = 10;
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
+  const printRef = useRef();
 
   useEffect(() => {
     fetchPengabdian();
@@ -86,6 +92,61 @@ const Pengabdian = () => {
     }
   };
 
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: "Pengabdian",
+    onBeforeGetContent: () => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 100);
+      });
+    },
+  });
+
+  const exportToExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Pengabdian");
+
+    worksheet.addRow(["No", "Judul Pengabdian", "Nama Dosen", "Mitra", "Bentuk Kegiatan", "Lokasi", "Tahun", "File Kegiatan"]);
+
+    for (let i = 0; i < filteredPengabdian.length; i++) {
+      const pengabdian = filteredPengabdian[i];
+      worksheet.addRow([]);
+      const row = worksheet.getRow(i + 2);
+
+      row.getCell(1).value = i + 1;
+      row.getCell(2).value = pengabdian.judul_pengabdian;
+      row.getCell(3).value = pengabdian.nama_dosen;
+      row.getCell(4).value = pengabdian.mitra;
+      row.getCell(5).value = pengabdian.bentuk_kegiatan;
+      row.getCell(6).value = pengabdian.lokasi;
+      row.getCell(7).value = pengabdian.tahun;
+
+      const fileUrl = `http://localhost:5000/uploads/pengabdian/${pengabdian.file_kegiatan}`;
+      row.getCell(8).value = {
+        text: "Lihat File",
+        hyperlink: fileUrl,
+      };
+      row.getCell(8).font = { color: { argb: 'FF0000FF' }, underline: true };
+    }
+
+    worksheet.columns = [
+      { width: 5 },
+      { width: 30 },
+      { width: 30 },
+      { width: 55 },
+      { width: 15 },
+      { width: 30 },
+    ];
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, "Pengabdian.xlsx");
+  };
+
   const handleShowDetail = (pengabdian) => {
     setSelectedDetail(pengabdian);
     setShowDetailModal(true);
@@ -137,7 +198,13 @@ const Pengabdian = () => {
           <Card className="shadow-sm border-0 overflow-hidden">
             <Card.Header className="bg-white py-3 border-bottom">
               <div className="d-flex align-items-center flex-wrap gap-3">
-                <div className="ms-auto col-md-6 col-lg-4">
+                <Button variant="danger" size="sm" onClick={handlePrint}>
+                  Cetak Laporan PDF
+                </Button>
+                <Button variant="secondary" size="sm" onClick={exportToExcel} className="ms-2">
+                  Ekspor ke Excel
+                </Button>
+                <div className="ms-auto col-12 col-md-6 col-lg-4">
                   <InputGroup size="sm" className="border rounded overflow-hidden">
                     <InputGroup.Text className="bg-white border-0">
                       <FiSearch size={16} className="text-primary" />
@@ -155,7 +222,7 @@ const Pengabdian = () => {
                   </InputGroup>
                 </div>
 
-                <div className="col-md-4 col-lg-3">
+                <div className="col-12 col-md-4 col-lg-3">
                   <Form.Select
                     value={selectedDosen}
                     onChange={(e) => {
@@ -176,19 +243,23 @@ const Pengabdian = () => {
             </Card.Header>
 
             <Card.Body className="p-0 text-center">
-              <div className="table-responsive">
+              <div className="table-responsive" ref={printRef}>
+                <div className="print-only">
+                  <h4 className="text-uppercase">Pengabdian</h4>
+                  <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
+                </div>
                 <Table striped bordered hover className="align-middle mb-0" size="sm">
                   <thead>
                     <tr className="bg-light">
-                      <th>No</th>
-                      <th>Judul Pengabdian</th>
-                      <th>Nama Dosen</th>
-                      <th>Mitra</th>
-                      <th>Bentuk Kegiatan</th>
-                      <th>Lokasi</th>
-                      <th>Tahun</th>
-                      <th>Bukti Kegiatan</th>
-                      <th>Aksi</th>
+                      <th className="px-2 py-3">No</th>
+                      <th className="px-5 py-3">Judul Pengabdian</th>
+                      <th className="px-5 py-3">Nama Dosen</th>
+                      <th className="px-5 py-3">Mitra</th>
+                      <th className="px-5 py-2">Bentuk Kegiatan</th>
+                      <th className="px-5 py-3">Lokasi</th>
+                      <th className="px-3 py-3">Tahun</th>
+                      <th className="px-3 py-2">Bukti Kegiatan</th>
+                      <th className=" py-3 no-print">Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -211,7 +282,7 @@ const Pengabdian = () => {
                               Lihat PDF
                             </a>
                           </td>
-                          <td>
+                          <td className="no-print">
                             <div className="d-flex justify-content-center gap-2">
                               <Button
                                 variant="outline-warning"
@@ -256,24 +327,25 @@ const Pengabdian = () => {
 
             <div className="p-3 border-top d-flex justify-content-between align-items-center">
               <div className="small text-muted">
-                Menampilkan {filteredPengabdian.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} -{" "}
+                Menampilkan {(currentPage - 1) * itemsPerPage + 1}–
                 {Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
               </div>
-              <div>
+              <div className="mx-3">
                 <Button
                   variant="outline-primary"
                   size="sm"
-                  disabled={currentPage === 1}
                   onClick={() => setCurrentPage(currentPage - 1)}
-                  className="me-2"
+                  disabled={currentPage === 1}
+                  className="mx-2 mb-2"
                 >
                   Sebelumnya
                 </Button>
                 <Button
                   variant="outline-primary"
                   size="sm"
-                  disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="mx-2 mb-2"
                 >
                   Selanjutnya
                 </Button>

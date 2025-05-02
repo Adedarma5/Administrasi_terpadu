@@ -4,6 +4,11 @@ import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiFilter } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
+import "../Dist/Home.css"
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const KontrakKuliah = () => {
     const navigate = useNavigate();
@@ -12,20 +17,21 @@ const KontrakKuliah = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const printRef = useRef();
 
-    
+
     useEffect(() => {
         fetchKontrakKuliah();
     }, []);
 
     const fetchKontrakKuliah = async () => {
         try {
-          const response = await axios.get("http://localhost:5000/kontrak_kuliah");
-          setKontrakKuliahList(response.data);
+            const response = await axios.get("http://localhost:5000/kontrak_kuliah");
+            setKontrakKuliahList(response.data);
         } catch (error) {
-          console.error("Error fetching mata kuliah data:", error);
+            console.error("Error fetching mata kuliah data:", error);
         }
-      };
+    };
 
     const handleSuccess = (message) => {
         setSuccessMessage(message);
@@ -66,6 +72,60 @@ const KontrakKuliah = () => {
             }
         }
     };
+
+    const handlePrint = useReactToPrint({
+        contentRef: printRef,
+        documentTitle: "Kontrak Kuliah",
+        onBeforeGetContent: () => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve();
+                }, 100);
+            });
+        },
+    });
+
+    const exportToExcel = async () => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Kontrak Kuliah");
+
+        worksheet.addRow(["No", "Nama Dosen", "Mata Kuliah ", "Semester", "File Kontrak Kuliah"]);
+
+        for (let i = 0; i < filteredKontrakKuliah.length; i++) {
+            const kontrak_kuliah = filteredKontrakKuliah[i];
+            worksheet.addRow([]);
+            const row = worksheet.getRow(i + 2);
+
+            row.getCell(1).value = i + 1;
+            row.getCell(2).value = kontrak_kuliah.nama_dosen;
+            row.getCell(3).value = kontrak_kuliah.mata_kuliah;
+            row.getCell(4).value = kontrak_kuliah.semester;
+
+            const fileUrl = `http://localhost:5000/uploads/kontrak_kuliah/${kontrak_kuliah.file_kontrak_kuliah}`;
+            row.getCell(5).value = {
+                text: "Lihat File",
+                hyperlink: fileUrl,
+            };
+            row.getCell(5).font = { color: { argb: 'FF0000FF' }, underline: true };
+        }
+
+        worksheet.columns = [
+            { width: 5 },
+            { width: 30 },
+            { width: 30 },
+            { width: 55 },
+            { width: 15 },
+            { width: 30 },
+        ];
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        saveAs(blob, "Kontrak Kuliah.xlsx");
+    };
+
+
 
     const filteredKontrakKuliah = kontrakkuliahList.filter((kontrak_kuliah) => {
         const nameMatch = kontrak_kuliah.mata_kuliah?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -112,7 +172,13 @@ const KontrakKuliah = () => {
                     <Card className="shadow-sm border-0 overflow-hidden">
                         <Card.Header className="bg-white py-3 border-bottom">
                             <div className="d-flex align-items-center flex-wrap gap-3">
-                                <div className="ms-auto col-md-6 col-lg-4">
+                                <Button variant="danger" size="sm" onClick={handlePrint}>
+                                    Cetak Laporan PDF
+                                </Button>
+                                <Button variant="secondary" size="sm" onClick={exportToExcel} className="ms-2">
+                                    Ekspor ke Excel
+                                </Button>
+                                <div className="ms-auto col-12 col-md-6 col-lg-4">
                                     <InputGroup size="sm" className="border rounded overflow-hidden">
                                         <InputGroup.Text className="bg-white border-0">
                                             <FiSearch size={16} className="text-primary" />
@@ -130,7 +196,7 @@ const KontrakKuliah = () => {
                                     </InputGroup>
                                 </div>
 
-                                <div className="col-md-4 col-lg-3">
+                                <div className="col-12 col-md-4 col-lg-3">
                                     <Form.Select
                                         value={selectedsemester}
                                         onChange={(e) => {
@@ -151,16 +217,20 @@ const KontrakKuliah = () => {
                         </Card.Header>
 
                         <Card.Body className="p-0 text-center">
-                            <div className="table-responsive">
+                            <div className="table-responsive" ref={printRef}>
+                                <div className="print-only">
+                                    <h4 className="text-uppercase">Kontrak Kuliah</h4>
+                                    <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
+                                </div>
                                 <Table striped bordered hover className="align-middle mb-0" size="sm">
                                     <thead>
                                         <tr className="bg-light">
                                             <th className="px-1 py-3" >No</th>
-                                            <th className="px-3 py-3" >Nama Dosen</th>
-                                            <th className="px-3 py-3" >Mata Kuliah</th>
+                                            <th className="px-5 py-3" >Nama Dosen</th>
+                                            <th className="px-2 py-3" >Mata Kuliah</th>
                                             <th className="px-3 py-3" >Semester</th>
                                             <th className="px-3 py-3" >Kontrak Kuliah</th>
-                                            <th className="px-3 py-3" >Aksi</th>
+                                            <th className="px-3 py-3 no-print" >Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -180,7 +250,7 @@ const KontrakKuliah = () => {
                                                             Lihat PDF
                                                         </a>
                                                     </td>
-                                                    <td>
+                                                    <td className="no-print">
                                                         <div className="d-flex justify-content-center gap-2">
                                                             <Button
                                                                 variant="outline-success"
@@ -224,15 +294,16 @@ const KontrakKuliah = () => {
 
                     <div className="p-3 border-top d-flex justify-content-between align-items-center">
                         <div className="small text-muted">
-                            Menampilkan {(currentPage - 1) * itemsPerPage + 1}–{Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
+                            Menampilkan {(currentPage - 1) * itemsPerPage + 1}–
+                            {Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
                         </div>
-                        <div>
+                        <div className="mx-3">
                             <Button
                                 variant="outline-primary"
                                 size="sm"
                                 onClick={() => setCurrentPage(currentPage - 1)}
                                 disabled={currentPage === 1}
-                                className="mx-4"
+                                className="mx-2 mb-2"
                             >
                                 Sebelumnya
                             </Button>
@@ -241,6 +312,7 @@ const KontrakKuliah = () => {
                                 size="sm"
                                 onClick={() => setCurrentPage(currentPage + 1)}
                                 disabled={currentPage === totalPages}
+                                className="mx-2 mb-2"
                             >
                                 Selanjutnya
                             </Button>

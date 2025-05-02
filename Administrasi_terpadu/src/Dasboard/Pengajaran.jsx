@@ -4,6 +4,11 @@ import { FiPlus, FiSearch, FiFilter, FiEdit2, FiTrash2, FiBookOpen, FiEye, FiFil
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
+import "../Dist/Home.css"
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const Pengajaran = () => {
   const navigate = useNavigate();
@@ -19,6 +24,7 @@ const Pengajaran = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const user = JSON.parse(localStorage.getItem('user'));
+  const printRef = useRef();
 
   useEffect(() => {
     fetchPengajaran();
@@ -112,6 +118,67 @@ const Pengajaran = () => {
     }
   };
 
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: "",
+    onBeforeGetContent: () => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 100);
+      });
+    },
+  });
+
+  const exportToExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Pengajaran");
+
+
+    worksheet.addRow(["No", "Nama Dosen", "Mata Kuliah", "Semester", "Kelas", "Metode Pengajaran", "Keterlibatan Praktisi", "Nama Praktisi", "Institusi Praktisi", "File Pengajaran"]);
+
+
+    for (let i = 0; i < filteredPengajaran.length; i++) {
+      const pengajaran = filteredPengajaran[i];
+      worksheet.addRow([]);
+      const row = worksheet.getRow(i + 2);
+
+      row.getCell(1).value = i + 1;
+      row.getCell(2).value = pengajaran.nama_dosen,
+        row.getCell(3).value = pengajaran.mata_kuliah,
+        row.getCell(4).value = pengajaran.semester,
+        row.getCell(5).value = pengajaran.kelas,
+        row.getCell(6).value = pengajaran.metode_pengajaran,
+        row.getCell(7).value = pengajaran.keterlibatan_praktisi
+      row.getCell(8).value = pengajaran.nama_praktisi
+      row.getCell(9).value = pengajaran.institusi_praktisi
+
+      const fileUrl = `http://localhost:5000/uploads/pengajaran/${pengajaran.file_pengajaran}`;
+      row.getCell(10).value = {
+        text: "Lihat File",
+        hyperlink: fileUrl,
+      };
+      row.getCell(10).font = { color: { argb: 'FF0000FF' }, underline: true };
+
+    }
+
+    worksheet.columns = [
+      { width: 5 },
+      { width: 30 },
+      { width: 55 },
+      { width: 40 },
+      { width: 30 },
+      { width: 20 },
+    ];
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, "Pengajaran.xlsx");
+  };
+
+
   const handleShowDetail = (item) => {
     setSelectedDetail(item);
     setShowDetailModal(true);
@@ -164,7 +231,13 @@ const Pengajaran = () => {
           <Card className="shadow-sm border-0 overflow-hidden">
             <Card.Header className="bg-white py-3 border-bottom">
               <div className="d-flex align-items-center flex-wrap gap-3">
-                <div className="ms-auto col-md-6 col-lg-4">
+                <Button variant="danger" size="sm" onClick={handlePrint}>
+                  Cetak Laporan PDF
+                </Button>
+                <Button variant="secondary" size="sm" onClick={exportToExcel} className="ms-2">
+                  Ekspor ke Excel
+                </Button>
+                <div className="ms-auto col-12 col-md-6 col-lg-4">
                   <InputGroup size="sm" className="border rounded overflow-hidden">
                     <InputGroup.Text className="bg-white border-0">
                       <FiSearch size={16} className="text-primary" />
@@ -182,7 +255,7 @@ const Pengajaran = () => {
                   </InputGroup>
                 </div>
 
-                <div className="col-md-4 col-lg-3">
+                <div className="col-12 col-md-4 col-lg-3">
                   <Form.Select
                     value={selectedmatakuliah}
                     onChange={(e) => {
@@ -203,21 +276,25 @@ const Pengajaran = () => {
             </Card.Header>
 
             <Card.Body className="p-0 text-center">
-              <div className="table-responsive">
+              <div className="table-responsive" ref={printRef}>
+                <div className="print-only">
+                  <h4 className="text-uppercase">Pengajaran</h4>
+                  <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
+                </div>
                 <Table striped bordered hover className="align-middle mb-0" size="sm">
                   <thead>
                     <tr className="bg-light">
-                      <th>No</th>
-                      <th>Nama Dosen</th>
-                      <th>Mata Kuliah</th>
-                      <th>Semester</th>
-                      <th>Kelas</th>
-                      <th>Metode Pengajaran</th>
-                      <th>Keterlibatan Praktisi</th>
-                      <th>Nama Praktisi</th>
-                      <th>Institusi Praktisi</th>
-                      <th>File Pengajaran</th>
-                      <th>Aksi</th>
+                      <th className="px-2 py-4">No</th>
+                      <th className="px-5 py-2">Nama Dosen</th>
+                      <th className="px-5 py-2">Mata Kuliah</th>
+                      <th className="px-3 py-4">Semester</th>
+                      <th className="px-3 py-4">Kelas</th>
+                      <th className="px-5 py-2">Metode Pengajaran</th>
+                      <th className="px-2 py-2">Keterlibatan Praktisi</th>
+                      <th className="px-5 py-2">Nama Praktisi</th>
+                      <th className="px-5 py-2">Institusi Praktisi</th>
+                      <th className="px-3 py-2">File Pengajaran</th>
+                      <th className="px-2 py-4 no-print">Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -238,12 +315,12 @@ const Pengajaran = () => {
                               href={`http://localhost:5000/uploads/pengajaran/${item.file_pengajaran}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              
+
                             >
                               Lihat PDF
                             </a>
                           </td>
-                          <td>
+                          <td className="no-print">
                             <div className="d-flex justify-content-center gap-2">
                               <Button
                                 variant="outline-warning"
@@ -288,13 +365,26 @@ const Pengajaran = () => {
 
             <div className="p-3 border-top d-flex justify-content-between align-items-center">
               <div className="small text-muted">
-                Menampilkan {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
+                Menampilkan {(currentPage - 1) * itemsPerPage + 1}–
+                {Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
               </div>
-              <div>
-                <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="mx-4">
+              <div className="mx-3">
+                <Button
+                  variant="outline-primary"
+                  size="sm"
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="mx-2 mb-2"
+                >
                   Sebelumnya
                 </Button>
-                <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+                <Button
+                  variant="outline-primary"
+                  size="sm"
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="mx-2 mb-2"
+                >
                   Selanjutnya
                 </Button>
               </div>

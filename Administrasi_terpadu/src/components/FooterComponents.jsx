@@ -37,13 +37,14 @@ const Footer = () => {
                     </Col>
 
                     <Col md={2} lg={2} className="mb-4 ms-4 ">
-                        <h6 className="text-uppercase fw-bold">Program</h6>
+                        <h6 className="text-uppercase fw-bold">Menu</h6>
                         <hr className="mb-4 mt-0 bg-primary" style={{ width: "60px", height: "2px" }} />
                         <ul className="list-unstyled">
                             <li><a href="/Home" className="text-white text-decoration-none">Home</a></li>
                             <li><a href="#program" className="text-white text-decoration-none">Program</a></li>
                             <li><a href="/About" className="text-white text-decoration-none">About</a></li>
-                            <li><a href="/Login" className="text-white text-decoration-none">Login</a></li>
+                            <li><a href="/Kemahasiswaan" className="text-white text-decoration-none">Kemahasiswaan</a></li>
+                            <li><a href="/TenagaPengajar" className="text-white text-decoration-none">Tenaga Pengajar</a></li>
                         </ul>
                     </Col>
 
@@ -51,9 +52,10 @@ const Footer = () => {
                         <h6 className="text-uppercase fw-bold">Fiturs</h6>
                         <hr className="mb-4 mt-0 bg-primary" style={{ width: "60px", height: "2px" }} />
                         <ul className="list-unstyled">
-                            <li><a href="/Akademik" className="text-white text-decoration-none">Akademik</a></li>
+                            <li><a href="/Login" className="text-white text-decoration-none">Akademik</a></li>
                             <li><a href="/Kema" className="text-white text-decoration-none">Kegiatan Mahasiswa</a></li>
                             <li><a href="/Berita" className="text-white text-decoration-none">Berita</a></li>
+                            <li><a href="/Login" className="text-white text-decoration-none">Login</a></li>
                         </ul>
                     </Col>
 

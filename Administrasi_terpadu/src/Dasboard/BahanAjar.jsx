@@ -5,6 +5,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Modal } from "react-bootstrap";
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
+import "../Dist/Home.css"
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const BahanAjar = () => {
   const navigate = useNavigate();
@@ -19,8 +24,8 @@ const BahanAjar = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const user = JSON.parse(localStorage.getItem('user'));
+  const printRef = useRef();
 
-  console.log('User from localStorage:', user);
 
   useEffect(() => {
     fetchBahanAjar();
@@ -91,6 +96,61 @@ const BahanAjar = () => {
     }
   };
 
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: "Laporan Bahan Ajar Dosen",
+    onBeforeGetContent: () => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 100);
+      });
+    },
+  });
+
+  const exportToExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Laporan Bahan Ajar");
+
+    worksheet.addRow(["No", "Mata Kuliah", "Judul Materi", "Dosen Pengampu", "Pertemuan", "File Pendukung"]);
+
+    for (let i = 0; i < filteredBahanAjar.length; i++) {
+      const bahan_ajar = filteredBahanAjar[i];
+      worksheet.addRow([]);
+      const row = worksheet.getRow(i + 2);
+
+      row.getCell(1).value = i + 1;
+      row.getCell(2).value = bahan_ajar.name;
+      row.getCell(3).value = bahan_ajar.judul_materi;
+      row.getCell(4).value = bahan_ajar.dosen_pengampu;
+      row.getCell(5).value = bahan_ajar.pertemuan;
+
+      const fileUrl = `http://localhost:5000/uploads/bahan_ajar/${bahan_ajar.file_pendukung}`;
+      row.getCell(6).value = {
+        text: "Lihat File",
+        hyperlink: fileUrl,
+      };
+      row.getCell(6).font = { color: { argb: 'FF0000FF' }, underline: true };
+    }
+
+    worksheet.columns = [
+      { width: 5 },
+      { width: 30 },
+      { width: 30 },
+      { width: 55 },
+      { width: 15 },
+      { width: 30 },
+    ];
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, "Laporan_Bahan_Ajar.xlsx");
+  };
+
+
+
   const handleShowDetail = (item) => {
     setSelectedDetail(item);
     setShowDetailModal(true);
@@ -144,14 +204,20 @@ const BahanAjar = () => {
 
           <Card.Header className="bg-white py-3 border-bottom">
             <div className="d-flex align-items-center flex-wrap gap-3">
-              <div className="ms-auto col-md-6 col-lg-4">
+              <Button variant="danger" size="sm" onClick={handlePrint}>
+                Cetak Laporan PDF
+              </Button>
+              <Button variant="secondary" size="sm" onClick={exportToExcel} className="ms-2">
+                Ekspor ke Excel
+              </Button>
+              <div className="ms-auto col-lg-4 col-12">
                 <InputGroup size="sm" className="border rounded overflow-hidden">
                   <InputGroup.Text className="bg-white border-0">
                     <FiSearch size={16} className="text-primary" />
                   </InputGroup.Text>
                   <Form.Control
                     size="sm"
-                    placeholder="Cari nama Mata Kuliah..."
+                    placeholder="Cari Jadwal Jam Pelajaran Mata Kuliah"
                     value={searchTerm}
                     onChange={(e) => {
                       setSearchTerm(e.target.value);
@@ -162,7 +228,7 @@ const BahanAjar = () => {
                 </InputGroup>
               </div>
 
-              <div className="col-md-4 col-lg-3">
+              <div className="col-lg-3 col-12 " >
                 <Form.Select
                   value={selectedmatakuliah}
                   onChange={(e) => {
@@ -182,7 +248,11 @@ const BahanAjar = () => {
             </div>
           </Card.Header>
 
-          <div className="table-responsive">
+          <div className="table-responsive" ref={printRef}>
+            <div className="print-only">
+              <h4 className="text-uppercase">Laporan Bahan Ajar</h4>
+              <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
+            </div>
             {loading ? (
               <div className="text-center p-4">
                 <Spinner animation="border" />
@@ -192,6 +262,7 @@ const BahanAjar = () => {
                 {error}
               </Alert>
             ) : (
+
               <Table striped bordered hover className="align-middle mb-0 text-center" size="sm">
                 <thead className="bg-light">
                   <tr>
@@ -200,7 +271,7 @@ const BahanAjar = () => {
                     <th>Judul Materi</th>
                     <th>Pertemuan</th>
                     <th>File Pendukung</th>
-                    <th>Aksi</th>
+                    <th className="no-print">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -220,8 +291,8 @@ const BahanAjar = () => {
                             Lihat PDF
                           </a>
                         </td>
-                        <td>
-                          <div className="d-flex justify-content-center gap-2">
+                        <td className="no-print">
+                          <div className="d-flex justify-content-center gap-2 no-print">
                             <Button
                               variant="outline-warning"
                               size="sm"
@@ -265,13 +336,26 @@ const BahanAjar = () => {
 
         <div className="p-3 border-top d-flex justify-content-between align-items-center">
           <div className="small text-muted">
-            Menampilkan {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
+            Menampilkan {(currentPage - 1) * itemsPerPage + 1}–
+            {Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
           </div>
-          <div>
-            <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="mx-4">
+          <div className="mx-3">
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="mx-2 mb-2"
+            >
               Sebelumnya
             </Button>
-            <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="mx-2 mb-2"
+            >
               Selanjutnya
             </Button>
           </div>
@@ -281,8 +365,8 @@ const BahanAjar = () => {
       <Modal show={showDetailModal} onHide={handleCloseDetail} centered>
         <Modal.Header closeButton>
           <Modal.Title className="fw-semibold ">
-             <FiBookOpen className="mx-2" /> 
-             Detail Bahan Ajar
+            <FiBookOpen className="mx-2" />
+            Detail Bahan Ajar
           </Modal.Title>
         </Modal.Header>
 
@@ -312,8 +396,8 @@ const BahanAjar = () => {
                   rel="noopener noreferrer"
                   className="btn btn-sm btn-outline-primary mt-2"
                 >
-                <FiFile className="mx-2 mb-1" />
-                   Lihat File PDF
+                  <FiFile className="mx-2 mb-1" />
+                  Lihat File PDF
                 </a>
               </li>
             </ul>
@@ -327,7 +411,7 @@ const BahanAjar = () => {
         </Modal.Footer>
       </Modal>
 
-    </Container>
+    </Container >
   );
 };
 

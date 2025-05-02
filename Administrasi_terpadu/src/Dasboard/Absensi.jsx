@@ -4,6 +4,11 @@ import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiEye } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
+import "../Dist/Home.css"
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const Absensi = () => {
   const navigate = useNavigate();
@@ -16,6 +21,74 @@ const Absensi = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const user = JSON.parse(localStorage.getItem('user'));
+  const printRef = useRef();
+
+
+
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: "Laporan Absensi Dosen",
+    onBeforeGetContent: () => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 100);
+      });
+    },
+  });
+
+  const exportToExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Laporan Absensi");
+
+
+    worksheet.addRow(["No", "Nama", "Mata Kuliah", "Jam Pelajaran", "Foto"]);
+
+
+    for (let i = 0; i < filteredAbsensi.length; i++) {
+      const absensi = filteredAbsensi[i];
+      const row = worksheet.addRow([
+        i + 1,
+        absensi.name,
+        absensi.mata_kuliah,
+        absensi.jam_pelajaran,
+        "",
+      ]);
+
+      const response = await fetch(`http://localhost:5000/uploads/absensi/${absensi.foto}`);
+      const blob = await response.blob();
+      const buffer = await blob.arrayBuffer();
+
+      const imageId = workbook.addImage({
+        buffer,
+        extension: 'jpeg/png',
+      });
+
+      worksheet.addImage(imageId, {
+        tl: { col: 4, row: row.number - 1 },
+        ext: { width: 100, height: 100 }
+      })
+      worksheet.getRow(row.number).height = 80;
+    }
+
+    worksheet.columns = [
+      { width: 5 },
+      { width: 50 },
+      { width: 25 },
+      { width: 20 },
+      { width: 20 },
+    ];
+
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, "Laporan_Absensi.xlsx");
+  };
+
+
+
 
   useEffect(() => {
     fetchAbsensi();
@@ -27,16 +100,16 @@ const Absensi = () => {
     setError(null);
     try {
       let url = "http://localhost:5000/absensi";
-  
+
       if (user?.role === "user") {
         url = `http://localhost:5000/absensi?userId=${user.id}`;
       }
-  
-      const token = localStorage.getItem('token'); 
-  
+
+      const token = localStorage.getItem('token');
+
       const response = await axios.get(url, {
         headers: {
-          Authorization: `Bearer ${token}` 
+          Authorization: `Bearer ${token}`
         }
       });
       setAbsensiList(response.data);
@@ -46,7 +119,7 @@ const Absensi = () => {
     }
     setLoading(false);
   };
-  
+
 
   const fetchMataKuliah = async () => {
     setLoading(true);
@@ -125,10 +198,24 @@ const Absensi = () => {
 
 
       <Card className="shadow border-0">
-        <Card.Body className="p-0">
+        <Card.Body className="p-0">          <div className="p-3 border-bottom">
+          <Row className="align-items-center g-3">
+            <Col md={6} lg={5}>
+              <h5 className="mb-0 fw-semibold">Daftar Absensi Sistem Informasi</h5>
+            </Col>
+          </Row>
+        </div>
+
+
           <Card.Header className="bg-white py-3 border-bottom">
             <div className="d-flex align-items-center flex-wrap gap-3">
-              <div className="ms-auto col-md-6 col-lg-4">
+              <Button variant="danger" size="sm" onClick={handlePrint}>
+                Cetak Laporan PDF
+              </Button>
+              <Button variant="secondary" size="sm" onClick={exportToExcel} className="ms-2">
+                Ekspor ke Excel
+              </Button>
+              <div className="ms-auto col-lg-4 col-12">
                 <InputGroup size="sm" className="border rounded overflow-hidden">
                   <InputGroup.Text className="bg-white border-0">
                     <FiSearch size={16} className="text-primary" />
@@ -146,7 +233,7 @@ const Absensi = () => {
                 </InputGroup>
               </div>
 
-              <div className="col-md-4 col-lg-3">
+              <div className="col-lg-3 col-12 " >
                 <Form.Select
                   value={selectedmatakuliah}
                   onChange={(e) => {
@@ -167,7 +254,11 @@ const Absensi = () => {
           </Card.Header>
 
 
-          <div className="table-responsive">
+          <div className="table-responsive " ref={printRef}>
+            <div className="print-only">
+              <h4 className="text-uppercase">Laporan Absensi</h4>
+              <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
+            </div>
             {loading ? (
               <div className="text-center p-4">
                 <Spinner animation="border" />
@@ -185,7 +276,7 @@ const Absensi = () => {
                     <th className="py-3">Mata Kuliah</th>
                     <th className="py-3">Jam Pelajaran</th>
                     <th className="py-3">Foto</th>
-                    <th className="py-3 text-center">Aksi</th>
+                    <th className="py-3 text-center no-print">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -205,7 +296,7 @@ const Absensi = () => {
                             Lihat FOTO
                           </a>
                         </td>
-                        <td>
+                        <td className="no-print">
                           <div className="d-flex justify-content-center gap-2">
                             <Button
                               variant="outline-success"

@@ -3,6 +3,11 @@ import { Container, Card, Table, Button, Badge, Row, Col, Form, InputGroup, Form
 import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiFilter } from "react-icons/fi";
 import { Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
+import "../Dist/Home.css"
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const MataKuliah = () => {
   const navigate = useNavigate();
@@ -12,6 +17,7 @@ const MataKuliah = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [role, setRole] = useState("");
   const itemsPerPage = 10;
+  const printRef = useRef();
 
   const fetchMataKuliah = async () => {
     try {
@@ -24,7 +30,7 @@ const MataKuliah = () => {
 
   useEffect(() => {
     const userRole = localStorage.getItem('role');
-    setRole(userRole?.toLowerCase()); 
+    setRole(userRole?.toLowerCase());
     fetchMataKuliah();
   }, []);
 
@@ -37,6 +43,50 @@ const MataKuliah = () => {
         console.error("Error deleting mata kuliah:", error);
       }
     }
+  };
+
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: "Mata Kuliah",
+    onBeforeGetContent: () => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 100);
+      });
+    },
+  });
+
+  const exportToExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Laporan Absensi");
+
+
+    worksheet.addRow(["No", "Nama", "SKS", "Semester"]);
+
+
+    for (let i = 0; i < filteredMataKuliah.length; i++) {
+      const mata_kuliah = filteredMataKuliah[i];
+      const row = worksheet.addRow([
+        i + 1,
+        mata_kuliah.name,
+        mata_kuliah.sks,
+        mata_kuliah.semester,
+      ]);
+    }
+
+    worksheet.columns = [
+      { width: 5 },
+      { width: 30 },
+      { width: 55 },
+      { width: 40 },
+    ];
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, "mata_kuliah.xlsx");
   };
 
   const filteredMataKuliah = matakuliahList.filter((mata_kuliah) => {
@@ -82,7 +132,13 @@ const MataKuliah = () => {
 
           <Card.Header className="bg-white py-3 border-bottom">
             <div className="d-flex  align-items-center flex-wrap gap-3 ">
-              <div className=" ms-auto col-md-6 col-lg-4">
+              <Button variant="danger" size="sm" onClick={handlePrint}>
+                Cetak Laporan PDF
+              </Button>
+              <Button variant="secondary" size="sm" onClick={exportToExcel} className="ms-2">
+                Ekspor ke Excel
+              </Button>
+              <div className="ms-auto col-12 col-md-6 col-lg-4">
                 <InputGroup size="sm" className="border rounded overflow-hidden">
                   <InputGroup.Text className="bg-white border-0">
                     <FiSearch size={16} className="text-primary" />
@@ -100,7 +156,7 @@ const MataKuliah = () => {
                 </InputGroup>
               </div>
 
-              <div className="col-md-4 col-lg-3">
+              <div className=" col-12 col-md-4 col-lg-3">
                 <Form.Select
                   value={selectedsemester}
                   onChange={(e) => {
@@ -120,7 +176,11 @@ const MataKuliah = () => {
             </div>
           </Card.Header>
 
-          <div className="table-responsive">
+          <div className="table-responsive " ref={printRef}>
+            <div className="print-only">
+              <h4 className="text-uppercase">Mata Kuliah</h4>
+              <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
+            </div>
             <Table striped bordered hover className="text-center align-middle" size="sm">
               <thead >
                 <tr className="bg-light">
@@ -129,7 +189,7 @@ const MataKuliah = () => {
                   <th className="px-3 py-3">SKS</th>
                   <th className="px-3 py-3">Semester</th>
                   {role === "admin" && (
-                  <th className="px-3 py-3">Aksi</th>
+                    <th className="px-3 py-3 no-print">Aksi</th>
                   )}
                 </tr>
               </thead>
@@ -141,29 +201,29 @@ const MataKuliah = () => {
                       <td>{mata_kuliah.name}</td>
                       <td>{mata_kuliah.sks}</td>
                       <td>{mata_kuliah.semester}</td>
-                      { role === "admin" && (
-                      <td>
-                        <div className="d-flex justify-content-center gap-2">
-                          <Button
-                            variant="outline-success"
-                            size="sm"
-                            className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
-                            title="Edit"
-                            onClick={() => navigate(`/admin/dashboard/matakuliah/editmatakuliah/${mata_kuliah.id}`)}
-                          >
-                            <FiEdit2 size={16} />
-                          </Button>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
-                            title="Hapus"
-                            onClick={() => deleteMataKuliah(mata_kuliah.id)}
-                          >
-                            <FiTrash2 size={16} />
-                          </Button>
-                        </div>
-                      </td>
+                      {role === "admin" && (
+                        <td className="no-print">
+                          <div className="d-flex justify-content-center gap-2">
+                            <Button
+                              variant="outline-success"
+                              size="sm"
+                              className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
+                              title="Edit"
+                              onClick={() => navigate(`/admin/dashboard/matakuliah/editmatakuliah/${mata_kuliah.id}`)}
+                            >
+                              <FiEdit2 size={16} />
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
+                              title="Hapus"
+                              onClick={() => deleteMataKuliah(mata_kuliah.id)}
+                            >
+                              <FiTrash2 size={16} />
+                            </Button>
+                          </div>
+                        </td>
                       )}
                     </tr>
                   ))
@@ -172,7 +232,7 @@ const MataKuliah = () => {
                     <td colSpan="8" className="text-center py-4">
                       <div className="d-flex flex-column align-items-center justify-content-center py-4">
                         <FiFilter size={32} className="text-muted mb-2" />
-                        <p className="text-muted mb-0">Tidak ada data dosen yang tersedia</p>
+                        <p className="text-muted mb-0">Tidak ada data mata_kuliah yang tersedia</p>
                       </div>
                     </td>
                   </tr>
@@ -184,13 +244,26 @@ const MataKuliah = () => {
 
           <div className="p-3 border-top d-flex justify-content-between align-items-center">
             <div className="small text-muted">
-              Menampilkan {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
+              Menampilkan {(currentPage - 1) * itemsPerPage + 1}–
+              {Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
             </div>
-            <div>
-              <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="mx-4">
+            <div className="mx-3">
+              <Button
+                variant="outline-primary"
+                size="sm"
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="mx-2 mb-2"
+              >
                 Sebelumnya
               </Button>
-              <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+              <Button
+                variant="outline-primary"
+                size="sm"
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="mx-2 mb-2"
+              >
                 Selanjutnya
               </Button>
             </div>

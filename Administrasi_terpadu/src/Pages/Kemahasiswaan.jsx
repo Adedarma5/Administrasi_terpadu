@@ -133,20 +133,20 @@ const Kemahasiswaan = () => {
                     <h3 className="text-uppercase text-center " style={{ color: 'darkblue' }}>Kemahasiswaan</h3>
 
                     <div className="col-11 col-sm-10 col-md-10  col-lg-12 mt-5">
-                        <Card className="mt-5  border-0 bg-transparent">
-                            <Card.Body>
-                                <h5 className="fw-semibold text-uppercase mb-4 mx-4">Statistik Kegiatan Mahasiswa</h5>
-                                <ResponsiveContainer width="80%" height={250}>
-                                    <BarChart data={kegiatandata}>
-                                        <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="nama" />
-                                        <YAxis allowDecimals={false} />
-                                        <Tooltip />
-                                        <Bar dataKey="jumlah" fill="#8884d8" />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </Card.Body>
-                        </Card>
+                        <h5 className="fw-semibold text-uppercase mb-4 mx-4">Statistik Kegiatan Mahasiswa</h5>
+                        <ResponsiveContainer width="80%" height={300}>
+                            <BarChart data={kegiatandata} margin={{ bottom: 63 }}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="nama"
+                                    angle={-35}
+                                    textAnchor="end"
+                                    dy={10}
+                                    interval={0} />
+                                <YAxis allowDecimals={false} />
+                                <Tooltip />
+                                <Bar dataKey="jumlah" fill="#8884d8" />
+                            </BarChart>
+                        </ResponsiveContainer>
                     </div>
                 </div>
 
@@ -154,7 +154,7 @@ const Kemahasiswaan = () => {
                     <h4 className='text-center text-uppercase'>rancangan pelajaran semester</h4>
                 </div>
 
-                <Card className="p-4 bg-dark" >
+                <Card className="p-4 bg-secondary" >
                     <Card className="shadow border-0 p-4">
                         <Card.Body className="p-0">
                             <div className="p-3 border-bottom">
@@ -273,7 +273,7 @@ const Kemahasiswaan = () => {
                     <h4 className='text-center text-uppercase'>Kontrak Kuliah</h4>
                 </div>
 
-                <Card className="p-4 bg-dark" >
+                <Card className="p-4 bg-secondary" >
                     <Card className="shadow border-0 p-4">
                         <Card.Body className="p-0">
                             <div className="p-3 border-bottom">
@@ -407,7 +407,7 @@ const Kemahasiswaan = () => {
                 <div className="mt-5 p-4">
                     <h4 className='text-center text-uppercase'>Bahan Ajar</h4>
                 </div>
-                <Card className="p-4 bg-dark">
+                <Card className="p-4 bg-secondary">
                     <Card className="shadow border-0 p-4">
                         <Card.Body className="p-0">
                             <div className="p-3 border-bottom">
@@ -518,11 +518,11 @@ const Kemahasiswaan = () => {
                             <div className="small text-muted">
                                 Menampilkan {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
                             </div>
-                            <div  className="mx-4">
+                            <div className="mx-4">
                                 <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="mx-2 mb-2">
                                     Sebelumnya
                                 </Button>
-                                <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}  className="mx-2 mb-2">
+                                <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} className="mx-2 mb-2">
                                     Selanjutnya
                                 </Button>
                             </div>

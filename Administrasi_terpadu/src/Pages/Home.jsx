@@ -17,7 +17,7 @@ const Home = () => {
     setIndex(selectedIndex);
   };
 
-  
+
 
   const handleNavigate = () => {
     navigate("/Login");
@@ -47,8 +47,8 @@ const Home = () => {
             />
             <div className="position-absolute text-center col-11 col-sm-10 col-md-10  col-lg-12" style={{ fontFamily: `'Poppins', sans-serif`, top: '20%' }}>
               <h4>Selamat Datang</h4>
-              <h1>SISTEM INFORMASI AKADEMIK TERPADU</h1>
-              <h4>SISTEM INFORMASI</h4>
+              <h1>SISTEM  ADMINISTRASI TERPADU</h1>
+              <h4>SATU AKADEMIK</h4>
               <Button onClick={handleNavigate} className="btn mt-3 text-light btn-hover">
                 Mulai Sekarang
               </Button>
@@ -93,105 +93,109 @@ const Home = () => {
         </div>
 
       </Container>
-              
-      <div style={{ backgroundColor: 'darkblue', marginTop: '100px', marginBottom: '100px' }}>        
-      <div className="container mt-5 ">
-        <div className="row align-items-center g-4">
-          <div className="col-10 col-sm-6 col-md-4 col-lg-7 pe-lg-5 text-white">
-            <h2 className='text-center mb-4'>SIATSI</h2>
-            <p className='fs-5 '>Administrasi Terpadu merupakan penyelenggaraan pelayanan publik yang terintegrasi dalam satu
-              tempat. Tujuannya adalah untuk meningkatkan efisiensi administrasi dan menyederhanakan birokras </ p>
-              
+
+      <div style={{ backgroundColor: 'darkblue', marginTop: '100px', marginBottom: '100px' }}>
+        <div className="container mt-5 ">
+          <div className="row align-items-center g-4">
+            <div className="col-10 col-sm-6 col-md-4 col-lg-7 pe-lg-5 text-white">
+              <h2 className='text-center mb-0 text-uppercase'>satu akademik</h2>
+              <p className='text-center mb-4 text-uppercase fw-semibold'>(sistem administrasi terpadu akademik )</p>
+              <p className='fs-5 '>Administrasi Terpadu merupakan penyelenggaraan pelayanan publik yang terintegrasi dalam satu
+                tempat untuk meningkatkan efisiensi administrasi dan menyederhanakan birokras </ p>
+
               <p className='fs-5 mb-4'> Sistem Informasi Akademik Terpadu memiliki beberapa sistem yang terpusat,
-              memungkinkan kita dalam mengolah berbagai data dengan memanfaatkan fungsi yang saling 
-              terintegrasi di dalam satu sistem.</p>
-          </div>
+                memungkinkan kita dalam mengolah berbagai data dengan memanfaatkan fungsi yang saling
+                terintegrasi di dalam satu sistem.</p>
+            </div>
 
-          <div className="col-11 col-sm-6 col-md-6 col-lg-5 ps-lg-5 mb-4">
-            <Image src="src/assets/bg-si.png" rounded style={{ width: '100%' }} />
+            <div className="col-11 col-sm-6 col-md-6 col-lg-5 ps-lg-5 mb-4">
+              <Image src="src/assets/bg-si.png" rounded style={{ width: '100%' }} />
+            </div>
           </div>
         </div>
       </div>
-      </div>
 
-      
 
-      <div   className="container mt-5 mb-4">
-        <h1 id='program' className="text-center  " style={{ color: 'darkblue' }}>PROGRAM</h1>
-        <div className="row g-4 justify-content-center ">
-          <div className="col-12 col-md-12 ">
-            <div className="card d-flex align-items-center flex-row p-1 shadow border-0 card-hover">
-              <Image
+
+      <div className="container mt-5 mb-4">
+        <h1 id="program" className="text-center text-primary mb-4">PROGRAM</h1>
+        <div className="row g-4 justify-content-center">
+
+          <div className="col-12 card-hover">
+            <div className="card shadow border-0 d-flex flex-column flex-md-row align-items-center p-3">
+              <img
                 src="src/assets/akademik.png"
-                rounded
-                style={{ width: '12%', marginRight: '0px', padding: '30px' }}
+                alt="Akademik"
+                className="img-fluid me-md-4 mb-3 mb-md-0"
+                style={{ width: '100px' }}
               />
               <div>
-                <h4 style={{ color: 'darkblue'}}>Akademik</h4>
-                <p className='text-muted'>
-                   Fitur adakdemik yang hanya bisa diakses oleh tenaga pendidik memiliki beberapa fitur yang membantu prodi dalam melihat beberapa data yang di perlukan
-                   untuk keperluan prodi 
+                <h4 className="text-primary">Akademik</h4>
+                <p className="text-muted mb-0">
+                  Fitur akademik yang hanya bisa diakses oleh tenaga pendidik, memiliki beberapa fitur yang membantu prodi dalam melihat data yang diperlukan untuk keperluan prodi.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="col-12 col-md-12">
-            <div className="card d-flex align-items-center flex-row p-1 shadow border-0 card-hover">
-              <Image
+          <div className="col-12 card-hover">
+            <div className="card shadow border-0 d-flex flex-column flex-md-row align-items-center p-3">
+              <img
                 src="src/assets/kema.png"
-                rounded
-                style={{ width: '12%', padding: '30px' }}
+                alt="Kegiatan Mahasiswa"
+                className="img-fluid me-md-4 mb-3 mb-md-0"
+                style={{ width: '100px' }}
               />
               <div>
-                <h4 style={{ color: 'darkblue'}}>Kegiatan Mahasiswa</h4>
-                <p className='text-muted'>
-                  Fitur kegiata mahasiswa merupakan fitur yang di rancang untuk dapat mengumpulkan data dan kegiatan apa saja yang telah di lakukan oleh mahasiswa sistem Informasi 
-                  guna untuk mendukung IKU Kampus
+                <h4 className="text-primary">Kegiatan Mahasiswa</h4>
+                <p className="text-muted mb-0">
+                  Fitur kegiatan mahasiswa dirancang untuk mengumpulkan data dan aktivitas yang telah dilakukan oleh mahasiswa Sistem Informasi guna mendukung IKU Kampus.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="col-12 col-md-12">
-            <div className="card d-flex align-items-center flex-row p-1 shadow border-0 card-hover ">
-              <Image
+          <div className="col-12 card-hover">
+            <div className="card shadow border-0 d-flex flex-column flex-md-row align-items-center p-3">
+              <img
                 src="src/assets/berita.png"
-                rounded
-                style={{ width: '10%', marginRight: '25px', padding: '30px' }}
+                alt="Portal Berita"
+                className="img-fluid me-md-4 mb-3 mb-md-0 p-2"
+                style={{ width: '90px' }}
               />
               <div>
-                <h4 style={{ color: 'darkblue'}}>Portal Berita</h4>
-                <p className='text-muted'>
-                 Fitur ini bertujuan untuk menampilkan beberapa berita penting seputaran akademik dan non akademik yang menyangkut prodi sistem informasi atau pun <br />
-                 berita lainnya
+                <h4 className="text-primary">Portal Berita</h4>
+                <p className="text-muted mb-0">
+                  Fitur ini bertujuan untuk menampilkan berita penting seputar akademik maupun non-akademik yang menyangkut Prodi Sistem Informasi ataupun berita lainnya.
                 </p>
               </div>
             </div>
           </div>
+
         </div>
       </div>
+
 
 
       <div style={{ position: 'relative', width: '100%', marginTop: '50px' }}>
-  <svg
-    className="w-100 position-absolute"
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 1440 320"
-    style={{ bottom: 0, width: '100vw', height: 'auto', zIndex: '-1' }}
-  >
-    <path
-      fill="#e2edff"
-      fillOpacity="1"
-      d="M0,256L40,261.3C80,267,160,277,240,282.7C320,288,400,288,480,250.7C560,213,640,139,720,133.3C800,128,880,192,960,186.7C1040,181,1120,107,1200,69.3C1280,32,1360,32,1400,32L1440,32L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z"
-    />
-  </svg>
-</div>
+        <svg
+          className="w-100 position-absolute"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1440 320"
+          style={{ bottom: 0, width: '100vw', height: 'auto', zIndex: '-1' }}
+        >
+          <path
+            fill="#e2edff"
+            fillOpacity="1"
+            d="M0,256L40,261.3C80,267,160,277,240,282.7C320,288,400,288,480,250.7C560,213,640,139,720,133.3C800,128,880,192,960,186.7C1040,181,1120,107,1200,69.3C1280,32,1360,32,1400,32L1440,32L1440,320L1400,320C1360,320,1280,320,1200,320C1120,320,1040,320,960,320C880,320,800,320,720,320C640,320,560,320,480,320C400,320,320,320,240,320C160,320,80,320,40,320L0,320Z"
+          />
+        </svg>
+      </div>
       <Footer />
       <FooterEnd />
     </div>
 
-    
+
   );
 };
 

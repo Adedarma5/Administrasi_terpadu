@@ -4,6 +4,11 @@ import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiFilter } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
+import "../Dist/Home.css"
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const Dosen = () => {
   const navigate = useNavigate();
@@ -12,6 +17,7 @@ const Dosen = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const { user, isAuthenticated } = useAuth();
+  const printRef = useRef();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -61,6 +67,56 @@ const Dosen = () => {
     "Kepala Laboratorium": 5,
   };
 
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: " Dosen",
+    onBeforeGetContent: () => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 100);
+      });
+    },
+  });
+
+  const exportToExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Dosen");
+
+
+    worksheet.addRow(["No", "Nip", "Nama",  "Keahlian", "Jabatan Struktural", "Jabatan Fungsional", "Status"]);
+
+
+    for (let i = 0; i < filteredDosen.length; i++) {
+      const dosen = filteredDosen[i];
+      const row = worksheet.addRow([
+        i + 1,
+        dosen.nip,
+        dosen.name,
+        dosen.keahlian,
+        dosen.jabatan_struktural,
+        dosen.jabatan_fungsional,
+        dosen.status
+      ]);
+    }
+
+    worksheet.columns = [
+      { width: 5 },
+      { width: 30 },
+      { width: 55 },
+      { width: 40 },
+      { width: 30 },
+      { width: 20 },
+    ];
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, "Dosen.xlsx");
+  };
+
+
   const sortedDosen = [...filteredDosen].sort(
     (a, b) => (rank[a.jabatan_struktural] || 99) - (rank[b.jabatan_struktural] || 99)
   );
@@ -108,7 +164,13 @@ const Dosen = () => {
           <Card className="shadow-sm border-0 overflow-hidden">
             <Card.Header className="bg-white py-3 border-bottom">
               <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                <div className="ms-auto col-md-4">
+                <Button variant="danger" size="sm" onClick={handlePrint}>
+                  Cetak Laporan PDF
+                </Button>
+                <Button variant="secondary" size="sm" onClick={exportToExcel} className="ms-2">
+                  Ekspor ke Excel
+                </Button>
+                <div className="ms-auto col-md-4 col-12">
                   <InputGroup size="sm" className="border rounded overflow-hidden">
                     <InputGroup.Text className="bg-white border-0">
                       <FiSearch size={16} className="text-primary" />
@@ -125,19 +187,23 @@ const Dosen = () => {
               </div>
             </Card.Header>
 
-            <Card.Body className="p-0 text-center">
-              <div className="table-responsive">
+            <Card.Body className="p-0 text-center" >
+              <div className="table-responsive " ref={printRef}>
+                <div className="print-only">
+                  <h4 className="text-uppercase">Laporan Dosen</h4>
+                  <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
+                </div>
                 <Table striped bordered hover className="align-middle mb-0" size="sm">
                   <thead>
                     <tr className="bg-light">
                       <th className="px-2 py-4">No</th>
                       <th className="px-3 py-4">NIP</th>
-                      <th className="px-4 py-4">Nama</th>
+                      <th className="px-5 py-4">Nama</th>
                       <th className="px-3 py-4">Bidang Keahlian</th>
                       <th className="px-3 py-4">Jabatan Struktural</th>
                       <th className="px-2 py-4">Jabatan Fungsional</th>
                       <th className="px-3 py-4">Status</th>
-                      <th className="px-3 py-4">Aksi</th>
+                      <th className="px-3 py-4 no-print">Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -160,7 +226,7 @@ const Dosen = () => {
                               {dosen.status}
                             </Badge>
                           </td>
-                          <td>
+                          <td className="no-print">
                             <div className="d-flex justify-content-center gap-2">
                               <Button
                                 variant="outline-success"
@@ -207,13 +273,13 @@ const Dosen = () => {
               Menampilkan {(currentPage - 1) * itemsPerPage + 1}–
               {Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
             </div>
-            <div>
+            <div className="mx-3">
               <Button
                 variant="outline-primary"
                 size="sm"
                 onClick={() => setCurrentPage(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="mx-4"
+                className="mx-2 mb-2"
               >
                 Sebelumnya
               </Button>
@@ -222,6 +288,7 @@ const Dosen = () => {
                 size="sm"
                 onClick={() => setCurrentPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
+                className="mx-2 mb-2"
               >
                 Selanjutnya
               </Button>

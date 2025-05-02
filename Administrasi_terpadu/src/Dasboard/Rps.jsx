@@ -3,6 +3,11 @@ import { Container, Card, Table, Button, Row, Col, Form, InputGroup } from "reac
 import { FiPlus, FiFilter, FiEdit2, FiTrash2, FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"
+import { useReactToPrint } from 'react-to-print';
+import { useRef } from 'react';
+import "../Dist/Home.css"
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const Rps = () => {
     const navigate = useNavigate();
@@ -14,6 +19,7 @@ const Rps = () => {
     const [role, setRole] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const printRef = useRef();
 
     useEffect(() => {
         const userRole = localStorage.getItem('role');
@@ -45,6 +51,58 @@ const Rps = () => {
             }
         }
     };
+
+    const handlePrint = useReactToPrint({
+        contentRef: printRef,
+        documentTitle: "Laporan RPS ",
+        onBeforeGetContent: () => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve();
+                }, 100);
+            });
+        },
+    });
+
+    const exportToExcel = async () => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Laporan Bahan Ajar");
+
+        worksheet.addRow(["No", "Mata Kuliah", "Semester", "File RPS"]);
+
+        for (let i = 0; i < filteredRps.length; i++) {
+            const rps = filteredRps[i];
+            worksheet.addRow([]);
+            const row = worksheet.getRow(i + 2);
+
+            row.getCell(1).value = i + 1;
+            row.getCell(2).value = rps.name;
+            row.getCell(3).value = rps.semester;
+
+
+            const fileUrl = `http://localhost:5000/uploads/rps/${rps.file_rps}`;
+            row.getCell(4).value = {
+                text: "Lihat File",
+                hyperlink: fileUrl,
+            };
+            row.getCell(4).font = { color: { argb: 'FF0000FF' }, underline: true };
+        }
+
+        worksheet.columns = [
+            { width: 5 },
+            { width: 30 },
+            { width: 30 },
+            { width: 55 },
+        ];
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        saveAs(blob, "RPS.xlsx");
+    };
+
+
 
 
 
@@ -96,7 +154,13 @@ const Rps = () => {
 
                     <Card.Header className="bg-white py-3 border-bottom">
                         <div className="d-flex  align-items-center flex-wrap gap-3 ">
-                            <div className=" ms-auto col-md-6 col-lg-4">
+                            <Button variant="danger" size="sm" onClick={handlePrint}>
+                                Cetak Laporan PDF
+                            </Button>
+                            <Button variant="secondary" size="sm" onClick={exportToExcel} className="ms-2">
+                                Ekspor ke Excel
+                            </Button>
+                            <div className=" ms-auto col-12 col-md-6 col-lg-4">
                                 <InputGroup size="sm" className="border rounded overflow-hidden">
                                     <InputGroup.Text className="bg-white border-0">
                                         <FiSearch size={16} className="text-primary" />
@@ -114,7 +178,7 @@ const Rps = () => {
                                 </InputGroup>
                             </div>
 
-                            <div className=" col-md-4 col-lg-3">
+                            <div className="col-12 col-md-4 col-lg-3">
                                 <Form.Select
                                     value={selectedsemester}
                                     onChange={(e) => {
@@ -135,7 +199,11 @@ const Rps = () => {
                     </Card.Header>
 
 
-                    <div className="table-responsive">
+                    <div className="table-responsive" ref={printRef}>
+                        <div className="print-only">
+                            <h4 className="text-uppercase">Laporan  RPS</h4>
+                            <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
+                        </div>
                         <Table striped bordered over className="align-middle  text-center" size="sm">
                             <thead className="bg-light">
                                 <tr>
@@ -144,7 +212,7 @@ const Rps = () => {
                                     <th className="py-3">Semester</th>
                                     <th className="py-3">File_Rps</th>
                                     {role === "admin" && (
-                                        <th className="py-3">Aksi</th>
+                                        <th className="py-3 no-print">Aksi</th>
                                     )}
                                 </tr>
                             </thead>
@@ -165,7 +233,7 @@ const Rps = () => {
                                                 </a>
                                             </td>
                                             {role === "admin" && (
-                                                <td>
+                                                <td className="no-print">
                                                     <div className="d-flex justify-content-center gap-2">
                                                         <Button
                                                             variant="outline-success"
@@ -205,13 +273,26 @@ const Rps = () => {
 
                     <div className="p-3 border-top d-flex justify-content-between align-items-center">
                         <div className="small text-muted">
-                            Menampilkan {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
+                            Menampilkan {(currentPage - 1) * itemsPerPage + 1}–
+                            {Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
                         </div>
-                        <div>
-                            <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="mx-4">
+                        <div className="mx-3">
+                            <Button
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() => setCurrentPage(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="mx-2 mb-2"
+                            >
                                 Sebelumnya
                             </Button>
-                            <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+                            <Button
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() => setCurrentPage(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="mx-2 mb-2"
+                            >
                                 Selanjutnya
                             </Button>
                         </div>
