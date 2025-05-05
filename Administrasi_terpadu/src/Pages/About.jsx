@@ -19,54 +19,32 @@ const About = () => {
                 <h4 className='text-center text-uppercase'>Frequently Asked Questions (FAQ)</h4>
                 <Accordion className='p-5 '>
                     <Accordion.Item eventKey="0" className='shadow '>
-                        <Accordion.Header>MSIB</Accordion.Header>
+                        <Accordion.Header className="text-uppercase">Apa itu website Satu Akademik?</Accordion.Header>
                         <Accordion.Body>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-                            minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                            aliquip ex ea commodo consequat. Duis aute irure dolor in
-                            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                            culpa qui officia deserunt mollit anim id est laborum.
+                            Satu Akademik adalah sistem informasi administrasi terpadu yang dirancang untuk
+                            mendukung pengelolaan data akademik dan kegiatan mahasiswa di Program Studi Sistem <br /> Informasi Universitas Malikussaleh.
                         </Accordion.Body>
                     </Accordion.Item>
 
                     <Accordion.Item eventKey="1" className='shadow'>
-                        <Accordion.Header>Magang Mandiri </Accordion.Header>
+                        <Accordion.Header>Fitur apa saja yang tersedia di dalam website ini? </Accordion.Header>
                         <Accordion.Body>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-                            minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                            aliquip ex ea commodo consequat. Duis aute irure dolor in
-                            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                            culpa qui officia deserunt mollit anim id est laborum.
+                            Website ini menyediakan berbagai fitur seperti  kegiatan mahasiswa (MSIB, Magang Mandiri, Prestasi, Kerja Praktik, Tugas Akhir, dan Pertukaran Pelajar),
+                            pengisian data alumni, hingga informasi akademik seperti  bahan ajar, kontrak kuliah dan Rps
                         </Accordion.Body>
                     </Accordion.Item>
 
                     <Accordion.Item eventKey="2" className='shadow'>
-                        <Accordion.Header>Prestasi Mahasiswa </Accordion.Header>
+                        <Accordion.Header>Siapa saja yang dapat menggunakan website ini? </Accordion.Header>
                         <Accordion.Body>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-                            minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                            aliquip ex ea commodo consequat. Duis aute irure dolor in
-                            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                            culpa qui officia deserunt mollit anim id est laborum.
+                            Website ini dapat diakses oleh mahasiswa, dosen, dan admin program studi sesuai dengan hak akses masing-masing pengguna.
                         </Accordion.Body>
                     </Accordion.Item>
 
                     <Accordion.Item eventKey="3" className='shadow'>
-                        <Accordion.Header>Kerja Praktik </Accordion.Header>
+                        <Accordion.Header>Bagaimana cara mengisi formulir kegiatan? </Accordion.Header>
                         <Accordion.Body>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-                            minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                            aliquip ex ea commodo consequat. Duis aute irure dolor in
-                            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                            culpa qui officia deserunt mollit anim id est laborum.
+                            Mahasiswa dapat memilih menu kegiatan yang sesuai, lalu klik tombol “Buka Formulir” dan lengkapi data yang diminta beserta dokumen pendukung.
                         </Accordion.Body>
                     </Accordion.Item>
                 </Accordion>

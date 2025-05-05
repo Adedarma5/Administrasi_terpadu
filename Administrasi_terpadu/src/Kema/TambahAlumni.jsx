@@ -600,7 +600,7 @@
 
             <div className="d-flex justify-content-end">
               <Button type="submit" variant="primary" >
-                Submit
+                Tambah
               </Button>
             </div>
 

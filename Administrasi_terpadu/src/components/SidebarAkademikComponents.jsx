@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Nav, Button, Offcanvas, Card } from "react-bootstrap";
 import {
     FaBars,
@@ -13,13 +13,24 @@ import {
     FaTachometerAlt,
     FaSignOutAlt
 } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import AkademikDashboard from "../Kema/AkademikDashboard";
 
 const SidebarAkademikComponents = ({ children }) => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [showOffcanvas, setShowOffcanvas] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const handleNavigate = () => {
         navigate("/kema");
@@ -31,11 +42,9 @@ const SidebarAkademikComponents = ({ children }) => {
         { icon: <FaTrophy />, title: "Prestasi", path: "/akademik/dashboard/Prestasi/TambahPrestasi" },
         { icon: <FaLaptopCode />, title: "Kerja Praktik", path: "/akademik/dashboard/KerjaPraktik/TambahKerjaPraktik" },
         { icon: <FaBook />, title: "Tugas Akhir", path: "/akademik/dashboard/TugasAkhir/TambahTugasAkhir" },
-        { icon: <FaUniversity />, title: "PMM", path: "/akademik/dashboard/Pmm/TambahPmm" },
-        // { icon: <FaStore />, title: "Kewirausahaan", path: "/akademik/dashboard/Kewirausahaan/TambahKewirausahaan" },
+        { icon: <FaUniversity />, title: "Student Mobility", path: "/akademik/dashboard/Pmm/TambahPmm" },
         { icon: <FaUserGraduate />, title: "Alumni", path: "/akademik/dashboard/Alumni/TambahAlumni" }
     ];
-
 
     const colors = {
         primary: "#212529",
@@ -48,6 +57,9 @@ const SidebarAkademikComponents = ({ children }) => {
         border: "rgba(255, 255, 255, 0.15)",
     };
 
+    const isActiveRoute = (path) => {
+        return location.pathname.startsWith(path);
+    };
 
     return (
         <Container fluid className="p-0">
@@ -91,11 +103,15 @@ const SidebarAkademikComponents = ({ children }) => {
                     <Nav.Link
                         as={Link}
                         to="/akademik/dashboard"
-                        className="text-white d-flex align-items-center py-2 px-3 mt-1"
+                        className={`text-white d-flex align-items-center py-2 px-3 mt-1 ${
+                            location.pathname === "/akademik/dashboard" ? "bg-dark" : ""
+                        }`}
                         style={{
                             borderRadius: '4px',
                             margin: '2px 8px',
-                            backgroundColor: 'rgba(255,255,255,0.1)',
+                            backgroundColor: location.pathname === "/akademik/dashboard" 
+                                ? colors.accent 
+                                : 'rgba(255,255,255,0.1)',
                         }}
                     >
                         <FaTachometerAlt className="me-3" />
@@ -104,35 +120,46 @@ const SidebarAkademikComponents = ({ children }) => {
 
                     <div className="mt-2 mb-2" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}></div>
 
-
                     <div className="overflow-auto flex-grow-1 " style={{ maxHeight: 'calc(100vh - 170px)' }}>
                         {menuItems.map((item, index) => (
                             <Nav.Link
                                 key={index}
                                 as={Link}
                                 to={item.path}
-                                className="text-white d-flex align-items-center py-2 px-3"
+                                className={`text-white d-flex align-items-center py-2 px-3 ${
+                                    isActiveRoute(item.path) ? "bg-secondary" : ""
+                                }`}
                                 style={{
                                     borderRadius: '4px',
                                     margin: '4px 8px',
-                                    transition: 'all 0.2s ease'
+                                    transition: 'all 0.2s ease',
+                                    backgroundColor: isActiveRoute(item.path) 
+                                        ? colors.accent 
+                                        : 'transparent'
                                 }}
-                                onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'}
-                                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                                onMouseOver={(e) => {
+                                    if (!isActiveRoute(item.path)) {
+                                        e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)';
+                                    }
+                                }}
+                                onMouseOut={(e) => {
+                                    if (!isActiveRoute(item.path)) {
+                                        e.currentTarget.style.backgroundColor = 'transparent';
+                                    }
+                                }}
                             >
                                 <span className="me-3">
                                     {item.icon}
                                 </span>
                                 {!isCollapsed && <span>{item.title}</span>}
                             </Nav.Link>
-
                         ))}
                     </div>
 
                     <div className="p-3 mt-auto" style={{ borderTop: `1px solid ${colors.border}` }}>
                         <Button
                             variant="danger"
-                            className="w-100 d-flex align-items-center justify-content-center py-2 "
+                            className="w-100 d-flex align-items-center justify-content-center py-2"
                             style={{ borderRadius: '6px', fontSize: '14px' }}
                             onClick={handleNavigate}
                         >
@@ -143,10 +170,8 @@ const SidebarAkademikComponents = ({ children }) => {
                 </Col>
 
 
-
-
-                <div className="d-md-none w-100 fixed-top" style={{ zIndex: 1040 }}>
-                    <div className="d-flex justify-content-between align-items-center p-2 bg-white">
+                <div className="d-md-none w-100 fixed-top shadow-sm" style={{ zIndex: 1040 }}>
+                    <div className="d-flex justify-content-between align-items-center p-3 bg-white">
                         <div className="d-flex align-items-center">
                             <img
                                 src="/src/assets/unimal.png"
@@ -161,11 +186,12 @@ const SidebarAkademikComponents = ({ children }) => {
                         </div>
 
                         <Button
-                            variant="light"
+                            variant="outline-white"
                             onClick={() => setShowOffcanvas(true)}
-                            className="border-0"
+                            className="d-flex align-items-center justify-content-center"
+                            style={{ width: '40px', height: '40px', borderRadius: '8px' }}
                         >
-                            <FaBars size={24} />
+                            <FaBars size={20} />
                         </Button>
                     </div>
                 </div>
@@ -175,50 +201,96 @@ const SidebarAkademikComponents = ({ children }) => {
                     onHide={() => setShowOffcanvas(false)}
                     placement="end"
                     className="w-75"
+                    backdrop="static"
                 >
-                    <Offcanvas.Header closeButton className="bg-dark text-white">
-                        <Offcanvas.Title className="fw-bold">Menu</Offcanvas.Title>
+                    <Offcanvas.Header className="bg-dark text-white py-3">
+                        <div className="d-flex align-items-center">
+                            <img
+                                src="/src/assets/unimal.png"
+                                width="40"
+                                height="40"
+                                className="rounded-circle me-2"
+                                alt="Logo"
+                            />
+                            <div>
+                                <h5 className="fw-semibold mb-0">Sistem Informasi</h5>
+                                <p className="text-info mb-0" style={{ fontSize: '12px' }}>Akademik Terpadu</p>
+                            </div>
+                        </div>
+                        <Button 
+                            variant="outline-light" 
+                            size="sm"
+                            onClick={() => setShowOffcanvas(false)}
+                            className="d-flex align-items-center justify-content-center mx-3"
+                            style={{ width: '30px', height: '30px', borderRadius: '4px' }}
+                        >
+                            &times;
+                        </Button>
                     </Offcanvas.Header>
+                    
                     <Offcanvas.Body className="p-0">
                         <Nav className="flex-column">
+                            <Nav.Link
+                                as={Link}
+                                to="/akademik/dashboard"
+                                className={`py-3 px-4 d-flex align-items-center border-bottom ${
+                                    location.pathname === "/akademik/dashboard" ? "bg-secondary text-white fw-bold" : ""
+                                }`}
+                                onClick={() => setShowOffcanvas(false )}
+                            >
+                                <span className="me-3 text-dark">
+                                    <FaTachometerAlt size={18} className="text-white"/>
+                                </span>
+                                Dashboard
+                            </Nav.Link>
+                            
                             {menuItems.map((item, index) => (
                                 <Nav.Link
                                     key={index}
                                     as={Link}
                                     to={item.path}
-                                    className="py-3 px-4 d-flex align-items-center border-bottom text-dark"
+                                    className={`py-3 px-4 d-flex align-items-center border-bottom ${
+                                        isActiveRoute(item.path) ? "bg-secondary text-white fw-bold" : ""
+                                    }`}
                                     onClick={() => setShowOffcanvas(false)}
                                 >
-                                    <span className="me-3">{item.icon}</span> {item.title}
+                                    <span className={`me-3 ${isActiveRoute(item.path) ? "text-white" : ""}`}>
+                                        {item.icon}
+                                    </span>
+                                    {item.title}
                                 </Nav.Link>
                             ))}
-                                <Button
-                                    onClick={handleNavigate}
-                                    className="py-3 px-4 d-flex align-items-center w-100 text-start rounded-0 border-bottom"
-                                    style={{ borderColor: '#e5e7eb', color: "#dc3545", backgroundColor: "transparent" }}
-                                >
-                                    <FaSignOutAlt className="me-3" size={16} /> Kembali
-                                </Button>
                             
+                            <div className="p-3 mt-2">
+                                <Button
+                                    onClick={() => {
+                                        setShowOffcanvas(false);
+                                        handleNavigate();
+                                    }}
+                                    variant="danger"
+                                    className="w-100 py-2 d-flex align-items-center justify-content-center"
+                                    style={{ borderRadius: '6px' }}
+                                >
+                                    <FaSignOutAlt className="me-2" /> Kembali
+                                </Button>
+                            </div>
                         </Nav>
                     </Offcanvas.Body>
                 </Offcanvas>
 
-
-
                 <Col
-                    className={`min-vh-100 ${window.innerWidth < 768 ? 'p-0' : 'ps-0 pe-3'}`}
+                    className={`min-vh-100 ${isMobile ? 'p-0' : 'ps-0 pe-3'}`}
                     style={{
-                        marginLeft: window.innerWidth < 768 ? '0' : (isCollapsed ? '80px' : '260px'),
+                        marginLeft: isMobile ? '0' : (isCollapsed ? '80px' : '260px'),
                         transition: "margin-left 0.3s ease",
-                        width: window.innerWidth < 768 ? '100%' : (isCollapsed ? 'calc(100% - 80px)' : 'calc(100% - 260px)'),
-                        marginTop: window.innerWidth < 768 ? '60px' : '0'
+                        width: isMobile ? '100%' : (isCollapsed ? 'calc(100% - 80px)' : 'calc(100% - 260px)'),
+                        marginTop: isMobile ? '70px' : '0'
                     }}
                 >
                     <div className="container-fluid py-3">
                         <div className="row">
                             <div className="col-12">
-                                {window.location.pathname === "/akademik/dashboard" ? <AkademikDashboard /> : children}
+                                {location.pathname === "/akademik/dashboard" ? <AkademikDashboard /> : children}
                             </div>
                         </div>
                     </div>

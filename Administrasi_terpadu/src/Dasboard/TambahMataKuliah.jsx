@@ -73,8 +73,10 @@ const TambahMataKuliah = () => {
                   onChange={(e) => setSks(e.target.value)}
                 >
                   <option value="">Pilih SKS</option>
+                  <option value="1 SKS">1 SKS</option>
                   <option value="2 SKS">2 SKS</option>
                   <option value="3 SKS">3 SKS</option>
+                  <option value="6 SKS">6 SKS</option>
                 </Form.Select>
               </Col>
             </Row>

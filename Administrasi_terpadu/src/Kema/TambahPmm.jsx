@@ -40,15 +40,14 @@ const TammbahPmm = () => {
         <Container fluid className="p-4">
             <Row className="align-items-center p-4">
                 <Col>
-                    <h2 className="mb-1 fw-bold text-white text-uppercase">Pertukaran Mahasiswa Merdeka</h2>
-                    <p className="text-muted mb-0">Daftar PMM Mahasiswa Sistem Informasi </p>
+                    <h2 className="mb-1 fw-bold text-white text-uppercase">STUDENT MOBILITY</h2>
                 </Col>
             </Row>
 
 
             <Card className="shadow border-0">
                 <Card.Header>
-                    <h5 className="mb-0 fw-semibold">Tambah Data PMM </h5>
+                    <h5 className="mb-0 fw-semibold">Tambah Student Mobility</h5>
                 </Card.Header>
                 <Card.Body className="p-4">
 
@@ -126,7 +125,7 @@ const TammbahPmm = () => {
                             </Col>
                         </Row>
                         <div className="ms-auto col-md-3 col-lg-2">
-                            <Button className=" shadow py-2 px-4" variant="success" size="sm" type="submit" >
+                            <Button className=" shadow py-2 px-4" variant="primary" size="sm" type="submit" >
                                 Tambah
                             </Button>
                         </div>

@@ -1,33 +1,44 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Container, Card, Table, Button, Badge, Row, Col, Form, InputGroup } from "react-bootstrap";
-import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiFilter } from "react-icons/fi";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import {
+  Container,
+  Card,
+  Table,
+  Button,
+  Badge,
+  Row,
+  Col,
+  Form,
+  InputGroup,
+} from "react-bootstrap";
+import {
+  FiPlus,
+  FiSearch,
+  FiEdit2,
+  FiTrash2,
+  FiFilter,
+} from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-import { useReactToPrint } from 'react-to-print';
-import { useRef } from 'react';
-import "../Dist/Home.css"
+import { useReactToPrint } from "react-to-print";
+import "../Dist/Home.css";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
 const Dosen = () => {
   const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
   const [dosenList, setDosenList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const { user, isAuthenticated } = useAuth();
   const printRef = useRef();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/login");
-    }
+    if (!isAuthenticated) navigate("/login");
   }, [isAuthenticated, navigate]);
 
-  if (!isAuthenticated) {
-    return <div>Loading...</div>;
-  }
+  if (!isAuthenticated) return <div>Loading...</div>;
 
   const fetchDosen = async () => {
     try {
@@ -67,58 +78,9 @@ const Dosen = () => {
     "Kepala Laboratorium": 5,
   };
 
-  const handlePrint = useReactToPrint({
-    contentRef: printRef,
-    documentTitle: " Dosen",
-    onBeforeGetContent: () => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, 100);
-      });
-    },
-  });
-
-  const exportToExcel = async () => {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Dosen");
-
-
-    worksheet.addRow(["No", "Nip", "Nama",  "Keahlian", "Jabatan Struktural", "Jabatan Fungsional", "Status"]);
-
-
-    for (let i = 0; i < filteredDosen.length; i++) {
-      const dosen = filteredDosen[i];
-      const row = worksheet.addRow([
-        i + 1,
-        dosen.nip,
-        dosen.name,
-        dosen.keahlian,
-        dosen.jabatan_struktural,
-        dosen.jabatan_fungsional,
-        dosen.status
-      ]);
-    }
-
-    worksheet.columns = [
-      { width: 5 },
-      { width: 30 },
-      { width: 55 },
-      { width: 40 },
-      { width: 30 },
-      { width: 20 },
-    ];
-
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-    saveAs(blob, "Dosen.xlsx");
-  };
-
-
   const sortedDosen = [...filteredDosen].sort(
-    (a, b) => (rank[a.jabatan_struktural] || 99) - (rank[b.jabatan_struktural] || 99)
+    (a, b) =>
+      (rank[a.jabatan_struktural] || 99) - (rank[b.jabatan_struktural] || 99)
   );
 
   const totalItems = sortedDosen.length;
@@ -132,6 +94,56 @@ const Dosen = () => {
     navigate("/admin/dashboard/dosen/tambahdosen");
   }, [navigate]);
 
+  const handlePrint = useReactToPrint({
+    content: () => printRef.current,
+    documentTitle: "Laporan Dosen",
+    onBeforeGetContent: () =>
+      new Promise((resolve) => setTimeout(resolve, 100)),
+  });
+
+  const exportToExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Dosen");
+
+    worksheet.addRow([
+      "No",
+      "NIP",
+      "Nama",
+      "Keahlian",
+      "Jabatan Struktural",
+      "Jabatan Fungsional",
+      "Status",
+    ]);
+
+    filteredDosen.forEach((dosen, i) => {
+      worksheet.addRow([
+        i + 1,
+        dosen.nip,
+        dosen.name,
+        dosen.keahlian,
+        dosen.jabatan_struktural,
+        dosen.jabatan_fungsional,
+        dosen.status,
+      ]);
+    });
+
+    worksheet.columns = [
+      { width: 5 },
+      { width: 20 },
+      { width: 30 },
+      { width: 30 },
+      { width: 30 },
+      { width: 30 },
+      { width: 10 },
+    ];
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, "Dosen.xlsx");
+  };
+
   return (
     <Container fluid className="p-4">
       <Row className="align-items-center p-4">
@@ -140,11 +152,7 @@ const Dosen = () => {
           <p className="text-muted mb-0">Sistem Informasi</p>
         </Col>
         <Col xs="auto">
-          <Button
-            variant="success"
-            onClick={handleAddDosen}
-            className="shadow d-flex align-items-center gap-2 text-white"
-          >
+          <Button variant="success" onClick={handleAddDosen} className="shadow d-flex align-items-center gap-2 text-white">
             <FiPlus size={18} />
             <span>Tambah Dosen</span>
           </Button>
@@ -167,7 +175,7 @@ const Dosen = () => {
                 <Button variant="danger" size="sm" onClick={handlePrint}>
                   Cetak Laporan PDF
                 </Button>
-                <Button variant="secondary" size="sm" onClick={exportToExcel} className="ms-2">
+                <Button variant="secondary" size="sm" onClick={exportToExcel}>
                   Ekspor ke Excel
                 </Button>
                 <div className="ms-auto col-md-4 col-12">
@@ -187,8 +195,8 @@ const Dosen = () => {
               </div>
             </Card.Header>
 
-            <Card.Body className="p-0 text-center" >
-              <div className="table-responsive " ref={printRef}>
+            <Card.Body className="p-0 text-center">
+              <div className="table-responsive" ref={printRef}>
                 <div className="print-only">
                   <h4 className="text-uppercase">Laporan Dosen</h4>
                   <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
@@ -196,29 +204,40 @@ const Dosen = () => {
                 <Table striped bordered hover className="align-middle mb-0" size="sm">
                   <thead>
                     <tr className="bg-light">
-                      <th className="px-2 py-4">No</th>
-                      <th className="px-3 py-4">NIP</th>
-                      <th className="px-5 py-4">Nama</th>
-                      <th className="px-3 py-4">Bidang Keahlian</th>
-                      <th className="px-3 py-4">Jabatan Struktural</th>
-                      <th className="px-2 py-4">Jabatan Fungsional</th>
-                      <th className="px-3 py-4">Status</th>
-                      <th className="px-3 py-4 no-print">Aksi</th>
+                      <th className="px-3">No</th>
+                      <th className="px-3">Foto</th>
+                      <th className="px-5">NIP</th>
+                      <th className="px-5">Nama</th>
+                      <th className="px-3">Bidang Keahlian</th>
+                      <th className="px-3">Jabatan Struktural</th>
+                      <th className="px-2">Jabatan Fungsional</th>
+                      <th className="px-3">Status</th>
+                      <th className="no-print">Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
                     {paginatedDosen.length > 0 ? (
                       paginatedDosen.map((dosen, index) => (
                         <tr key={dosen.id}>
-                          <td className="text-center border-end">
-                            {index + 1 + (currentPage - 1) * itemsPerPage}
+                          <td>{index + 1 + (currentPage - 1) * itemsPerPage}</td>
+                          <td>
+                            <img
+                              src={`http://localhost:5000/uploads/dosen/${dosen.foto_dosen}`}
+
+                              alt="Foto Dosen"
+                              style={{
+                                width: "70px",
+                                height: "100px",
+                                objectFit: "cover",
+                              }}
+                            />
                           </td>
-                          <td className="border-end">{dosen.nip}</td>
-                          <td className="border-end">{dosen.name}</td>
-                          <td className="border-end">{dosen.keahlian}</td>
-                          <td className="border-end">{dosen.jabatan_struktural}</td>
-                          <td className="border-end">{dosen.jabatan_fungsional}</td>
-                          <td className="text-center border-end">
+                          <td>{dosen.nip}</td>
+                          <td>{dosen.name}</td>
+                          <td>{dosen.keahlian}</td>
+                          <td>{dosen.jabatan_struktural}</td>
+                          <td>{dosen.jabatan_fungsional}</td>
+                          <td>
                             <Badge
                               bg={dosen.status === "Aktif" ? "success" : "warning"}
                               className="rounded-pill px-3 py-1 fw-normal"
@@ -231,7 +250,6 @@ const Dosen = () => {
                               <Button
                                 variant="outline-success"
                                 size="sm"
-                                className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
                                 title="Edit"
                                 onClick={() =>
                                   navigate(`/admin/dashboard/dosen/editdosen/${dosen.id}`)
@@ -242,7 +260,6 @@ const Dosen = () => {
                               <Button
                                 variant="outline-danger"
                                 size="sm"
-                                className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
                                 title="Hapus"
                                 onClick={() => deleteDosen(dosen.id)}
                               >
@@ -254,7 +271,7 @@ const Dosen = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="8" className="text-center py-4">
+                        <td colSpan="9" className="text-center py-4">
                           <div className="d-flex flex-column align-items-center justify-content-center py-4">
                             <FiFilter size={32} className="text-muted mb-2" />
                             <p className="text-muted mb-0">Tidak ada data dosen yang tersedia</p>
@@ -270,16 +287,15 @@ const Dosen = () => {
 
           <div className="p-3 border-top d-flex justify-content-between align-items-center">
             <div className="small text-muted">
-              Menampilkan {(currentPage - 1) * itemsPerPage + 1}–
-              {Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
+              Menampilkan {(currentPage - 1) * itemsPerPage + 1}–{Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
             </div>
-            <div className="mx-3">
+            <div>
               <Button
                 variant="outline-primary"
                 size="sm"
                 onClick={() => setCurrentPage(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="mx-2 mb-2"
+                className="mx-2"
               >
                 Sebelumnya
               </Button>
@@ -288,7 +304,7 @@ const Dosen = () => {
                 size="sm"
                 onClick={() => setCurrentPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="mx-2 mb-2"
+                className="mx-2"
               >
                 Selanjutnya
               </Button>

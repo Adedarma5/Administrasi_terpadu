@@ -190,7 +190,7 @@ const TambahTga = () => {
                             </Col>
                         </Row>
                         <div className="ms-auto col-md-3 col-lg-2">
-                            <Button className=" shadow py-2 px-4" variant="success" size="sm" type="submit" >
+                            <Button className=" shadow py-2 px-4" variant="primary" size="sm" type="submit" >
                                 Tambah
                             </Button>
                         </div>
