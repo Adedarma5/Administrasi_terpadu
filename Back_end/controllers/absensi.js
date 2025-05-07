@@ -28,7 +28,6 @@ export const getAbsensi = async (req, res) => {
 
 export const getAbsensiById = async (req, res) => {
     try {
-        const { role, id } = req.user;
 
         const absensi = await Absensi.findOne({
             attributes: ['id', 'name', 'mata_kuliah', 'jam_pelajaran', 'foto'],
@@ -37,10 +36,6 @@ export const getAbsensiById = async (req, res) => {
 
         if (!absensi) {
             return res.status(404).json({ msg: "Absensi tidak ditemukan" });
-        }
-
-        if (role === 'user' && absensi.userId !== id) {
-            return res.status(403).json({ msg: "Akses ditolak" });
         }
 
         res.status(200).json(absensi);

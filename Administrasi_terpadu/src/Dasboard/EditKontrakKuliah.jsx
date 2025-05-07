@@ -101,7 +101,7 @@ const EditKontrakKuliah = () => {
               <Col md={8}>
                 <Form.Select value={semester} onChange={(e) => setSemester(e.target.value)} required>
                   <option value="">-- Pilih Semester --</option>
-                  {Array.from({ length: 16 }, (_, i) => (
+                  {Array.from({ length: 8 }, (_, i) => (
                     <option key={i + 1} value={`Semester ${i + 1}`}>
                       Semester {i + 1}
                     </option>

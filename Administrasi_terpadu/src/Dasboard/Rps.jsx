@@ -8,6 +8,7 @@ import { useRef } from 'react';
 import "../Dist/Home.css"
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import Swal from "sweetalert2";
 
 const Rps = () => {
     const navigate = useNavigate();
@@ -41,13 +42,36 @@ const Rps = () => {
     };
 
     const deleteRps = async (id) => {
-        if (window.confirm("Apakah Anda yakin ingin menghapus RPS ini?")) {
+        const result = await Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data yang dihapus tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        });
+
+        if (result.isConfirmed) {
             try {
                 await axios.delete(`http://localhost:5000/rps/${id}`);
                 fetchRps();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Data berhasil dihapus.',
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
             } catch (error) {
-                alert("Gagal menghapus RPS");
-                console.error("Error deleting RPS:", error);
+                console.error("Error deleting:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops!',
+                    text: 'Terjadi kesalahan saat menghapus data.',
+                });
             }
         }
     };

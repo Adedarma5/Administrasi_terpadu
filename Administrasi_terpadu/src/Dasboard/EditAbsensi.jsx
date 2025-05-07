@@ -17,6 +17,7 @@ const EditAbsensi = () => {
     useEffect(() => {
         getMataKuliahList();
         getDosenList();
+        getAbsensiById();
     }, []);
 
     const getMataKuliahList = async () => {
@@ -41,6 +42,20 @@ const EditAbsensi = () => {
         setFoto(e.target.files[0]);
     };
 
+    const getAbsensiById = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/absensi/${id}`);
+            const absensi = response.data;
+
+            setName(absensi.name);
+            setMataKuliah(absensi.mata_kuliah);
+            setJamPelajaran(absensi.jam_pelajaran);
+        } catch (error) {
+            console.error("Gagal mengambil data absensi:", error);
+            setMsg("Terjadi kesalahan saat mengambil data absensi.");
+        }
+    };
+
     const updateAbsensi = async (e) => {
         e.preventDefault();
         try {
@@ -52,7 +67,7 @@ const EditAbsensi = () => {
                 formData.append("foto", foto);
             }
 
-            const token = localStorage.getItem("token"); 
+            const token = localStorage.getItem("token");
             await axios.patch(`http://localhost:5000/absensi/${id}`, formData, {
                 headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
             });
@@ -132,10 +147,10 @@ const EditAbsensi = () => {
                         <Row className="mb-3">
                             <Col md={3}><Form.Label>Foto </Form.Label></Col>
                             <Col md={8}>
-                                <Form.Control 
-                                type="file" 
-                                onChange={handleFileChange} 
-                                 />
+                                <Form.Control
+                                    type="file"
+                                    onChange={handleFileChange}
+                                />
                             </Col>
                         </Row>
 

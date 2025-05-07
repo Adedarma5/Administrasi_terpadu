@@ -26,7 +26,6 @@ export const getPengabdian = async (req, res) => {
 
 export const getPengabdianById = async (req, res) => {
   try {
-    const { role, id } = req.user;
 
     const pengabdian = await Pengabdian.findOne({
       attributes: ['id', 'judul_pengabdian', 'nama_dosen', 'mitra', 'bentuk_kegiatan', 'lokasi', 'tahun', 'file_kegiatan'],
@@ -37,9 +36,6 @@ export const getPengabdianById = async (req, res) => {
       return res.status(404).json({ msg: "Data tidak ditemukan" });
     }
 
-    if (role === 'user' && absensi.userId !== id) {
-      return res.status(403).json({ msg: "Akses ditolak" });
-  }
 
     res.status(200).json(pengabdian);
   } catch (error) {

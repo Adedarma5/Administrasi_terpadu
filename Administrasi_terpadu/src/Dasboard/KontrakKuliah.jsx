@@ -131,7 +131,12 @@ const KontrakKuliah = () => {
         const nameMatch = kontrak_kuliah.mata_kuliah?.toLowerCase().includes(searchTerm.toLowerCase());
         const semesterMatch = selectedsemester === "" || kontrak_kuliah.semester?.toLowerCase() === `semester ${selectedsemester}`.toLowerCase();
         return nameMatch && semesterMatch;
-    });
+    })
+    .sort((a, b) => {
+        const semesterA = parseInt(a.semester.replace(/[^0-9]/g, ""));
+        const semesterB = parseInt(b.semester.replace(/[^0-9]/g, ""));
+        return semesterA - semesterB;
+      });
 
     const totalItems = filteredKontrakKuliah.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);

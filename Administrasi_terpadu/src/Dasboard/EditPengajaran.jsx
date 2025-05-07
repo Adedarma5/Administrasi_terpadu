@@ -23,6 +23,8 @@ const EditPengajaran = () => {
     useEffect(() => {
         getDosenList();
         getMataKuliahList();
+        getPengajaranById();
+
     }, []);
 
     const getDosenList = async () => {
@@ -47,6 +49,27 @@ const EditPengajaran = () => {
     const handleFileChange = (e) => {
         setFilePengajaran(e.target.files[0]);
     };
+
+    const getPengajaranById = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/pengajaran/${id}`);
+            const pengajaran = response.data;
+
+            setNamaDosen(pengajaran.nama_dosen);
+            setMataKuliah(pengajaran.mata_kuliah);
+            setSemester(pengajaran.semester);
+            setKelas(pengajaran.kelas);
+            setMetodePengajaran(pengajaran.metode_pengajaran);
+            setKeterlibatanPraktisi(pengajaran.keterlibatan_praktisi);
+            setNamaPraktisi(pengajaran.nama_praktisi);
+            setInstitusiPraktisi(pengajaran.institusi_praktisi);
+        } catch (error) {
+            console.error("Gagal mengambil data pengajaran:", error);
+            setMsg("Terjadi kesalahan saat mengambil data pengajaran.");
+        }
+    };
+    
+
 
     const updatePengajaran = async (e) => {
         e.preventDefault();

@@ -13,11 +13,16 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
+    const [user, setUser] = useState("");
     const [kegiatandata, setKegiatanData] = useState([]);
     const [statsdata, setStatsData] = useState([]);
     const [role, setRole] = useState("");
 
     useEffect(() => {
+        const storedName = localStorage.getItem("name");
+        if (storedName) {
+            setUser(storedName);
+        }
         const userRole = localStorage.getItem('role');
         setRole(userRole?.toLowerCase());
 
@@ -62,8 +67,16 @@ const AdminDashboard = () => {
                 <Card.Body className="p-4">
                     <Row className="align-items-center">
                         <Col>
-                            <h2 className="mb-1 fw-bold">SELAMAT DATANG</h2>
-                            <p className="text-muted mb-0">Sistem Informasi Administrasi Terpadu</p>
+                        
+                            <h2 className="mb-1 fw-bold"> <Activity /> SELAMAT DATANG</h2>
+                            <div className="mb-5 ">
+                                
+                                <span className="fw-semibold text-primary " style={{ fontSize: '25px' }}>
+                                {user} 
+
+                                </span>
+                            </div>
+                            <p className="text-muted">Sistem Informasi Administrasi Terpadu</p>
                         </Col>
                         <Col xs={6} md={2} className="text-end">
                             <Image src="/src/assets/bg-login.png" rounded style={{ width: '80%' }} />
@@ -106,15 +119,15 @@ const AdminDashboard = () => {
                     <Card.Body>
                         <h5 className="fw-semibold text-uppercase mb-3">Statistik Kegiatan Mahasiswa</h5>
                         <ResponsiveContainer width="80%" height={300}>
-                            <BarChart data={kegiatandata} margin={{bottom: 63}}>
+                            <BarChart data={kegiatandata} margin={{ bottom: 63 }}>
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis 
-                                dataKey="nama"
-                                angle={-35}
-                                textAnchor="end"
-                                dy={10}
-                                interval={0}
-                                 />
+                                <XAxis
+                                    dataKey="nama"
+                                    angle={-35}
+                                    textAnchor="end"
+                                    dy={10}
+                                    interval={0}
+                                />
                                 <YAxis allowDecimals={false} />
                                 <Tooltip />
                                 <Bar dataKey="jumlah" fill="#8884d8" />

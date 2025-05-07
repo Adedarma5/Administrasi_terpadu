@@ -7,34 +7,74 @@ import { useState } from "react";
 
 const TammbahPmm = () => {
     const navigate = useNavigate();
-    const [nama, setNama] = useState("");
-    const [nim, setNim] = useState("");
-    const [stambuk, setStambuk] = useState("");
-    const [nama_universitas, setNamaUniversitas] = useState("");
-    const [konversi_nilai, setKonversiNilai] = useState(null);
     const [msg, setMsg] = useState("");
+    const [formData, setFormData] = useState({
+        nama: "",
+        nim: "",
+        stambuk: "",
+        nama_universitas: "",
+    });
+
+    const [files, setFiles] = useState({
+        konversi_nilai: null,
+    });
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleFileChange = (e) => {
+        setFiles({ ...files, [e.target.name]: e.target.files[0] });
+    };
 
     const TambahPmm = async (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append("nama", nama);
-        formData.append("nim", nim);
-        formData.append("stambuk", stambuk);
-        formData.append("nama_universitas", nama_universitas);
-        formData.append("konversi_nilai", konversi_nilai);
+
+        const data = new FormData();
+        Object.entries(formData).forEach(([key, value]) => data.append(key, value));
+        Object.entries(files).forEach(([key, file]) => {
+            if (file) data.append(key, file);
+        });
 
         try {
-            const response = await axios.post("http://localhost:5000/pmm", formData, {
+
+            const response = await axios.post("http://localhost:5000/pmm", data, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
-            console.log("Upload berhasil:", response.data);
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: 'Data berhasil ditambahkan.',
+                timer: 2000,
+                showConfirmButton: false,
+                position: 'center',
+            });
+
+            setFormData({
+                nama: "",
+                nim: "",
+                stambuk: "",
+                nama_universitas: "",
+            });
+            setFiles({
+                konversi_nilai: null,
+            });
+
+
             navigate("/akademik/dashboard");
         } catch (error) {
-            setMsg(error.response?.data?.msg || "Terjadi kesalahan");
-            console.error("Error saat upload:", error);
+            console.error("Gagal tambah data:", error);
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops!',
+                text: 'Terjadi kesalahan saat menambahkan data.',
+                position: 'center',
+                showConfirmButton: true,
+            });
         }
     };
-
 
     return (
         <Container fluid className="p-4">
@@ -60,8 +100,9 @@ const TammbahPmm = () => {
                                 <Form.Control
                                     type="text"
                                     placeholder="Masukkan Nama"
-                                    value={nama}
-                                    onChange={(e) => setNama (e.target.value)}
+                                    name="nama"
+                                    value={formData.nama}
+                                    onChange={handleChange}
                                     required
                                 />
                             </Col>
@@ -73,10 +114,11 @@ const TammbahPmm = () => {
                             </Col> :
                             <Col md={8}>
                                 <Form.Control
-                                    type="text"
+                                    type="number"
                                     placeholder="Masukkan Nim"
-                                    value={nim}
-                                    onChange={(e) => setNim (e.target.value)}
+                                    name="nim"
+                                    value={formData.nim}
+                                    onChange={handleChange}
                                     required
                                 />
                             </Col>
@@ -90,8 +132,9 @@ const TammbahPmm = () => {
                                 <Form.Control
                                     type="text"
                                     placeholder="Masukkan Stambuk"
-                                    value={stambuk}
-                                    onChange={(e) => setStambuk (e.target.value)}
+                                    name="stambuk"
+                                    value={formData.stambuk}
+                                    onChange={handleChange}
                                     required
                                 />
                             </Col>
@@ -104,8 +147,9 @@ const TammbahPmm = () => {
                             <Col md={8}>
                                 <Form.Control
                                     type="text"
-                                    value={nama_universitas}
-                                    onChange={(e) => setNamaUniversitas (e.target.value)}
+                                    name="nama_universitas"
+                                    value={formData.nama_universitas}
+                                    onChange={handleChange}
                                     required
                                 />
                             </Col>
@@ -119,7 +163,8 @@ const TammbahPmm = () => {
                                 <Form.Control
                                     type="file"
                                     accept=".pdf"
-                                    onChange={(e) => setKonversiNilai (e.target.files[0])}
+                                    name="konversi_nilai"
+                                    onChange={handleFileChange}
                                     required
                                 />
                             </Col>

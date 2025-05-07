@@ -167,7 +167,6 @@ const TambahTga = () => {
                             <Col md={8}>
                                 <Form.Control
                                     type="file"
-                                    accept=".pdf"
                                     name="program_tga"
                                     onChange={handleFileChange}
                                     required

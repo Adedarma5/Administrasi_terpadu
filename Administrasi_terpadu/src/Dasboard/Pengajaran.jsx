@@ -317,7 +317,7 @@ const Pengajaran = () => {
                               rel="noopener noreferrer"
 
                             >
-                              Lihat PDF
+                              Lihat 
                             </a>
                           </td>
                           <td className="no-print">

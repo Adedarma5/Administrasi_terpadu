@@ -8,6 +8,7 @@ import { useRef } from 'react';
 import "../Dist/Home.css"
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import Swal from "sweetalert2";
 
 const MataKuliah = () => {
   const navigate = useNavigate();
@@ -35,12 +36,36 @@ const MataKuliah = () => {
   }, []);
 
   const deleteMataKuliah = async (id) => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus Mata Kuliah ini?")) {
+    const result = await Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: "Data yang dihapus tidak bisa dikembalikan!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, hapus!',
+      cancelButtonText: 'Batal'
+    });
+
+    if (result.isConfirmed) {
       try {
         await axios.delete(`http://localhost:5000/mata_kuliah/${id}`);
         fetchMataKuliah();
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Berhasil!',
+          text: 'Data berhasil dihapus.',
+          timer: 2000,
+          showConfirmButton: false,
+        });
       } catch (error) {
-        console.error("Error deleting mata kuliah:", error);
+        console.error("Error deleting:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops!',
+          text: 'Terjadi kesalahan saat menghapus data.',
+        });
       }
     }
   };
@@ -89,11 +114,18 @@ const MataKuliah = () => {
     saveAs(blob, "mata_kuliah.xlsx");
   };
 
-  const filteredMataKuliah = matakuliahList.filter((mata_kuliah) => {
-    const nameMatch = mata_kuliah.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const semesterMatch = selectedsemester === "" || mata_kuliah.semester.toLowerCase() === `semester ${selectedsemester}`.toLowerCase();
-    return nameMatch && semesterMatch;
-  });
+  const filteredMataKuliah = matakuliahList
+    .filter((mata_kuliah) => {
+      const nameMatch = mata_kuliah.name.toLowerCase().includes(searchTerm.toLowerCase());
+      const semesterMatch = selectedsemester === "" || mata_kuliah.semester.toLowerCase() === `semester ${selectedsemester}`.toLowerCase();
+      return nameMatch && semesterMatch;
+    })
+    .sort((a, b) => {
+      const semesterA = parseInt(a.semester.replace(/[^0-9]/g, ""));
+      const semesterB = parseInt(b.semester.replace(/[^0-9]/g, ""));
+      return semesterA - semesterB;
+    });
+
 
   const totalItems = filteredMataKuliah.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);

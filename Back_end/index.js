@@ -1,53 +1,47 @@
-import express from "express";
-import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
-import cors from "cors";
-import db from "./config/database.js"
-import router from "./routes/userroute.js";
-import AuthRoute from "./routes/AuthRoute.js";
-import DosenRouter from "./routes/dosenroute.js";
-import MataKuliah from "./routes/matakuliah.js";
-import BahanAjar from "./routes/bahanajar.js";
-import Absensi from "./routes/absensi.js";
-import Msib from "./routes/msib.js";
-import Rps from "./routes/rps.js";
-import KontrakKuliah from "./routes/kontarkkuliah.js";
-import Penelitian from "./routes/penelitian.js";
-import Pengabdian from "./routes/pengabdian.js";
-import MagangMandiri from "./routes/magangmandiri.js";
-import Prestasi from "./routes/prestasi.js";
-import KerjaPraktik from "./routes/kerjaprakti.js";
-import TugasAkhir from "./routes/tga.js";
-import Pmm from "./routes/pmm.js";
-import Pengajaran from "./routes/pengajaran.js";
-import { getKegiatanMahasiswaStats, getStats } from './controllers/datakegiatanmahasiswa.js';
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const db = require("./config/database.js");
+const router = require("./routes/userroute.js");
+const AuthRoute = require("./routes/AuthRoute.js");
+const DosenRouter = require("./routes/dosenroute.js");
+const MataKuliah = require("./routes/matakuliah.js");
+const BahanAjar = require("./routes/bahanajar.js");
+const Absensi = require("./routes/absensi.js");
+const Msib = require("./routes/msib.js");
+const Rps = require("./routes/rps.js");
+const KontrakKuliah = require("./routes/kontarkkuliah.js");
+const Penelitian = require("./routes/penelitian.js");
+const Pengabdian = require("./routes/pengabdian.js");
+const MagangMandiri = require("./routes/magangmandiri.js");
+const Prestasi = require("./routes/prestasi.js");
+const KerjaPraktik = require("./routes/kerjaprakti.js");
+const TugasAkhir = require("./routes/tga.js");
+const Pmm = require("./routes/pmm.js");
+const Pengajaran = require("./routes/pengajaran.js");
+const { getKegiatanMahasiswaStats, getStats } = require('./controllers/datakegiatanmahasiswa.js');
 
 dotenv.config();
 
 const app = express();
 
-// (async () => {
-//     try {
-//         await db.sync({ force: false });
-//         console.log("Database sudah di migrate");
-//     } catch (error) {
-//         console.error(" Migrate  database Error :", error);
-//     }
-// })();
-
-
-try {
+(async () => {
+  try {
     await db.authenticate();
     console.log('Database terhubung...');
-} catch (error) {
-    console.log('Database tidak di temukan');
-}
+  } catch (error) {
+    console.log('Database tidak ditemukan:', error.message);
+  }
+})();
 
-app.use(cors({ credentials: true, origin: "http://localhost:5173" }))
+app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 app.use(cookieParser());
 app.use(express.json());
+
 app.get('/api/statistik', getStats);
 app.get('/api/kegiatan-mahasiswa/statistik', getKegiatanMahasiswaStats);
+
 app.use("/uploads/bahan_ajar", express.static("uploads/bahan_ajar"));
 app.use("/uploads/absensi", express.static("uploads/absensi"));
 app.use("/uploads/rps", express.static("uploads/rps"));
@@ -57,6 +51,7 @@ app.use("/uploads/pengabdian", express.static("uploads/pengabdian"));
 app.use("/uploads/pengajaran", express.static("uploads/pengajaran"));
 app.use("/uploads/dosen", express.static("uploads/dosen"));
 app.use("/uploads/kegiatan_mahasiswa", express.static("uploads/kegiatan_mahasiswa"));
+
 app.use(router);
 app.use(AuthRoute);
 app.use(DosenRouter);
@@ -75,6 +70,5 @@ app.use(KerjaPraktik);
 app.use(TugasAkhir);
 app.use(Pmm);
 
-
-
-app.listen(5000, () => console.log('server berjalan port 5000'));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server berjalan di port ${PORT}`));

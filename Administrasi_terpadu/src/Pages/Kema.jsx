@@ -15,30 +15,30 @@ const Kema = () => {
     const [show, setShow] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState("");
     const navigate = useNavigate();
-    
+
     // Scroll animation controls
     const { scrollY } = useScroll();
     const controls = useAnimation();
-    
+
     // References for scroll animations
     const titleRef = React.useRef(null);
     const cardsRef = React.useRef(null);
     const instructionsRef = React.useRef(null);
     const buttonRef = React.useRef(null);
-    
+
     // Check if elements are in view
     const titleInView = useInView(titleRef, { once: false, amount: 0.5 });
     const cardsInView = useInView(cardsRef, { once: false, amount: 0.2 });
     const instructionsInView = useInView(instructionsRef, { once: false, amount: 0.3 });
     const buttonInView = useInView(buttonRef, { once: false, amount: 0.6 });
-    
+
     // Animate elements when they come into view
     useEffect(() => {
         if (titleInView) {
             controls.start("visible");
         }
     }, [controls, titleInView]);
-    
+
     // Listen to scroll position for parallax effects
     useEffect(() => {
         return scrollY.onChange((latest) => {
@@ -76,50 +76,50 @@ const Kema = () => {
 
     const cardAnimation = {
         hidden: { y: 50, opacity: 0 },
-        visible: { 
-            y: 0, 
+        visible: {
+            y: 0,
             opacity: 1,
-            transition: { 
-                type: "spring", 
-                stiffness: 70 
+            transition: {
+                type: "spring",
+                stiffness: 70
             }
         },
-        hover: { 
-            y: -10, 
+        hover: {
+            y: -10,
             boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.1)",
-            transition: { 
-                type: "spring", 
-                stiffness: 300 
+            transition: {
+                type: "spring",
+                stiffness: 300
             }
         }
     };
 
     const buttonAnimation = {
         hidden: { scale: 0.8, opacity: 0 },
-        visible: { 
-            scale: 1, 
-            opacity: 1, 
-            transition: { 
-                type: "spring", 
-                stiffness: 120, 
-                delay: 0.3 
-            } 
+        visible: {
+            scale: 1,
+            opacity: 1,
+            transition: {
+                type: "spring",
+                stiffness: 120,
+                delay: 0.3
+            }
         },
-        hover: { 
+        hover: {
             scale: 1.05,
-            transition: { 
-                type: "spring", 
-                stiffness: 300 
+            transition: {
+                type: "spring",
+                stiffness: 300
             }
         },
         tap: { scale: 0.95 }
     };
-    
+
     // Scroll reveal animation styles
     const scrollReveal = {
         hidden: { opacity: 0, y: 75 },
-        visible: { 
-            opacity: 1, 
+        visible: {
+            opacity: 1,
             y: 0,
             transition: {
                 duration: 0.8,
@@ -145,8 +145,8 @@ const Kema = () => {
                     variants={fadeIn}
                     className="scroll-section"
                 >
-                    <motion.h1 
-                        className="text-center text-uppercase mb-3 mt-5" 
+                    <motion.h1
+                        className="text-center text-uppercase mb-3 mt-5"
                         style={{ color: 'darkblue' }}
                         initial={{ y: -20, opacity: 0 }}
                         animate={titleInView ? { y: 0, opacity: 1 } : { y: -20, opacity: 0 }}
@@ -154,25 +154,20 @@ const Kema = () => {
                     >
                         Kegiatan mahasiswa
                     </motion.h1>
-                    <motion.p 
+                    <motion.p
                         className="text-center text-muted mb-5"
                         initial={{ y: 20, opacity: 0 }}
                         animate={titleInView ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
                         transition={{ duration: 0.5, delay: 0.2 }}
-                    > 
+                    >
                         Halaman ini dirancang untuk mendukung pengelolaan berbagai aktivitas mahasiswa di dalam kampus maupun di luar kegiatan perkuliahan secara terintegrasi dan terdokumentasi dengan baik.
                         Melalui sistem ini, mahasiswa dapat mengakses layanan seperti Magang Mandiri, Program MSIB, Prestasi, Kerja Praktik, Tugas Akhir, dan student mobility. Tersedia juga fitur pengisian data Alumni yang terhubung dengan tracer study untuk mendukung evaluasi dan peningkatan mutu pendidikan.
                         Seluruh fitur disusun untuk meningkatkan efisiensi dan akuntabilitas dalam proses administrasi kegiatan kemahasiswaan.
                     </motion.p>
                 </motion.div>
 
-                <motion.div 
-                    ref={cardsRef}
+                <motion.div
                     className="row justify-content-center g-4 mt-4"
-                    variants={staggerContainer}
-                    initial="hidden"
-                    animate={cardsInView ? "visible" : "hidden"}
-                    viewport={{ once: false, amount: 0.2 }}
                 >
                     {[
                         { title: "MSIB", img: "src/assets/msib.png" },
@@ -181,8 +176,7 @@ const Kema = () => {
                         { title: "KERJA PRAKTIK", img: "src/assets/kp.png" },
                         { title: "TUGAS AKHIR", img: "src/assets/tugas akhir.png" },
                         // { title: "KEWIRAUSAHAAN", img: "src/assets/kkn.png" },
-                        { title: "STUDENT MOBILITY", img: "src/assets/pmm.jpg" },
-                        { title: "ALUMNI", img: "src/assets/alumni.jpg" },
+                        { title: "STUDENT MOBILITY", img: "src/assets/pmm.jpg" }
                     ].map((item, index) => (
                         <div key={index} className="col-6 col-sm-6 col-md-4 col-lg-2">
                             <motion.div
@@ -208,21 +202,36 @@ const Kema = () => {
                     ))}
                 </motion.div>
 
-                <div className="text-center mb-5 mt-5" ref={buttonRef}>
-                    <motion.div
-                        variants={buttonAnimation}
-                        initial="hidden"
-                        animate={buttonInView ? "visible" : "hidden"}
-                        whileHover="hover"
-                        whileTap="tap"
-                    >
+                <div className="text-center mb-5 mt-5" >
                         <Button variant="primary" onClick={handleNavigate}>
                             Buka Formulir Pengisian
                         </Button>
-                    </motion.div>
                 </div>
 
-                <motion.div 
+
+                <motion.div
+                    className="row justify-content-center g-4 mt-4"
+                >
+                    <div className="col-6 col-sm-6 col-md-4 col-lg-2">
+                        <Card className="text-center rounded-4 border-0 shadow card-hover mb-0" style={{ maxWidth: '500px' }}>
+                            <Card.Img variant="top" src="/src/assets/alumni.jpg" className="mb-0" style={{ padding: "15px 6px", width: "65%", margin: "auto" }} />
+                            <Card.Body>
+                                <Card.Title>Alumni</Card.Title>
+                            </Card.Body>
+                        </Card>
+                    </div>
+
+
+                    <div className="text-center mb-3 mt-5" >
+                            <Button variant="primary" href="https://tracer.unimal.ac.id/tracer">
+                                Buka Tracer Study
+                            </Button>
+                    </div>
+                </motion.div>
+
+                <p className="text-center text-muted mb-5">Untuk mengisi Tracer Study Silahkan Klik Tombol ini untuk pengisiannya</p>
+
+                <motion.div
                     ref={instructionsRef}
                     className="col-11 col-sm-10 col-md-10 col-lg-12 mt-4"
                     initial={{ opacity: 0, y: 50 }}
@@ -277,7 +286,7 @@ const Kema = () => {
                 </motion.div>
             </Container>
 
-            <motion.div 
+            <motion.div
                 style={{ position: 'relative', width: '100%', marginTop: '50px' }}
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
@@ -301,11 +310,11 @@ const Kema = () => {
                 </svg>
             </motion.div>
 
-           
 
-                <Footer />
 
-                <FooterEnd />
+            <Footer />
+
+            <FooterEnd />
         </div>
     );
 };

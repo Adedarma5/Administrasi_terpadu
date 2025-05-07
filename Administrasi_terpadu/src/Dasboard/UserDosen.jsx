@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Container, Card, Table, Button, Row, Col, Form, InputGroup, Modal } from "react-bootstrap";
 import { FiPlus, FiSearch, FiEdit2, FiTrash2 } from "react-icons/fi";
+import Swal from "sweetalert2";
 
 const UserDosen = () => {
   const [users, setUsers] = useState([]);
@@ -18,10 +19,10 @@ const UserDosen = () => {
   useEffect(() => {
     const userRole = localStorage.getItem('role');
     setRole(userRole?.toLowerCase());
-    getUsers();
+    fetchUsers();
   }, []);
 
-  const getUsers = async () => {
+  const fetchUsers = async () => {
     const token = localStorage.getItem('token');
     if (!token) {
       console.error("Token tidak ditemukan di localStorage.");
@@ -66,20 +67,46 @@ const UserDosen = () => {
       return user.nip === loggedInUserNip;
     }
     return false;
-  });
+  })
+    .sort((a, b) => {
+      if (a.role.toLowerCase() === "admin" && b.role.toLowerCase() !== "admin") return -1;
+      if (a.role.toLowerCase() !== "admin" && b.role.toLowerCase() === "admin") return 1;
+      return 0;
+    });
 
 
-  const handleDelete = async () => {
-    if (!selectedUser) return;
-    try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/users/${selectedUser.nip}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUsers(users.filter(user => user.nip !== selectedUser.nip));
-      setShowModal(false);
-    } catch (error) {
-      console.error("Error deleting user:", error.response?.data?.message || error.message);
+  const deleteUsers = async (id) => {
+    const result = await Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: "Data yang dihapus tidak bisa dikembalikan!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, hapus!',
+      cancelButtonText: 'Batal'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:5000/users/${id}`);
+        fetchUsers();
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Berhasil!',
+          text: 'Data berhasil dihapus.',
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      } catch (error) {
+        console.error("Error deleting:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops!',
+          text: 'Terjadi kesalahan saat menghapus data.',
+        });
+      }
     }
   };
 
@@ -155,10 +182,10 @@ const UserDosen = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredUsers.length > 0 ? (
-                  filteredUsers.map((user, index) => (
+                {paginatedUsers.length > 0 ? (
+                  paginatedUsers.map((user, index) => (
                     <tr key={user.nip}>
-                      <td className="text-center">{index + 1}</td>
+                      <td className="text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                       <td>{user.nip}</td>
                       <td>{user.name}</td>
                       <td>{user.email}</td>
@@ -185,8 +212,7 @@ const UserDosen = () => {
                             className="rounded-2 px-2 py-1 d-flex align-items-center justify-content-center"
                             title="Hapus"
                             onClick={() => {
-                              setSelectedUser(user);
-                              setShowModal(true);
+                              deleteUsers(user.id);
                             }}
                           >
                             <FiTrash2 size={15} />
@@ -197,7 +223,7 @@ const UserDosen = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="text-center text-muted py-3">Tidak ada data pengguna.</td> {/* Updated colspan to 6 */}
+                    <td colSpan="6" className="text-center text-muted py-3">Tidak ada data pengguna.</td>
                   </tr>
                 )}
               </tbody>
@@ -208,34 +234,17 @@ const UserDosen = () => {
             <div className="small text-muted">
               Menampilkan {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
             </div>
-            <div>
-              <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="mx-4">
+            <div className="mx-4">
+              <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="mx-2 mb-2">
                 Sebelumnya
               </Button>
-              <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+              <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} className="mx-2 mb-2">
                 Selanjutnya
               </Button>
             </div>
           </div>
         </Card.Body>
       </Card>
-
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Konfirmasi Hapus</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Apakah Anda yakin ingin menghapus user <strong>{selectedUser?.name}</strong>?
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Batal
-          </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            Hapus
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </Container>
   );
 };

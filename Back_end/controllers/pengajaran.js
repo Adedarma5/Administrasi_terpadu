@@ -28,7 +28,6 @@ export const getPengajaran= async (req, res) => {
 
 export const getPengajaranById = async (req, res) => {
     try {
-        const { role, id } = req.user;
 
         const pengajaran = await Pengajaran.findOne({
             attributes: ['id', 'nama_dosen', 'mata_kuliah', 'semester', 'kelas', 'metode_pengajaran', 'keterlibatan_praktisi', 'nama_praktisi', 'institusi_praktisi', 'file_pengajaran' ],
@@ -37,10 +36,6 @@ export const getPengajaranById = async (req, res) => {
 
         if (!pengajaran) {
             return res.status(404).json({ msg: "pengajaran tidak ditemukan" });
-        }
-
-        if (role === 'user' && pengajaran.userId !== id) {
-            return res.status(403).json({ msg: "Akses ditolak" });
         }
 
         res.status(200).json(pengajaran);

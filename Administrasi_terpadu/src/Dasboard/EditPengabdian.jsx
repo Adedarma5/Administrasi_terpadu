@@ -19,6 +19,7 @@ const EditPengabdian = () => {
 
     useEffect(() => {
         getDosenList();
+        getPengabdianById();
     }, []);
 
     const getDosenList = async () => {
@@ -33,6 +34,23 @@ const EditPengabdian = () => {
 
     const handleFileChange = (e) => {
         setFileKegiatan(e.target.files[0]);
+    };
+
+    const getPengabdianById = async () => {
+        try {
+            const response = await axios.get(`http://localhost:5000/pengabdian/${id}`);
+            const pengabdian = response.data;
+
+            setJudulPengabdian(pengabdian.judul_pengabdian);
+            setNamaDosen(pengabdian.nama_dosen);
+            setMitra(pengabdian.mitra);
+            setBentukKegiatan(pengabdian.bentuk_kegiatan);
+            setLokasi(pengabdian.lokasi);
+            setTahun(pengabdian.tahun);
+        } catch (error) {
+            console.error("Gagal mengambil data pengabdian:", error);
+            setMsg("Terjadi kesalahan saat mengambil data pengabdian.");
+        }
     };
 
     const updatePengabdian = async (e) => {

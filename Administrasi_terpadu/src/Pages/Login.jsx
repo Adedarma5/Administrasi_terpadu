@@ -22,6 +22,7 @@ const Login = () => {
     if (token) {
       const decoded = jwtDecode(token);
       localStorage.setItem("userId", decoded.userId);
+      localStorage.setItem("name", decoded.name);
       localStorage.setItem("role", decoded.role);
       localStorage.setItem("nip", decoded.nip);
       navigate("/admin/dashboard");
@@ -40,6 +41,7 @@ const Login = () => {
 
       const decoded = jwtDecode(accessToken);
       localStorage.setItem("userId", decoded.id);
+      localStorage.setItem("name", decoded.name);
       localStorage.setItem("role", decoded.role);
       localStorage.setItem("nip", decoded.nip);
       location.href = "/admin/dashboard";

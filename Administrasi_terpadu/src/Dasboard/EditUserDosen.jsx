@@ -9,6 +9,7 @@ const EditUserDosen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confPassword, setConfPassword] = useState("");
+  const [currentRole, setCurrentRole] = useState("");
   const [role, setRole] = useState("");
   const [msg, setMsg] = useState("");
   const { id } = useParams();
@@ -16,7 +17,7 @@ const EditUserDosen = () => {
 
   useEffect(() => {
     const userRole = localStorage.getItem('role');
-    setRole(userRole?.toLowerCase());
+    setCurrentRole(userRole?.toLowerCase());
     getUserById();
   }, []);
 
@@ -149,7 +150,7 @@ const EditUserDosen = () => {
             </Row>
 
 
-            {role === "admin" && (
+            {currentRole === "admin" && (
               <Row className="align-items-center mb-4">
                 <Col md={3}>
                   <Form.Label>Role</Form.Label>
@@ -167,7 +168,8 @@ const EditUserDosen = () => {
                 </Col>
               </Row>
             )}
-            
+
+
             <Card.Footer className="bg-white border-0 p-3 d-flex justify-content-end">
               <Button variant="secondary" size="sm" className="me-2" onClick={() => navigate("/admin/dashboard/userdosen")}>
                 Kembali

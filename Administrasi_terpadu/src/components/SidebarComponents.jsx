@@ -313,8 +313,7 @@ const SidebarComponents = ({ children }) => {
                         isSubMenuActive('/admin/dashboard/KerjaPraktik') ||
                         isSubMenuActive('/admin/dashboard/TugasAkhir') ||
                         isSubMenuActive('/admin/dashboard/Pmm') ||
-                        isSubMenuActive('/admin/dashboard/Kewirausahaan') ||
-                        isSubMenuActive('/admin/dashboard/Alumni')),
+                        isSubMenuActive('/admin/dashboard/Kewirausahaan')),
                     }}
                   >
                     <FaClipboardList className={isCollapsed ? "mx-auto" : "me-3"} size={16} />
@@ -402,7 +401,7 @@ const SidebarComponents = ({ children }) => {
                     >
                       Student Mobility
                     </Nav.Link>
-                    <Nav.Link
+                    {/* <Nav.Link
                       as={Link}
                       to="/admin/dashboard/Alumni"
                       className="text-white"
@@ -412,7 +411,7 @@ const SidebarComponents = ({ children }) => {
                       }}
                     >
                       Alumni
-                    </Nav.Link>
+                    </Nav.Link> */}
                   </div>
                 </Collapse>
               </Nav.Item>
@@ -588,8 +587,7 @@ const SidebarComponents = ({ children }) => {
                     { path: "Prestasi", label: "Prestasi" },
                     { path: "KerjaPraktik", label: "Kerja Praktik" },
                     { path: "TugasAkhir", label: "Tugas Akhir" },
-                    { path: "Pmm", label: "PMM" },
-                    { path: "Alumni", label: "Alumni" }
+                    { path: "Pmm", label: "PMM" }
                   ].map(item => (
                     <Nav.Link
                       key={item.path}

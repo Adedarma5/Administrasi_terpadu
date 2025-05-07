@@ -1,4 +1,4 @@
-import Sequelize from 'sequelize';
+const { Sequelize } = require('sequelize');
 
 const db = new Sequelize ('siatsi', 'root','',{
     host: "localhost",
@@ -7,4 +7,4 @@ const db = new Sequelize ('siatsi', 'root','',{
     logging: false
 });
 
-export default db;
+module.exports = db;
