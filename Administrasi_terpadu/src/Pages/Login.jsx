@@ -60,7 +60,7 @@ const Login = () => {
       <div className="container mt-5">
         <div className="row justify-content-center g-4">
           <div className="col-10 col-sm-6 col-md-4 col-lg-7">
-            <Image src="src/assets/bg-login.png" rounded style={{ width: '78%' }} />
+            <Image src="/assets/bg-login.png" rounded style={{ width: '78%' }} />
           </div>
 
           <div className="col-11 col-sm-6 col-md-6 col-lg-5 align-content-center">

@@ -198,13 +198,14 @@ const Absensi = () => {
 
 
       <Card className="shadow border-0">
-        <Card.Body className="p-0">          <div className="p-3 border-bottom">
-          <Row className="align-items-center g-3">
-            <Col md={6} lg={5}>
-              <h5 className="mb-0 fw-semibold">Daftar Absensi Sistem Informasi</h5>
-            </Col>
-          </Row>
-        </div>
+        <Card.Body className="p-0">
+          <div className="p-3 border-bottom">
+            <Row className="align-items-center g-3">
+              <Col md={6} lg={5}>
+                <h5 className="mb-0 fw-semibold">Daftar Absensi Sistem Informasi</h5>
+              </Col>
+            </Row>
+          </div>
 
 
           <Card.Header className="bg-white py-3 border-bottom">
@@ -254,7 +255,7 @@ const Absensi = () => {
           </Card.Header>
 
 
-          <div className="table-responsive " ref={printRef}>
+          <div className="table-responsive" ref={printRef}>
             <div className="print-only">
               <h4 className="text-uppercase">Laporan Absensi</h4>
               <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
@@ -268,7 +269,7 @@ const Absensi = () => {
                 {error}
               </Alert>
             ) : (
-              <Table striped bordered hover className="align-middle mb-0 text-center">
+              <Table striped bordered  className="align-middle mb-0 text-center">
                 <thead className="bg-light">
                   <tr>
                     <th className="py-3">No</th>
@@ -334,11 +335,11 @@ const Absensi = () => {
             <div className="small text-muted">
               Menampilkan {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
             </div>
-            <div>
-              <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="mx-4">
+            <div className="mx-4">
+              <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="mx-2 mb-2">
                 Sebelumnya
               </Button>
-              <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+              <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} className="mx-2 mb-2">
                 Selanjutnya
               </Button>
             </div>

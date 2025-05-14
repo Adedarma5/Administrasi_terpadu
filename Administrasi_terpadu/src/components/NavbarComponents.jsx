@@ -33,7 +33,7 @@ function NavbarComponents() {
         <Navbar.Brand href="/Home" className="d-flex align-items-center fw-bold text-success">
           <img
             alt="Logo"
-            src="src/assets/unimal.png"
+            src="/assets/unimal.png"
             width="45"
             height="45"
             className="d-inline-block align-middle me-2"

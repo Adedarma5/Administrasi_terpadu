@@ -68,15 +68,27 @@ const SidebarComponents = ({ children }) => {
     return location.pathname.startsWith(basePath);
   };
 
-  const handleLogout = async () => {
-    try {
-      await axios.delete("http://localhost:5000/logout", { withCredentials: true });
-      localStorage.removeItem("token");
-      navigate("/login");
-    } catch (error) {
+const handleLogout = async () => {
+  try {
+    await axios.delete("http://localhost:5000/logout", {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    localStorage.removeItem("token");
+
+    navigate("/login");
+  } catch (error) {
+    if (error.code === "ERR_NETWORK") {
+      alert("Gagal logout: Tidak bisa terhubung ke server.");
+    } else if (error.response) {
+      alert(`Gagal logout: ${error.response.data?.msg || "Terjadi kesalahan."}`);
+    } else {
       console.error("Logout gagal:", error);
     }
-  };
+  }
+};
 
   const navLinkStyle = (active = false) => ({
     borderRadius: '6px',
@@ -113,7 +125,7 @@ const SidebarComponents = ({ children }) => {
         >
           <div className="d-flex align-items-center p-3 border-bottom" style={{ borderColor: colors.border }}>
             <img
-              src="/src/assets/unimal.png"
+              src="/assets/unimal.png"
               width="40"
               height="40"
               className="rounded-circle"
@@ -313,7 +325,7 @@ const SidebarComponents = ({ children }) => {
                         isSubMenuActive('/admin/dashboard/KerjaPraktik') ||
                         isSubMenuActive('/admin/dashboard/TugasAkhir') ||
                         isSubMenuActive('/admin/dashboard/Pmm') ||
-                        isSubMenuActive('/admin/dashboard/Kewirausahaan')),
+                        isSubMenuActive('/admin/dashboard/Alumni')),
                     }}
                   >
                     <FaClipboardList className={isCollapsed ? "mx-auto" : "me-3"} size={16} />
@@ -401,7 +413,7 @@ const SidebarComponents = ({ children }) => {
                     >
                       Student Mobility
                     </Nav.Link>
-                    {/* <Nav.Link
+                    <Nav.Link
                       as={Link}
                       to="/admin/dashboard/Alumni"
                       className="text-white"
@@ -411,7 +423,7 @@ const SidebarComponents = ({ children }) => {
                       }}
                     >
                       Alumni
-                    </Nav.Link> */}
+                    </Nav.Link>
                   </div>
                 </Collapse>
               </Nav.Item>
@@ -451,7 +463,7 @@ const SidebarComponents = ({ children }) => {
           <div className="d-flex justify-content-between align-items-center p-2 bg-white shadow-sm">
             <div className="d-flex align-items-center">
               <img
-                src="/src/assets/unimal.png"
+                src="/assets/unimal.png"
                 height="36"
                 alt="University Logo"
                 className="me-2"
@@ -587,7 +599,8 @@ const SidebarComponents = ({ children }) => {
                     { path: "Prestasi", label: "Prestasi" },
                     { path: "KerjaPraktik", label: "Kerja Praktik" },
                     { path: "TugasAkhir", label: "Tugas Akhir" },
-                    { path: "Pmm", label: "PMM" }
+                    { path: "Pmm", label: "Student Mobility" },
+                    { path: "Alumni", label: "Alumni" }
                   ].map(item => (
                     <Nav.Link
                       key={item.path}

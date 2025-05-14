@@ -320,7 +320,7 @@ const Dosen = () => {
                 size="sm"
                 onClick={() => setCurrentPage(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="mx-2"
+                className="mx-2 mb-2"
               >
                 Sebelumnya
               </Button>
@@ -329,7 +329,7 @@ const Dosen = () => {
                 size="sm"
                 onClick={() => setCurrentPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="mx-2"
+                className="mx-2 mb-2"
               >
                 Selanjutnya
               </Button>

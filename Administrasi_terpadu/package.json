@@ -1,7 +1,8 @@
 {
   "name": "administrasi-terpadu",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
+  "homepage": "https://satuakademik.my.id/",
   "type": "module",
   "scripts": {
     "dev": "vite",

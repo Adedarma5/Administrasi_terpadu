@@ -4,19 +4,20 @@ import db from "../config/database.js"
 const { DataTypes } = Sequelize;
 
 const Alumni = db.define('alumni', {
-    id:{
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    nama_file: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
+  datajson: {
+    type: DataTypes.JSON, 
+    allowNull: false
+  }
 }, {
-    freezeTableName: true,
-    timestamps: false,
+  tableName: 'alumni',
+  timestamps: true,
+  createdAt: 'created_at',
+  updatedAt: false
 });
 
 export default Alumni;

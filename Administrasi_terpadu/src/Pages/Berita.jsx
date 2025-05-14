@@ -11,28 +11,28 @@ const Berita = () => {
             id: 1,
             title: "PENERIMA SKEMA PENDANAAN RISET DAN INOVASI UNTUK INDONESIA MAJU STARTUP GELOMBANG 1 BAGIAN 2",
             description: "Unduh salinan: Download 20PENDANAAN",
-            image: "src/assets/berita2.jpg",
+            image: "/assets/berita2.jpg",
             link: "https://lppm.unimal.ac.id/197-penerima-skema-pendanaan-riset-dan-inovasi-untuk-indonesia-maju-startup-gelombang-1-bagian-2"
         },
         {
             id: 2,
             title: "PENERIMA SKEMA RISET DAN INOVASI UNTUK INDONESIA MAJU EKSPEDISI GELOMBANG II TAHAP I",
             description: "PENERIMA SKEMA RISET DAN INOVASI UNTUK INDONESIA MAJU EKSPEDISI GELOMBANG II TAHAP I Download 20I",
-            image: "src/assets/berita_unimal.png",
+            image: "/assets/berita_unimal.png",
             link: "https://lppm.unimal.ac.id/189-penerima-skema-riset-dan-inovasi-untuk-indonesia-maju-ekspedisi-gelombang-ii-tahap-i"
         },
         {
             id: 3,
             title: "Pengabdian Masyarakat di Desa Binaan",
             description: "Dosen dan mahasiswa aktif melaksanakan kegiatan pengabdian di berbagai desa.",
-            image: "/src/assets/konten 1.jpg",
+            image: "/assets/konten 1.jpg",
             link: "https://news.unimal.ac.id/"
         },
         {
             id: 4,
             title: "Pengabdian Masyarakat di Desa Binaan",
             description: "Dosen dan mahasiswa aktif melaksanakan kegiatan pengabdian di berbagai desa.",
-            image: "/src/assets/foto konten.jpg",
+            image: "/assets/foto konten.jpg",
             link: "https://news.unimal.ac.id/"
         }
     ];

@@ -184,24 +184,6 @@ const Kemahasiswaan = () => {
                                             />
                                         </InputGroup>
                                     </div>
-
-                                    <div className=" col-md-4 col-lg-3">
-                                        <Form.Select
-                                            value={selectedsemester}
-                                            onChange={(e) => {
-                                                setSelectedSemester(e.target.value);
-                                                setCurrentPage(1);
-                                            }}
-                                            className="shadow-none py-1"
-                                        >
-                                            <option value="">Semua Semester</option>
-                                            {[...Array(8)].map((_, i) => (
-                                                <option key={i + 1} value={(i + 1).toString()}>
-                                                    Semester {i + 1}
-                                                </option>
-                                            ))}
-                                        </Form.Select>
-                                    </div>
                                 </div>
                             </Card.Header>
 
@@ -303,24 +285,6 @@ const Kemahasiswaan = () => {
                                                     className="border-0 shadow-none py-1"
                                                 />
                                             </InputGroup>
-                                        </div>
-
-                                        <div className="col-md-4 col-lg-3">
-                                            <Form.Select
-                                                value={selectedsemester}
-                                                onChange={(e) => {
-                                                    setSelectedSemester(e.target.value);
-                                                    setCurrentPage(1);
-                                                }}
-                                                className="shadow-none py-1"
-                                            >
-                                                <option value="">-- Semua Semester --</option>
-                                                {[...Array(8)].map((_, i) => (
-                                                    <option key={i + 1} value={(i + 1).toString()}>
-                                                        Semester {i + 1}
-                                                    </option>
-                                                ))}
-                                            </Form.Select>
                                         </div>
                                     </div>
                                 </Card.Header>
@@ -438,7 +402,7 @@ const Kemahasiswaan = () => {
                                         </InputGroup>
                                     </div>
 
-                                    <div className="col-md-4 col-lg-3">
+                                    <div className="col-12 col-md-4 col-lg-3">
                                         <Form.Select
                                             value={selectedmatakuliah}
                                             onChange={(e) => {

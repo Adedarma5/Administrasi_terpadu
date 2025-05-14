@@ -68,7 +68,7 @@ export const logOut = async (req, res) => {
         const refreshToken = req.cookies.refreshToken;
 
         if (!refreshToken) {
-            return res.status(204).json({ msg: "Tidak ada token untuk logout" });
+            return res.sendStatus(204); 
         }
 
         const user = await Users.findOne({
@@ -76,19 +76,23 @@ export const logOut = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(204).json({ msg: "Token tidak ditemukan" });
+            return res.sendStatus(204); 
         }
 
         await Users.update({ refresh_token: null }, {
             where: { id: user.id }
         });
 
-        res.clearCookie("refreshToken", { httpOnly: true, secure: false });
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: true, 
+            sameSite: "None" 
+        });
 
-        res.status(200).json({ msg: "Anda telah logout" });
+        return res.status(200).json({ msg: "Anda telah logout" });
     } catch (error) {
         console.error("Error in logOut:", error);
-        res.status(500).json({ msg: "Terjadi kesalahan server" });
+        return res.status(500).json({ msg: "Terjadi kesalahan server" });
     }
-}
+};
 

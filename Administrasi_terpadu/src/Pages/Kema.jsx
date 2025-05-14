@@ -170,13 +170,14 @@ const Kema = () => {
                     className="row justify-content-center g-4 mt-4"
                 >
                     {[
-                        { title: "MSIB", img: "src/assets/msib.png" },
-                        { title: "MAGANG MANDIRI", img: "src/assets/magang mandiri.png" },
-                        { title: "PRESTASI", img: "src/assets/prestasi.png" },
-                        { title: "KERJA PRAKTIK", img: "src/assets/kp.png" },
-                        { title: "TUGAS AKHIR", img: "src/assets/tugas akhir.png" },
-                        // { title: "KEWIRAUSAHAAN", img: "src/assets/kkn.png" },
-                        { title: "STUDENT MOBILITY", img: "src/assets/pmm.jpg" }
+                        { title: "MSIB", img: "/assets/msib.png" },
+                        { title: "MAGANG MANDIRI", img: "/assets/magang mandiri.png" },
+                        { title: "PRESTASI", img: "/assets/prestasi.png" },
+                        { title: "KERJA PRAKTIK", img: "/assets/kp.png" },
+                        { title: "TUGAS AKHIR", img: "/assets/tugas akhir.png" },
+                        // { title: "KEWIRAUSAHAAN", img: "/assets/kkn.png" },
+                        { title: "STUDENT MOBILITY", img: "/assets/pmm.jpg" },
+                        { title: "Alumni", img: "/assets/alumni.jpg" }
                     ].map((item, index) => (
                         <div key={index} className="col-6 col-sm-6 col-md-4 col-lg-2">
                             <motion.div
@@ -208,28 +209,6 @@ const Kema = () => {
                         </Button>
                 </div>
 
-
-                <motion.div
-                    className="row justify-content-center g-4 mt-4"
-                >
-                    <div className="col-6 col-sm-6 col-md-4 col-lg-2">
-                        <Card className="text-center rounded-4 border-0 shadow card-hover mb-0" style={{ maxWidth: '500px' }}>
-                            <Card.Img variant="top" src="/src/assets/alumni.jpg" className="mb-0" style={{ padding: "15px 6px", width: "65%", margin: "auto" }} />
-                            <Card.Body>
-                                <Card.Title>Alumni</Card.Title>
-                            </Card.Body>
-                        </Card>
-                    </div>
-
-
-                    <div className="text-center mb-3 mt-5" >
-                            <Button variant="primary" href="https://tracer.unimal.ac.id/tracer">
-                                Buka Tracer Study
-                            </Button>
-                    </div>
-                </motion.div>
-
-                <p className="text-center text-muted mb-5">Untuk mengisi Tracer Study Silahkan Klik Tombol ini untuk pengisiannya</p>
 
                 <motion.div
                     ref={instructionsRef}

@@ -43,7 +43,7 @@ const SidebarAkademikComponents = ({ children }) => {
         { icon: <FaLaptopCode />, title: "Kerja Praktik", path: "/akademik/dashboard/KerjaPraktik/TambahKerjaPraktik" },
         { icon: <FaBook />, title: "Tugas Akhir", path: "/akademik/dashboard/TugasAkhir/TambahTugasAkhir" },
         { icon: <FaUniversity />, title: "Student Mobility", path: "/akademik/dashboard/Pmm/TambahPmm" },
-        // { icon: <FaUserGraduate />, title: "Alumni", path: "/akademik/dashboard/Alumni/TambahAlumni" }
+        { icon: <FaUserGraduate />, title: "Alumni", path: "/akademik/dashboard/Alumni/TambahAlumni" }
     ];
 
     const colors = {
@@ -74,7 +74,7 @@ const SidebarAkademikComponents = ({ children }) => {
                 >
                     <div className="d-flex align-items-center p-3 border-bottom border-secondary">
                         <img
-                            src="/src/assets/unimal.png"
+                            src="/assets/unimal.png"
                             width="50"
                             height="50"
                             className="rounded-circle"
@@ -174,7 +174,7 @@ const SidebarAkademikComponents = ({ children }) => {
                     <div className="d-flex justify-content-between align-items-center p-3 bg-white">
                         <div className="d-flex align-items-center">
                             <img
-                                src="/src/assets/unimal.png"
+                                src="/assets/unimal.png"
                                 height="40"
                                 alt="University Logo"
                                 className="me-2"
@@ -206,7 +206,7 @@ const SidebarAkademikComponents = ({ children }) => {
                     <Offcanvas.Header className="bg-dark text-white py-3">
                         <div className="d-flex align-items-center">
                             <img
-                                src="/src/assets/unimal.png"
+                                src="/assets/unimal.png"
                                 width="40"
                                 height="40"
                                 className="rounded-circle me-2"

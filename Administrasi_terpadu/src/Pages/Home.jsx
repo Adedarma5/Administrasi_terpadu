@@ -154,7 +154,7 @@ const Home = () => {
         <div className="row text-center text-white">
           <div className="d-flex justify-content-center align-items-center position-relative mt-3" style={{ height: '80vh', overflow: 'hidden' }}>
             <motion.img
-              src="src/assets/gedung_fakultas_teknik.jpeg"
+              src="/assets/Gedung_Fakultas_Teknik.jpeg"
               alt="Background"
               className="img-fluid"
               initial={{ scale: 1.2 }}
@@ -233,17 +233,17 @@ const Home = () => {
   >
     {[{
       title: 'AKADEMIK',
-      src: 'src/assets/akademik.png',
+      src: '/assets/akademik.png',
       path: '/Login'
     },
     {
       title: 'KEGIATAN MAHASISWA',
-      src: 'src/assets/kema.png',
+      src: '/assets/kema.png',
       path: '/Kema'
     },
     {
       title: 'PORTAL BERITA',
-      src: 'src/assets/berita-bg.png',
+      src: '/assets/berita-bg.png',
       path: '/berita'
     }].map((item, i) => (
       <motion.div
@@ -406,7 +406,7 @@ const Home = () => {
                 variants={floatingAnimation}
               >
                 <Image 
-                  src="src/assets/bg-si.png" 
+                  src="/assets/bg-si.png" 
                   rounded 
                   style={{ width: '100%' }}
                   className="shadow-lg" 
@@ -455,17 +455,17 @@ const Home = () => {
           {[{
             title: "Akademik",
             text: "    Fitur akademik yang hanya bisa diakses oleh tenaga pendidik, memiliki beberapa fitur yang membantu prodi dalam melihat data yang diperlukan untuk keperluan prodi.",
-            img: "src/assets/akademik.png"
+            img: "/assets/akademik.png"
           },
           {
             title: "Kegiatan Mahasiswa",
             text:  "Fitur kegiatan mahasiswa dirancang untuk mengumpulkan data dan aktivitas yang telah dilakukan oleh mahasiswa Sistem Informasi guna mendukung IKU Kampus",
-            img: "src/assets/kema.png"
+            img: "/assets/kema.png"
           },
           {
             title: "Portal Berita",
             text: " Fitur ini bertujuan untuk menampilkan berita penting seputar akademik maupun non-akademik yang menyangkut Prodi Sistem Informasi ataupun berita lainnya.",
-            img: "src/assets/berita-bg.png"
+            img: "/assets/berita-bg.png"
           }].map((program, i) => (
             <motion.div
               className="col-12 card-hover"

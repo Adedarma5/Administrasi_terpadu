@@ -30,9 +30,9 @@ const Footer = () => {
                     <Col md={1} lg={4} className="mb-2 ">
                         <h6 className="text-uppercase fw-bold">Sistem Informasi</h6>
                         <hr className="mb-4 mt-0 bg-primary" style={{ width: "60px", height: "2px" }} />
-                        <Image src="src/assets/unimal.png" rounded style={{ width: '20%', marginRight: '25px' }}/>
-                        <Image src="src/assets/merdeka.png" rounded style={{ width: '20%', marginRight: '25px' }}/>
-                        <Image src="src/assets/tutwuri.png" rounded style={{ width: '20%', marginRight: '25px' }}/>
+                        <Image src="/assets/unimal.png" rounded style={{ width: '20%', marginRight: '25px' }}/>
+                        <Image src="/assets/merdeka.png" rounded style={{ width: '20%', marginRight: '25px' }}/>
+                        <Image src="/assets/tutwuri.png" rounded style={{ width: '20%', marginRight: '25px' }}/>
                         <p className="ms-2 mt-2">Sistem Informasi Administrasi Terpadu</p>
                     </Col>
 
