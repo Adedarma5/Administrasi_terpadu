@@ -213,7 +213,7 @@ const MataKuliah = () => {
               <h4 className="text-uppercase">Mata Kuliah</h4>
               <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
             </div>
-            <Table striped bordered hover className="text-center align-middle" size="sm">
+            <Table striped bordered hover className="text-center align-middle small">
               <thead >
                 <tr className="bg-light">
                   <th className="px-1 py-3">No</th>

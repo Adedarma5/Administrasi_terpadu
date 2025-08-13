@@ -40,7 +40,7 @@ const Login = () => {
 
 
       const decoded = jwtDecode(accessToken);
-      localStorage.setItem("userId", decoded.id);
+    localStorage.setItem("userId", decoded.userId);
       localStorage.setItem("name", decoded.name);
       localStorage.setItem("role", decoded.role);
       localStorage.setItem("nip", decoded.nip);
@@ -53,7 +53,7 @@ const Login = () => {
   };
 
 
-  
+
   return (
     <div>
       <NavbarComponents />
@@ -63,10 +63,10 @@ const Login = () => {
             <Image src="/assets/bg-login.png" rounded style={{ width: '78%' }} />
           </div>
 
-          <div className="col-11 col-sm-6 col-md-6 col-lg-5 align-content-center">
+          <div className="col-11 col-sm-6 col-md-6 col-lg-5 align-content-center mb-3">
             <div className="card shadow border-0 ">
               <div className="card-body ">
-                <Form onSubmit={Auth} >
+                <Form onSubmit={Auth}  >
                   <p className='text-center'>{msg}</p>
                   <h3 className='text-center'>Selamat Datang</h3>
                   <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -86,6 +86,18 @@ const Login = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Password" />
                   </Form.Group>
+
+                  <div className="d-flex justify-content-end mb-3">
+                    <Button
+                      variant="link"
+                      href="/ResetPassword"
+                      className="p-0 text-decoration-underline text-primary"
+                    >
+                      Lupa Password?
+                      
+                    </Button>
+                  </div>
+
                   <p className='text-center mt-2 text-secondary'> Silahkan hubungi pihak administrasi jika anda belum <br /> mempunyai akun
                   </p>
                   <div className='d-grid d-flex justify-content-center'>

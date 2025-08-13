@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import Rps from "../models/rpsmodel.js";
 import upload from "../middleware/upload.js";
-
+import { Op } from "sequelize";
 
 export const getRps = async (req, res) => {
     try {
@@ -33,21 +33,42 @@ export const getRpsById = async (req, res) => {
     }
 };
 
+
+export const getRpsByMataKuliah = async (req, res) => {
+    try {
+        const { name } = req.query;
+        const rps = await Rps.findOne({
+            where: {
+                name: {
+                    [Op.like]: `%${name}%` // pakai LIKE agar lebih longgar
+                }
+            }
+        });
+
+        if (!rps) return res.status(404).json({ msg: "RPS tidak ditemukan" });
+        res.json(rps);
+    } catch (err) {
+        res.status(500).json({ msg: "Gagal mengambil RPS", error: err.message });
+    }
+};
+
+
+
 export const createRps = async (req, res) => {
     try {
-      console.log("Req File:", req.file); 
-      if (!req.file) {
-        return res.status(400).json({ msg: "File PDF harus diunggah!" });
-      }
-  
-      const { name, semester } = req.body;
-      const file_rps = req.file.filename; 
-  
-      await Rps.create({ name, semester, file_rps });
-  
-      res.status(201).json({ msg: "RPS berhasil dibuat!" });
+        console.log("Req File:", req.file);
+        if (!req.file) {
+            return res.status(400).json({ msg: "File PDF harus diunggah!" });
+        }
+
+        const { name, semester } = req.body;
+        const file_rps = req.file.filename;
+
+        await Rps.create({ name, semester, file_rps });
+
+        res.status(201).json({ msg: "RPS berhasil dibuat!" });
     } catch (error) {
-      res.status(500).json({ msg: error.message });
+        res.status(500).json({ msg: error.message });
     }
 };
 

@@ -8,13 +8,17 @@ const EditAbsensi = () => {
     const [matakuliahList, setMataKuliahList] = useState([]);
     const [name, setName] = useState("");
     const [mata_kuliah, setMataKuliah] = useState("");
-    const [jam_pelajaran, setJamPelajaran] = useState("");
-    const [foto, setFoto] = useState("");
+    const [jam, setJam] = useState("");
+    const [hari, setHari] = useState("");
+    const [kelas, setKelas] = useState("");
     const [msg, setMsg] = useState("");
     const { id } = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
+        const name = localStorage.getItem("name");
+        if (name) setName(name);
+
         getMataKuliahList();
         getDosenList();
         getAbsensiById();
@@ -49,7 +53,9 @@ const EditAbsensi = () => {
 
             setName(absensi.name);
             setMataKuliah(absensi.mata_kuliah);
-            setJamPelajaran(absensi.jam_pelajaran);
+            setKelas(absensi.kelas);
+            setHari(absensi.hari);
+            setJam(absensi.jam);
         } catch (error) {
             console.error("Gagal mengambil data absensi:", error);
             setMsg("Terjadi kesalahan saat mengambil data absensi.");
@@ -59,19 +65,13 @@ const EditAbsensi = () => {
     const updateAbsensi = async (e) => {
         e.preventDefault();
         try {
-            const formData = new FormData();
-            formData.append("name", name);
-            formData.append("mata_kuliah", mata_kuliah);
-            formData.append("jam_pelajaran", jam_pelajaran);
-            if (foto) {
-                formData.append("foto", foto);
-            }
-
-            const token = localStorage.getItem("token");
-            await axios.patch(`http://localhost:5000/absensi/${id}`, formData, {
-                headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
+            await axios.patch(`http://localhost:5000/absensi/${id}`, {
+                name,
+                mata_kuliah,
+                kelas,
+                hari,
+                jam
             });
-
             navigate("/admin/dashboard/absensi");
         } catch (error) {
             console.error("Error saat memperbarui data:", error);
@@ -101,19 +101,17 @@ const EditAbsensi = () => {
                     )}
 
                     <Form onSubmit={updateAbsensi}>
-                        <Row className="align-items-center mb-3">
-                            <Col md={3}>
-                                <Form.Label>Nama</Form.Label>
-                            </Col>
+                        {/* <Row className="align-items-center mb-3">
+                            <Col md={3}><Form.Label>Nama Dosen</Form.Label></Col>
                             <Col md={8}>
-                                <Form.Select value={name} onChange={(e) => setName(e.target.value)} required>
-                                    <option value="">-- Pilih Dosen --</option>
+                                <Form.Select value={name} onChange={(e) => setName(e.target.value)}>
+                                    <option value="">-- Pilih Dosen Pengampu --</option>
                                     {dosenList.map((dosen) => (
                                         <option key={dosen.id} value={dosen.name}>{dosen.name}</option>
                                     ))}
                                 </Form.Select>
                             </Col>
-                        </Row>
+                        </Row> */}
 
                         <Row className="align-items-center mb-3">
                             <Col md={3}>
@@ -131,25 +129,45 @@ const EditAbsensi = () => {
 
                         <Row className="align-items-center mb-3">
                             <Col md={3}>
-                                <Form.Label>Hari dan Jam Pelajaran</Form.Label>
+                                <Form.Label>Kelas</Form.Label>
                             </Col>
                             <Col md={8}>
                                 <Form.Control
                                     type="text"
-                                    placeholder="Masukkan Hari dan Jam Pelajarang"
-                                    value={jam_pelajaran}
-                                    onChange={(e) => setJamPelajaran(e.target.value)}
+                                    placeholder="Masukkan Kelas"
+                                    value={kelas}
+                                    onChange={(e) => setKelas(e.target.value)}
                                     required
                                 />
                             </Col>
                         </Row>
 
-                        <Row className="mb-3">
-                            <Col md={3}><Form.Label>Foto </Form.Label></Col>
+                        <Row className="align-items-center mb-3">
+                            <Col md={3}>
+                                <Form.Label>Hari</Form.Label>
+                            </Col>
                             <Col md={8}>
                                 <Form.Control
-                                    type="file"
-                                    onChange={handleFileChange}
+                                    type="text"
+                                    placeholder="Masukkan Hari "
+                                    value={hari}
+                                    onChange={(e) => setHari(e.target.value)}
+                                    required
+                                />
+                            </Col>
+                        </Row>
+
+                        <Row className="align-items-center mb-3">
+                            <Col md={3}>
+                                <Form.Label>Jam</Form.Label>
+                            </Col>
+                            <Col md={8}>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Masukkan Jam Pelajarang"
+                                    value={jam}
+                                    onChange={(e) => setJam(e.target.value)}
+                                    required
                                 />
                             </Col>
                         </Row>

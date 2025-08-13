@@ -10,6 +10,7 @@ const TambahPrestasi = () => {
     const [formData, setFormData] = useState({
         nama: "",
         nim: "",
+        kategori_prestasi: "",
         kategori_peserta: "",
         tingkatan: "",
         nama_perlombaan: "",
@@ -58,6 +59,7 @@ const TambahPrestasi = () => {
             setFormData({
                 nama: "",
                 nim: "",
+                kategori_prestasi: "",
                 kategori_peserta: "",
                 tingkatan: "",
                 nama_perlombaan: "",
@@ -117,6 +119,22 @@ const TambahPrestasi = () => {
                         ))}
 
                         <Row className="align-items-center mb-3">
+                            <Col md={3}><Form.Label>Kategori Prestasi</Form.Label></Col>
+                            <Col md={8}>
+                                <Form.Select
+                                    name="kategori_prestasi"
+                                    value={formData.kategori_prestasi}
+                                    onChange={handleChange}
+                                    required
+                                >
+                                    <option value="">-- Pilih Kategori --</option>
+                                    <option value="Akademik">Akademik</option>
+                                    <option value="Non-Akademik">Non-Akademik</option>
+                                </Form.Select>
+                            </Col>
+                        </Row>
+
+                        <Row className="align-items-center mb-3">
                             <Col md={3}><Form.Label>Kategori Peserta</Form.Label></Col>
                             <Col md={8}>
                                 <Form.Select
@@ -144,6 +162,8 @@ const TambahPrestasi = () => {
                                     <option value="Internasional">Internasional</option>
                                     <option value="Nasional">Nasional</option>
                                     <option value="Provinsi">Provinsi</option>
+                                    <option value="Kabupaten/kota">Kabupaten/kota</option>
+                                    <option value="Universitas">Universitas</option>
                                 </Form.Select>
                             </Col>
                         </Row>

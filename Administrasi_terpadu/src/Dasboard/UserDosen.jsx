@@ -9,7 +9,6 @@ const UserDosen = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState("");
-  const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -170,15 +169,16 @@ const UserDosen = () => {
           </div>
 
           <div className="table-responsive text-center">
-            <Table striped bordered hover className="align-middle mb-0">
+            <Table striped bordered hover className="align-middle mb-0 small">
               <thead className="bg-dark text-white text-center">
                 <tr>
-                  <th>No</th>
-                  <th>NIP</th>
-                  <th>Nama Dosen</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th className="text-center">Aksi</th>
+                  <th className="py-4">No</th>
+                  <th className="py-4">Foto Users</th>
+                  <th className="py-4">NIP/NIDN</th>
+                  <th className="py-4">Nama Dosen</th>
+                  <th className="py-4">Email</th>
+                  <th className="py-4">Role</th>
+                  <th className="text-center py-4">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -186,7 +186,17 @@ const UserDosen = () => {
                   paginatedUsers.map((user, index) => (
                     <tr key={user.nip}>
                       <td className="text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                      <td>{user.nip}</td>
+                      <td className="text-center">
+                        <img
+                          src={`http://localhost:5000/uploads/users/${user.foto_users}`}
+                          alt="Foto User"
+                          width="70"
+                          height="70"
+                          className="rounded-circle object-fit-cover"
+                        />
+                      </td>
+
+                      <td>{user.nip} / {user.nidn}</td>
                       <td>{user.name}</td>
                       <td>{user.email}</td>
                       <td>

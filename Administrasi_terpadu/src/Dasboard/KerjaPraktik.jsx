@@ -220,7 +220,7 @@ const KerjaPraktik = () => {
               <h4 className="text-uppercase">Magang Mandiri</h4>
               <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
             </div>
-            <Table striped bordered hover className="text-center small">
+            <Table striped bordered hover className=" align-middle mb-0  text-center small">
               <thead className="bg-light">
                 <tr>
                   <th>No</th>

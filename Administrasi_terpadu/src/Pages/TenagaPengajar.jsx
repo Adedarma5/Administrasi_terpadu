@@ -195,8 +195,8 @@ const TenagaPengajar = () => {
                                                         <Card.Title className="fw-bold mb-1 fs-5">
                                                             {dosen.name}
                                                         </Card.Title>
-                                                        <Card.Subtitle className="mb-3 text-muted small">
-                                                            NIDN/NIP:{" "}
+                                                        <Card.Subtitle className="mb-3 mt-1 text-muted small">
+                                                            NIP/NIDN:{" "}
                                                             {dosen.nip || "-"}
                                                         </Card.Subtitle>
 

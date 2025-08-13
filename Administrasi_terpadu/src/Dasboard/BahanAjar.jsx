@@ -23,7 +23,7 @@ const BahanAjar = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));  
   const printRef = useRef();
 
 
@@ -217,7 +217,7 @@ const BahanAjar = () => {
                   </InputGroup.Text>
                   <Form.Control
                     size="sm"
-                    placeholder="Cari Jadwal Jam Pelajaran Mata Kuliah"
+                    placeholder="Cari Mata Kuliah"
                     value={searchTerm}
                     onChange={(e) => {
                       setSearchTerm(e.target.value);
@@ -226,24 +226,6 @@ const BahanAjar = () => {
                     className="border-0 shadow-none py-1"
                   />
                 </InputGroup>
-              </div>
-
-              <div className="col-lg-3 col-12 " >
-                <Form.Select
-                  value={selectedmatakuliah}
-                  onChange={(e) => {
-                    setSelectedMataKuliah(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="shadow-none py-1"
-                >
-                  <option value="">-- Semua Mata Kuliah --</option>
-                  {matakuliahList.map((mata_kuliah) => (
-                    <option key={mata_kuliah.id} value={mata_kuliah.name}>
-                      {mata_kuliah.name}
-                    </option>
-                  ))}
-                </Form.Select>
               </div>
             </div>
           </Card.Header>
@@ -263,7 +245,7 @@ const BahanAjar = () => {
               </Alert>
             ) : (
 
-              <Table striped bordered hover className="align-middle mb-0 text-center" size="sm">
+              <Table striped bordered hover className="align-middle mb-0 text-center small">
                 <thead className="bg-light">
                   <tr>
                     <th>No</th>
@@ -298,7 +280,7 @@ const BahanAjar = () => {
                               size="sm"
                               title="Lihat Detail"
                               onClick={() => handleShowDetail(item)}
-                            >
+                            > lihat bahan ajar
                               <FiEye size={16} />
                             </Button>
                             <Button

@@ -19,6 +19,11 @@ const Prestasi = db.define('prestasi', {
         allowNull: false,
 
     },
+    kategori_prestasi: {
+        type: DataTypes.STRING,
+        allowNull: false,
+
+    },
     kategori_peserta: {
         type: DataTypes.STRING,
         allowNull: false,

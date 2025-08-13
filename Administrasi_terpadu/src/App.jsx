@@ -41,9 +41,6 @@ import EditRps from './Dasboard/EditRps.jsx';
 import Alumni from './Dasboard/Alumni.jsx';
 import Pmm from './Dasboard/Pmm.jsx';
 import Kewirausahaan from './Dasboard/Kewirausahaan.jsx';
-import KontrakKuliah from './Dasboard/KontrakKuliah.jsx';
-import TambahKontrakKuliah from './Dasboard/TambahKontrakKuliah.jsx';
-import EditKontrakKuliah from './Dasboard/EditKontrakKuliah.jsx';
 import EditPenelitian from './Dasboard/EditPenelitian.jsx';
 import Penelitian from './Dasboard/Penelitian.jsx';
 import EditPengabdian from './Dasboard/EditPengabdian.jsx';
@@ -60,6 +57,21 @@ import EditUserDosen from './Dasboard/EditUserDosen.jsx';
 import EditPengajaran from './Dasboard/EditPengajaran.jsx';
 import Kemahasiswaan from './Pages/Kemahasiswaan.jsx';
 import TenagaPengajar from './Pages/TenagaPengajar.jsx';
+import ResetPassword from './Pages/ResetPassword.jsx';
+import FormReset from './Pages/FormReset.jsx';
+import KontrakKuliahById from './Dasboard/KontrakKuliahById.jsx';
+import DaftarPenelitian from './Dasboard/DaftarPenelitian.jsx';
+import BeritaDetail from './Pages/BeritaDetail.jsx';
+import PembelajaranMataKuliah from './Dasboard/PembelajaranMataKuliah.jsx';
+import TambahPembelajaranMataKuliah from './Dasboard/TambahPembelajaranMataKuliah.jsx';
+import DaftarPembelajaranMataKuliah from './Dasboard/Daftar PembelajaranMataKuliah.jsx';
+import EditPembelajaran from './Dasboard/EditPembelajaran.jsx';
+import Jurnal from './Dasboard/Jurnal.jsx';
+import TambahJurnal from './Dasboard/TambahJurnal.jsx';
+import TambahAbsensiPertemuan from './Dasboard/TambahAbsensiPertemuan.jsx';
+import EditJurnal from './Dasboard/EditJurnal.jsx';
+import TambahSurvei from './Kema/TambahSurvei.jsx';
+import SurveiAlumni from './Dasboard/SurveiAlumni.jsx';
 
 
 function App() {
@@ -79,13 +91,18 @@ function App() {
         <Route path='/Home' Component={Home} />
         <Route path='/Login' Component={Login} />
         <Route path='/Berita' Component={Berita} />
+        <Route path='/BeritaDetail' Component={BeritaDetail} />
         <Route path='/Kema' Component={Kema} />
         <Route path='/About' Component={About} />
         <Route path='/Kemahasiswaan' Component={Kemahasiswaan} />
         <Route path='/TenagaPengajar' Component={TenagaPengajar} />
+        <Route path='/ResetPassword' Component={ResetPassword} />
+        <Route path='/FormReset' Component={FormReset} />
         <Route path='/admin' Component={LayoutAdmin}>
           <Route path='dashboard' Component={AdminDashboard} />
-          <Route path='dashboard/KontrakKuliah' Component={KontrakKuliah} />
+          <Route path='dashboard/PembelajaranMataKuliah' Component={PembelajaranMataKuliah} />
+          <Route path='dashboard/DaftarPembelajaranMataKuliah' Component={DaftarPembelajaranMataKuliah} />
+          <Route path='dashboard/KontrakKuliahById' Component={KontrakKuliahById} />
           <Route path='dashboard/BahanAjar' Component={BahanAjar} />
           <Route path='dashboard/UserDosen' Component={UserDosen} />
           <Route path='dashboard/Msib' Component={Msib} />
@@ -98,11 +115,14 @@ function App() {
           <Route path='dashboard/MataKuliah' Component={MataKuliah} />
           <Route path='dashboard/Pengabdian' Component={Pengabdian} />
           <Route path='dashboard/Penelitian' Component={Penelitian} />
+          <Route path='dashboard/Jurnal' Component={Jurnal} />
           <Route path='dashboard/Rps' Component={Rps} />
           <Route path='dashboard/Alumni' Component={Alumni} />
+          <Route path='dashboard/SurveiAlumni' Component={SurveiAlumni} />
           <Route path='dashboard/Pmm' Component={Pmm} />
           <Route path='dashboard/Dosen' Component={Dosen} />
           <Route path='dashboard/Penelitian' Component={Penelitina} />
+          <Route path='dashboard/DaftarPenelitian' Component={DaftarPenelitian} />
           <Route path='dashboard/Pengabdian' Component={Pengabdian} />
           <Route path='dashboard/Pengajaran' Component={Pengajaran} />
           <Route path='dashboard/Kewirausahaan' Component={Kewirausahaan} />
@@ -112,16 +132,19 @@ function App() {
           <Route path='dashboard/Absensi/EditAbsensi/:id' Component={EditAbsensi} />
           <Route path='dashboard/Pengabdian/EditPengabdian/:id' Component={EditPengabdian} />
           <Route path='dashboard/Penelitian/EditPenelitian/:id' Component={EditPenelitian} />
-          <Route path='dashboard/KontrakKuliah/EditKontrakKuliah/:id' Component={EditKontrakKuliah} />
+          <Route path='dashboard/PembelajaranMataKuliah/EditPembelajaran/:id' Component={EditPembelajaran} />
           <Route path='dashboard/Rps/EditRps/:id' Component={EditRps} />
           <Route path='dashboard/MataKuliah/EditMataKuliah/:id' Component={EditMataKuliah} />
+          <Route path='dashboard/Jurnal/EditJurnal/:id' Component={EditJurnal} />
           <Route path='dashboard/Bahanajar/EditBahanAjar/:id' Component={EditBahanAjar} />
-          <Route path='dashboard/KontrakKuliah/TambahKontrakKuliah' Component={TambahKontrakKuliah} />
+          <Route path='dashboard/PembelajaranMataKuliah/TambahPembelajaranMataKuliah' Component={TambahPembelajaranMataKuliah} />
           <Route path='dashboard/Rps/TambahRps' Component={TambahRps} />
           <Route path='dashboard/UserDosen/TambahUser' Component={TambahUser} />
           <Route path='dashboard/Absensi/TambahAbsensi' Component={TambahAbsensi} />
-          <Route path='dashboard/BahanAjar/TambahBahanAjar' Component={TambahBahanAjar} />
+          <Route path='dashboard/Absensi/TambahAbsensiPertemuan' Component={TambahAbsensiPertemuan} />
+          <Route path='dashboard/BahanAjar/TambahBahanAjar/:id' Component={TambahBahanAjar} />
           <Route path='dashboard/Dosen/TambahDosen' Component={TambahDosen} />
+          <Route path='dashboard/Jurnal/TambahJurnal' Component={TambahJurnal} />
           <Route path='dashboard/MataKuliah/TambahMataKuliah' Component={TambahMataKuliah} />
           <Route path='dashboard/Penelitian/TambahPenelitian' Component={TambahPenelitian} />
           <Route path='dashboard/Pengabdian/TambahPengabdian' Component={TambahPengabdian} />
@@ -137,6 +160,7 @@ function App() {
           <Route path='dashboard/TugasAkhir/TambahTugasAkhir' Component={TambahTga} />
           <Route path='dashboard/Pmm/TambahPmm' Component={TammbahPmm} />
           <Route path='dashboard/Alumni/TambahAlumni' Component={TambahAlumni} />
+          <Route path='dashboard/Survei/TambahSurvei' Component={TambahSurvei} />
 
         </Route>
       </Routes>

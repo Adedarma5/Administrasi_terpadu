@@ -6,7 +6,7 @@ import upload from "../middleware/upload.js";
 export const getPrestasi = async (req, res) => {
     try {
         const prestasi = await Prestasi.findAll({
-            attributes: ['id', 'nama', 'nim', 'kategori_peserta', 'tingkatan', 'nama_perlombaan', 'bidang_perlombaan', 'sertifikat']
+            attributes: ['id', 'nama', 'nim','kategori_prestasi', 'kategori_peserta', 'tingkatan', 'nama_perlombaan', 'bidang_perlombaan', 'sertifikat']
         });
         res.json(prestasi);
     } catch (error) {
@@ -17,7 +17,7 @@ export const getPrestasi = async (req, res) => {
 export const getPrestasiById = async (req, res) => {
     try {
         const prestasi = await Prestasi.findOne({
-            attributes: ['id', 'nama', 'nim', 'kategori_peserta', 'tingkatan', 'nama_perlombaan', 'bidang_perlombaan', 'sertifikat'],
+            attributes: ['id', 'nama', 'nim', 'kategori_prestasi', 'kategori_peserta', 'tingkatan', 'nama_perlombaan', 'bidang_perlombaan', 'sertifikat'],
             where: {
                 id: req.params.id
             }
@@ -39,12 +39,13 @@ export const createPrestasi = async (req, res) => {
         return res.status(400).json({ msg: "File PDF harus diunggah!" });
       }
   
-      const { nama, nim, kategori_peserta, tingkatan, nama_perlombaan, bidang_perlombaan } = req.body;
+      const { nama, nim, kategori_prestasi, kategori_peserta, tingkatan, nama_perlombaan, bidang_perlombaan } = req.body;
       const sertifikat = req.file.filename; 
   
       await Prestasi.create({
         nama,
         nim,
+        kategori_prestasi,
         kategori_peserta,
         tingkatan,
         nama_perlombaan, 
@@ -68,12 +69,12 @@ export const updatePrestasi = async (req, res) => {
             return res.status(404).json({ msg: "Prestasi tidak ditemukan" });
         }
 
-        const { nama, nim, kategori_peserta, tingkatan, nama_perlombaan, bidang_perlombaan } = req.body;
+        const { nama, nim, kategori_prestasi, kategori_peserta, tingkatan, nama_perlombaan, bidang_perlombaan } = req.body;
         let sertifikat = prestasi.sertifikat;
         if (req.file) {
             sertifikat = req.file.filename;
         }
-        await prestasi.update({ nama, nim, kategori_peserta, tingkatan, nama_perlombaan, bidang_perlombaan, sertifikat });
+        await prestasi.update({ nama, nim, kategori_prestasi, kategori_peserta, tingkatan, nama_perlombaan, bidang_perlombaan, sertifikat });
 
         res.status(200).json({ msg: "Prestasi berhasil diperbarui" });
     } catch (error) {

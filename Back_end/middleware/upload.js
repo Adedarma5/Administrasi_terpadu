@@ -14,9 +14,11 @@ const storage = multer.diskStorage({
         if (file.fieldname === "file_pendukung") {
             folder += "bahan_ajar/";
         } else if (file.fieldname === "foto") {
-            folder += "absensi/";
+            folder += "absensi_pertemuan/";
         } else if (file.fieldname === "foto_dosen") {
             folder += "dosen/";
+        } else if (file.fieldname === "foto_users") {
+            folder += "users/";
         } else if (
             ["lembar_pengesahan", "laporan", "projek",
                 "sertifikat", "pengesahan_prodi", "pengesahan_pembimbing",
@@ -24,16 +26,18 @@ const storage = multer.diskStorage({
                 "skripsi", "program_tga", "jurnal_sisfo"].includes(file.fieldname)
         ) {
             folder += "kegiatan_mahasiswa/";
-        } else if (file.fieldname === "file_rps") {
-            folder += "rps/";
-        } else if (file.fieldname === "file_kontrak_kuliah") {
-            folder += "kontrak_kuliah/";
+        } else if (
+            ["file_kontrak_kuliah", "file_rps_pembelajaran"].includes(file.fieldname)
+        ) {
+            folder += "pembelajaran_mata_kuliah/";
         } else if (file.fieldname === "file_laporan") {
             folder += "penelitian/";
         } else if (file.fieldname === "file_kegiatan") {
             folder += "pengabdian/";
         } else if (file.fieldname === "file_pengajaran") {
             folder += "pengajaran/";
+        } else if (file.fieldname === "file_rps") {
+            folder += "rps/";
         } else {
             folder += "misc/";
         }

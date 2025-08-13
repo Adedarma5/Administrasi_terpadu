@@ -208,7 +208,7 @@ const Pmm = () => {
               <h4 className="text-uppercase">Student Mobility</h4>
               <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
             </div>
-            <Table striped bordered over className="align-middle mb-0 text-center">
+            <Table striped bordered over className=" align-middle mb-0 text-center small">
               <thead className="bg-light">
                 <tr>
                   <th className="py-3">No</th>

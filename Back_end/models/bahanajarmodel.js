@@ -5,37 +5,35 @@ import db from "../config/database.js"
 const { DataTypes } = Sequelize;
 
 const BahanAjar = db.define('bahan_ajar', {
-    id:{
+    id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    userId: { 
+    userId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-    },
-    name: {
-        type: DataTypes.STRING,
         allowNull: false,
     },
     judul_materi: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    dosen_pengampu: {
+    file_pendukung: {
         type: DataTypes.STRING,
         allowNull: false,
-
     },
     pertemuan: {
-        type: DataTypes.STRING,
-        allowNull: false,
-
+        type: DataTypes.INTEGER,
+        allowNull: false
     },
-    file_pendukung:{
-        type: DataTypes.STRING,
+    pembelajaran_id: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-    },
+        references: {
+            model: "pembelajaran_mata_kuliah",
+            key: "id"
+        }
+    }
 }, {
     freezeTableName: true,
     timestamps: false,

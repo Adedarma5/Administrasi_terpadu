@@ -223,22 +223,22 @@ const Msib = () => {
               <h4 className="text-uppercase">Laporan Bahan Ajar</h4>
               <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
             </div>
-            <Table striped bordered hover className="align-middle mb-0 text-center">
+            <Table striped bordered hover responsive className=" align-middle mb-0 text-center small">
               <thead className="bg-light">
                 <tr>
                   <th>No</th>
-                  <th>Nama</th>
-                  <th>Nim</th>
-                  <th>Program</th>
-                  <th>Judul</th>
-                  <th>Mitra</th>
-                  <th>Tanggal Mulai</th>
-                  <th>Tanggal Selesai</th>
-                  <th>Lembar Pengesahan</th>
-                  <th>Laporan</th>
-                  <th>Projek</th>
-                  <th>Sertifikat</th>
-                  <th>Konversi Nilai</th>
+                  <th className="py-3 px-5">Nama</th>
+                  <th className="py-3 px-5">Nim</th>
+                  <th className="py-3 px-3">Program</th>
+                  <th className="py-3 px-5">Judul</th>
+                  <th className="py-3 px-5">Mitra</th>
+                  <th className="py-3 px-5">Tanggal Mulai</th>
+                  <th className="py-3 px-5">Tanggal Selesai</th>
+                  <th className="py-3 px-3">Lembar Pengesahan</th>
+                  <th className="py-3 px-3">Laporan</th>
+                  <th className="py-3 px-3">Projek</th>
+                  <th className="py-3 px-3">Sertifikat</th>
+                  <th className="py-3 px-3">Konversi Nilai</th>
                   <th className="no-print">Aksi</th>
                 </tr>
               </thead>

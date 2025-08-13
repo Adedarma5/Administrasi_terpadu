@@ -14,6 +14,7 @@ const EditRps = () => {
 
   useEffect(() => {
     getMataKuliahList();
+    getRpsById();
   }, []);
 
   const getMataKuliahList = async () => {
@@ -22,6 +23,19 @@ const EditRps = () => {
       setMataKuliahList(response.data);
     } catch (error) {
       console.error("Gagal mengambil daftar mata kuliah:", error);
+    }
+  };
+
+  const getRpsById = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/rps/${id}`);
+      const rps = response.data;
+
+      setName(rps.name);
+      setSemester(rps.semester);
+    } catch (error) {
+      console.error("Gagal mengambil data penelitian:", error);
+      setMsg("Terjadi kesalahan saat mengambil data penelitian.");
     }
   };
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Card, Table, Button, Row, Col, Form, InputGroup, Modal } from "react-bootstrap";
-import { FiPlus, FiSearch, FiFilter, FiEdit2, FiTrash2, FiBookOpen, FiEye, FiFile } from "react-icons/fi";
+import { FiPlus, FiSearch, FiFilter, FiEdit2, FiTrash2, FiBookOpen, FiEye, FiFile, FiCalendar, FiUser, FiActivity, FiUsers, FiFileText, FiDownload } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -223,7 +223,7 @@ const Pengajaran = () => {
           <div className="p-3 border-bottom">
             <Row className="align-items-center g-3">
               <Col md={6} lg={5}>
-                <h5 className="mb-0 fw-semibold">Daftar Pengabdian Dosen  Sistem Informasi</h5>
+                <h5 className="mb-0 fw-semibold">Daftar Pengajaran Dosen  Sistem Informasi</h5>
               </Col>
             </Row>
           </div>
@@ -275,92 +275,288 @@ const Pengajaran = () => {
               </div>
             </Card.Header>
 
-            <Card.Body className="p-0 text-center">
-              <div className="table-responsive" ref={printRef}>
-                <div className="print-only">
-                  <h4 className="text-uppercase">Pengajaran</h4>
-                  <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
-                </div>
-                <Table striped bordered hover className="align-middle mb-0" size="sm">
-                  <thead>
-                    <tr className="bg-light">
-                      <th className="px-2 py-4">No</th>
-                      <th className="px-5 py-2">Nama Dosen</th>
-                      <th className="px-5 py-2">Mata Kuliah</th>
-                      <th className="px-3 py-4">Semester</th>
-                      <th className="px-3 py-4">Kelas</th>
-                      <th className="px-5 py-2">Metode Pengajaran</th>
-                      <th className="px-2 py-2">Keterlibatan Praktisi</th>
-                      <th className="px-5 py-2">Nama Praktisi</th>
-                      <th className="px-5 py-2">Institusi Praktisi</th>
-                      <th className="px-3 py-2">File Pengajaran</th>
-                      <th className="px-2 py-4 no-print">Aksi</th>
+            <div ref={printRef} className="d-none d-print-block">
+              <h4 className="text-center">Laporan Pengabdian</h4>
+              <Table striped bordered size="sm" className="mt-3">
+                <thead>
+                  <tr className="text-center">
+                    <th className="px-2 py-4">No</th>
+                    <th className="px-4 py-2">Nama Dosen</th>
+                    <th className="px-3 py-4 ">Mata Kuliah</th>
+                    <th className="px-2 py-4">Kelas</th>
+                    <th className="px-2 py-4">Semester</th>
+                    <th className="px-2 py-4">Metode Pengajaran</th>
+                    <th className="px-2 py-4">Keterlibatan Praktisi</th>
+                    <th className="px-2 py-4">Nama Praktisi</th>
+                    <th className="px-2 py-4">Institusi Praktisi</th>
+                    <th className="px-2 py-2">File Pengajaran</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredPengajaran.map((item, index) => (
+                    <tr key={item.id}>
+                      <td>{index + 1}</td>
+                      <td>{item.nama_dosen}</td>
+                      <td>{item.mata_kuliah}</td>
+                      <td>{item.kelas}</td>
+                      <td>{item.semester}</td>
+                      <td>{item.metode_pengajaran}</td>
+                      <td>{item.keterlibatan_praktisi}</td>
+                      <td>{item.nama_praktisi}</td>
+                      <td>{item.institusi_praktisi}</td>
+                      <td>
+                        <a href={`http://localhost:5000/uploads/pengajaran/${item.file_pengajaran}`}
+                          target="_blank"
+                          rel="noreferrer">
+                          Lihat PDF
+                        </a>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {paginatedPengajaran.length > 0 ? (
-                      paginatedPengajaran.map((item, index) => (
-                        <tr key={item.id}>
-                          <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                          <td>{item.nama_dosen}</td>
-                          <td>{item.mata_kuliah}</td>
-                          <td>{item.semester}</td>
-                          <td>{item.kelas}</td>
-                          <td>{item.metode_pengajaran}</td>
-                          <td>{item.keterlibatan_praktisi}</td>
-                          <td>{item.nama_praktisi}</td>
-                          <td>{item.institusi_praktisi}</td>
-                          <td>
-                            <a
-                              href={`http://localhost:5000/uploads/pengajaran/${item.file_pengajaran}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                  ))}
+                </tbody>
+              </Table>
+            </div>
 
-                            >
-                              Lihat 
-                            </a>
-                          </td>
-                          <td className="no-print">
-                            <div className="d-flex justify-content-center gap-2">
-                              <Button
-                                variant="outline-warning"
-                                size="sm"
-                                title="Lihat Detail"
-                                onClick={() => handleShowDetail(item)}
+            <Card.Body className="p-4">
+              {paginatedPengajaran.length > 0 ? (
+                <div>
+                  <div className="print-only mb-4 text-center">
+                    <h4 className="text-uppercase fw-bold">Pengajaran</h4>
+                    <p className="mb-0">Tanggal Cetak: {new Date().toLocaleDateString('id-ID')}</p>
+                  </div>
+
+                  <Row className="g-4">
+                    {paginatedPengajaran.map((item, index) => (
+                      <Col lg={6} xl={4} key={item.id}>
+                        <Card className="h-100 shadow border-0 teaching-card small" style={{
+                          borderRadius: '16px',
+                          transition: 'all 0.3s ease',
+                          overflow: 'hidden'
+                        }}>
+                          <div
+                            className="position-relative"
+                            style={{
+                              background: 'linear-gradient(135deg,rgb(102, 186, 234) 0%,rgb(75, 162, 145) 100%)',
+                              padding: '1.25rem',
+                            }}
+                          >
+                            <div className="d-flex align-items-center justify-content-between mb-2">
+                              <div className="d-flex align-items-center gap-3">
+                                <div
+                                  className="bg-white bg-opacity-20 backdrop-blur rounded-circle p-2 d-flex align-items-center justify-content-center"
+                                  style={{
+                                    width: 40,
+                                    height: 40,
+                                    backdropFilter: 'blur(10px)',
+                                    border: '1px solid rgba(255,255,255,0.2)'
+                                  }}
+                                >
+                                  <FiBookOpen size={18} className="text-black" />
+                                </div>
+                                <div>
+                                  <small className="text-black opacity-75 fw-bold d-block">
+                                    PENGAJARAN
+                                  </small>
+                                </div>
+                              </div>
+
+                              <div
+                                className="bg-white bg-opacity-20 rounded-pill px-2 py-1"
+                                style={{ backdropFilter: 'blur(10px)' }}
                               >
-                                <FiEye size={16} />
-                              </Button>
-                              <Button
-                                variant="outline-success"
-                                size="sm"
-                                title="Edit"
-                                onClick={() => navigate(`/admin/dashboard/pengajaran/editpengajaran/${item.id}`)}
-                              >
-                                <FiEdit2 size={16} />
-                              </Button>
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => deletePengajaran(item.id)}>
-                                <FiTrash2 size={16} />
-                              </Button>
+                                <small className="text-black fw-semibold">
+                                  <FiCalendar size={12} className="me-1 mb-1" />
+                                  {item.semester}
+                                </small>
+                              </div>
                             </div>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="11" className="text-center py-4">
-                          <div className="d-flex flex-column align-items-center justify-content-center py-4">
-                            <FiFilter size={32} className="text-muted mb-2" />
-                            <p className="text-muted mb-0">Tidak ada data  yang tersedia</p>
+
+                            <svg
+                              className="position-absolute bottom-0 start-0 w-100"
+                              viewBox="0 0 400 20"
+                              style={{ height: '20px' }}
+                              preserveAspectRatio="none"
+                            >
+                              <path
+                                d="M0,20 C100,0 300,0 400,20 L400,20 L0,20 Z"
+                                fill="white"
+                              />
+                            </svg>
                           </div>
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </Table>
-              </div>
+
+                          <Card.Body className="p-4 pt-3">
+                            <div className="mb-4">
+                              <h5
+                                className="fw-bold text-dark mb-2 lh-sm"
+                                style={{
+                                  fontSize: '1.05rem',
+                                  display: '-webkit-box',
+                                  WebkitLineClamp: 2,
+                                  WebkitBoxOrient: 'vertical',
+                                  overflow: 'hidden'
+                                }}
+                                title={item.mata_kuliah}
+                              >
+                                {item.mata_kuliah}
+                              </h5>
+                              <div className="d-flex align-items-center gap-2">
+                                <span className="badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-pill" style={{ fontSize: '0.75rem' }}>
+                                  Kelas {item.kelas}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="bg-light rounded-3 p-3 mb-3">
+                              <div className="d-flex align-items-center gap-2 mb-2">
+                                <div
+                                  className="bg-primary bg-opacity-10 rounded-circle p-2 me-1 d-flex align-items-center justify-content-center"
+                                  style={{ width: 28, height: 28 }}
+                                >
+                                  <FiUser size={14} className="text-primary" />
+                                </div>
+                                <small className="text-muted fw-semibold text-uppercase" style={{ letterSpacing: '0.5px' }}>
+                                  Dosen Pengajar
+                                </small>
+                              </div>
+                              <div className="ps-4">
+                                <p className="mb-0 fw-semibold text-dark" style={{ fontSize: '0.9rem' }}>
+                                  {item.nama_dosen}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="bg-info bg-opacity-10  rounded-3 p-3 mb-3">
+                              <div className="d-flex align-items-center gap-2 mb-1" >
+                                <FiActivity size={14} className="text-danger" />
+                                <small className="text-black fw-semibold text-uppercase">Metode Pengajaran </small>
+                              </div>
+                              <p
+                                className="ps-4 mb-3 text-dark fw-medium"
+                                style={{ fontSize: "0.85rem", lineHeight: "1" }}
+                              >
+                                {item.metode_pengajaran}
+                              </p>
+
+                              {item.keterlibatan_praktisi && item.keterlibatan_praktisi !== "-" && (
+                                <>
+                                  <div className="d-flex align-items-center gap-2 mb-2">
+                                    <FiUsers size={14} className="text-success" />
+                                    <small className="text-black fw-semibold">Keterlibatan Praktisi</small>
+                                  </div>
+                                  <div className="ps-4">
+                                    <p
+                                      className="mb-1 fw-medium text-dark"
+                                      style={{ fontSize: "0.85rem", lineHeight: "1.4" }}
+                                    >
+                                      <strong>Praktisi:</strong> {item.nama_praktisi || "-"}
+                                    </p>
+                                    <p
+                                      className="mb-0 fw-medium text-dark"
+                                      style={{ fontSize: "0.85rem", lineHeight: "1.4" }}
+                                    >
+                                      <strong>Institusi:</strong> {item.institusi_praktisi || "-"}
+                                    </p>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+
+
+                            <div>
+                              <div className="border-top">
+                                <div className="d-flex align-items-center justify-content-between mt-2">
+                                  <div className="d-flex align-items-center gap-2s">
+                                    <div
+                                      className="d-flex align-items-center justify-content-center"
+                                      style={{ width: 32, height: 32 }}
+                                    >
+                                      <FiFileText size={14} className="text-info" />
+                                    </div>
+                                    <div>
+                                      <small className="text-muted fw-medium">File Pengajaran</small>
+                                    </div>
+                                  </div>
+                                  <Button
+                                    variant="outline-info"
+                                    size="sm"
+                                    className="rounded-pill px-3"
+                                    onClick={() => window.open(`http://localhost:5000/uploads/pengajaran/${item.file_pengajaran}`, '_blank')}
+                                    style={{ fontSize: '0.75rem' }}
+                                  >
+                                    <FiDownload size={12} className="me-1 mb-1" />
+                                    Lihat File
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </Card.Body>
+
+                          <Card.Footer
+                            className="bg-white border-0 p-3 no-print"
+                            style={{ borderRadius: '0 0 16px 16px' }}
+                          >
+                            <div className="d-flex justify-content-between align-items-center">
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                className="px-3 rounded-pill"
+                                onClick={() => handleShowDetail(item)}
+                                style={{
+                                  background: 'linear-gradient(135deg,rgb(102, 186, 234) 0%,rgb(75, 162, 145) 100%)',
+                                  border: 'none',
+                                  fontSize: '0.8rem'
+                                }}
+                              >
+                                <FiEye className="me-1 mb-1" size={12} />
+                                Detail
+                              </Button>
+
+                              <div className="d-flex gap-2">
+                                <Button
+                                  variant="outline-success"
+                                  size="sm"
+                                  onClick={() => navigate(`/admin/dashboard/pengajaran/editpengajaran/${item.id}`)}
+                                  title="Edit Pengabdian"
+                                >
+                                  <FiEdit2 size={12} />
+                                </Button>
+                                <Button
+                                  variant="outline-danger"
+                                  size="sm"
+                                  onClick={() => deletePengajaran(item.id)}
+                                  title="Hapus Pengabdian"
+                                >
+                                  <FiTrash2 size={12} />
+                                </Button>
+                              </div>
+                            </div>
+                          </Card.Footer>
+
+                          <div
+                            style={{
+                              height: '3px',
+                              background: 'linear-gradient(135deg,rgb(102, 186, 234) 0%,rgb(75, 162, 145) 100%)'
+                            }}
+                          ></div>
+                        </Card>
+                      </Col>
+                    ))}
+                  </Row>
+                </div>
+              ) : (
+                <div className="text-center py-5">
+                  <div className="d-flex flex-column align-items-center justify-content-center py-4">
+                    <div
+                      className="bg-light rounded-circle p-4 mb-3 d-flex align-items-center justify-content-center"
+                      style={{ width: 80, height: 80 }}
+                    >
+                      <FiFilter size={32} className="text-muted" />
+                    </div>
+                    <h5 className="text-muted mb-2">Tidak ada data pengajaran</h5>
+                    <p className="text-muted mb-0">Data pengajaran tidak ditemukan atau belum ada yang ditambahkan</p>
+                  </div>
+                </div>
+              )}
             </Card.Body>
 
             <div className="p-3 border-top d-flex justify-content-between align-items-center">

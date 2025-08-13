@@ -14,6 +14,7 @@ const Prestasi = () => {
   const navigate = useNavigate();
   const [prestasiList, setPrestasiList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedkategoriprestasi, setSelectedKategoriPrestasi] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedDetail, setSelectedDetail] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -141,7 +142,9 @@ const Prestasi = () => {
   };
 
   const filteredPrestasi = prestasiList.filter((prestasi) => {
-    return prestasi.nama.toLowerCase().includes(searchTerm.toLowerCase());
+    const namaMatch = prestasi.nama.toLowerCase().includes(searchTerm.toLowerCase());
+    const kategoriMatch = selectedkategoriprestasi === "" || prestasi.kategori_prestasi === selectedkategoriprestasi;
+    return namaMatch && kategoriMatch;
   });
 
   const totalItems = filteredPrestasi.length;
@@ -199,6 +202,20 @@ const Prestasi = () => {
                 </InputGroup>
               </div>
 
+              <div className="col-lg-3 col-12 " >
+                <Form.Select
+                  value={selectedkategoriprestasi}
+                  onChange={(e) => {
+                    setSelectedKategoriPrestasi(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="shadow-none py-1"
+                >
+                  <option value="">-- Semua Kategori Prestasi --</option>
+                  <option value="Akademik">Akademik</option>
+                  <option value="Non-Akademik">Non-Akademik</option>
+                </Form.Select>
+              </div>
             </div>
           </Card.Header>
 
@@ -208,17 +225,18 @@ const Prestasi = () => {
               <h4 className="text-uppercase">Prestasi</h4>
               <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
             </div>
-            <Table striped bordered className="align-middle mb-0 text-center">
+            <Table striped bordered className=" align-middle mb-0 text-center small">
               <thead className="bg-light">
                 <tr>
                   <th className="py-3">No</th>
-                  <th className="py-3">Nama</th>
-                  <th className="py-3">Nim</th>
-                  <th className="py-3">Kategori Peserta</th>
-                  <th className="py-3">Tingkatan</th>
-                  <th className="py-3">Nama Perlombaan</th>
-                  <th className="py-3">Bidang Perlombaan</th>
-                  <th className="py-3">Sertifikat</th>
+                  <th className="py-3 px-5">Nama</th>
+                  <th className="py-3 px-5">Nim</th>
+                  <th className="py-3 px-5">Kategori Prestasi</th>
+                  <th className="py-3 px-5">Kategori Peserta</th>
+                  <th className="py-3 px-5">Tingkatan</th>
+                  <th className="py-3 px-5">Nama Perlombaan</th>
+                  <th className="py-3 px-5">Bidang Perlombaan</th>
+                  <th className="py-3 px-3">Sertifikat</th>
                   <th className="py-3 no-print">Aksi</th>
                 </tr>
               </thead>
@@ -229,6 +247,7 @@ const Prestasi = () => {
                       <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                       <td>{prestasi.nama}</td>
                       <td>{prestasi.nim}</td>
+                      <td>{prestasi.kategori_prestasi}</td>
                       <td>{prestasi.kategori_peserta}</td>
                       <td>{prestasi.tingkatan}</td>
                       <td>{prestasi.nama_perlombaan}</td>

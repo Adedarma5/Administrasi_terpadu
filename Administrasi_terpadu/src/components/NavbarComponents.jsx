@@ -7,24 +7,24 @@ import "../Dist/Home.css"
 
 function NavbarComponents() {
   const [expanded, setExpanded] = useState(false);
-  
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (expanded && !event.target.closest('.navbar')) {
         setExpanded(false);
       }
     };
-    
+
     document.addEventListener('click', handleClickOutside);
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
   }, [expanded]);
-  
+
   return (
-    <Navbar 
-      expand="lg" 
-      className="shadow py-2 sticky-top" 
+    <Navbar
+      expand="lg"
+      className="shadow py-2 sticky-top"
       bg="white"
       expanded={expanded}
       onToggle={() => setExpanded(!expanded)}
@@ -37,55 +37,72 @@ function NavbarComponents() {
             width="45"
             height="45"
             className="d-inline-block align-middle me-2"
-          /> 
+          />
           <span className="brand-text">SATU AKADEMIK</span>
         </Navbar.Brand>
-        
-        <Navbar.Toggle 
-          aria-controls="navbarScroll" 
-          className="border-0 shadow-none" 
+
+        <Navbar.Toggle
+          aria-controls="navbarScroll"
+          className="border-0 shadow-none"
         />
-        
+
         <Navbar.Collapse id="navbarScroll">
           <Nav className="ms-auto d-flex align-items-center">
-            <Nav.Link 
-              href="/Home" 
-              className="fw-semibold px-3 py-2 text-dark" 
+            <Nav.Link
+              href="/Home"
+              className="fw-semibold px-3 py-2 text-dark"
               active={window.location.pathname === '/Home'}
             >
               Home
             </Nav.Link>
-            <Nav.Link 
-              href="#program" 
+            <Nav.Link
+              href="/Kema"
               className="fw-semibold px-3 py-2 text-dark"
+              active={window.location.pathname === '/Kema'}
             >
               Program
             </Nav.Link>
-            <Nav.Link 
-              href="/About" 
-              className="fw-semibold px-3 py-2 text-dark" 
+            <Nav.Link
+              href="/About"
+              className="fw-semibold px-3 py-2 text-dark"
               active={window.location.pathname === '/About'}
             >
               About
             </Nav.Link>
-            
-            <NavDropdown 
-              title={<span className="dropdown-title">Profil Lainnya</span>} 
-              id="basic-nav-dropdown" 
+
+            <NavDropdown
+              title={<span className="dropdown-title">Profil Lainnya</span>}
+              id="basic-nav-dropdown"
               className="fw-semibold custom-dropdown"
               align={{ lg: 'end' }}
             >
-              <NavDropdown.Item 
-                className="dropdown-item-custom" 
+              <NavDropdown.Item
+                className="dropdown-item-custom"
                 href="/Kemahasiswaan"
               >
                 Kemahasiswaan
               </NavDropdown.Item>
-              <NavDropdown.Item 
-                className="dropdown-item-custom" 
+              <NavDropdown.Item
+                className="dropdown-item-custom"
                 href="/TenagaPengajar"
               >
                 Tenaga Pengajar
+              </NavDropdown.Item>
+              <NavDropdown.Item
+                className="dropdown-item-custom"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://sisteminformasi.unimal.ac.id/"
+              >
+                Prodi Sistem Informasi
+              </NavDropdown.Item>
+              <NavDropdown.Item
+                className="dropdown-item-custom"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://himasi.unimal.ac.id/"
+              >
+                Organisasi Mahasiswa
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>

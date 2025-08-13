@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Card, Table, Button, Row, Col, Form, InputGroup } from "react-bootstrap";
+import { Container, Card, Table, Button, Row, Col, Form, InputGroup, Spinner } from "react-bootstrap";
 import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiFilter } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -9,13 +9,17 @@ import { useRef } from 'react';
 import "../Dist/Home.css"
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import { jwtDecode } from "jwt-decode";
 
 const KontrakKuliah = () => {
     const navigate = useNavigate();
     const [kontrakkuliahList, setKontrakKuliahList] = useState([]);
     const [selectedsemester, setSelectedSemester] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
+    const [userRole, setUserRole] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const itemsPerPage = 10;
     const printRef = useRef();
 
@@ -25,12 +29,33 @@ const KontrakKuliah = () => {
     }, []);
 
     const fetchKontrakKuliah = async () => {
+        setLoading(true);
+        setError(null);
+
         try {
-            const response = await axios.get("http://localhost:5000/kontrak_kuliah");
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setError("Token tidak ditemukan. Harap login terlebih dahulu.");
+                setLoading(false);
+                return;
+            }
+
+            const response = await axios.get("http://localhost:5000/kontrak_kuliah/all", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
             setKontrakKuliahList(response.data);
+            const decoded = jwtDecode(token);
+            setUserRole(decoded.role)
+
         } catch (error) {
-            console.error("Error fetching mata kuliah data:", error);
+            setError("Gagal memuat data Kontrak Kuliah.");
+            console.error("Error fetching data:", error);
         }
+
+        setLoading(false);
     };
 
     const handleSuccess = (message) => {
@@ -132,11 +157,11 @@ const KontrakKuliah = () => {
         const semesterMatch = selectedsemester === "" || kontrak_kuliah.semester?.toLowerCase() === `semester ${selectedsemester}`.toLowerCase();
         return nameMatch && semesterMatch;
     })
-    .sort((a, b) => {
-        const semesterA = parseInt(a.semester.replace(/[^0-9]/g, ""));
-        const semesterB = parseInt(b.semester.replace(/[^0-9]/g, ""));
-        return semesterA - semesterB;
-      });
+        .sort((a, b) => {
+            const semesterA = parseInt(a.semester.replace(/[^0-9]/g, ""));
+            const semesterB = parseInt(b.semester.replace(/[^0-9]/g, ""));
+            return semesterA - semesterB;
+        });
 
     const totalItems = filteredKontrakKuliah.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -150,29 +175,48 @@ const KontrakKuliah = () => {
             <Row className="align-items-center p-4">
                 <Col>
                     <h2 className="mb-1 fw-bold text-white text-uppercase">Kontrak Kuliah</h2>
-                    <p className="text-muted mb-0">Sistem Informasi</p>
+                    <p className="text-muted mb-0">Daftar Kontrak Kuliah Sistem Informasi</p>
                 </Col>
                 <Col xs="auto">
-                    <Button
-                        variant="success"
-                        onClick={() => navigate("/admin/dashboard/kontrakkuliah/tambahkontrakkuliah")}
-                        className="shadow d-flex align-items-center gap-2 text-white"
-                    >
-                        <FiPlus size={18} />
-                        <span>Tambah Kontrak Kuliah</span>
-                    </Button>
+                    {/* {userRole === "admin" && ( */}
+                        <Button
+                            variant="success"
+                            onClick={() => navigate("/admin/dashboard/kontrakkuliah/tambahkontrakkuliah")}
+                            className="shadow d-flex align-items-center gap-2 text-white"
+                        >
+                            <FiPlus size={18} />
+                            <span>Tambah Kontrak Kuliah</span>
+                        </Button>
+                    {/* )} */}
                 </Col>
             </Row>
 
             <Card className="shadow border-0">
                 <Card.Body className="p-0">
                     <div className="p-3 border-bottom">
-                        <Row className="align-items-center g-3">
-                            <Col md={6} lg={4}>
-                                <h5 className="mb-0 fw-semibold">Daftar Kontrak Kuliah Sistem Informasi</h5>
+                        <Row className="align-items-center g-0">
+                            <Col md={5} lg={5}>
+                            <h5>Daftar Kontrak Kuliah Sistem Informasi</h5>
+                                {/* <Button
+                                    variant="link"
+                                    onClick={() => navigate("/admin/dashboard/kontrakkuliah")}
+                                    className="d-flex align-items-center fs-5 text-decoration-none"
+                                >
+                                    Daftar Kontrak Kuliah
+                                </Button>
+                            </Col>
+                            <Col md={2} lg={2}>
+                                <Button
+                                    variant="link"
+                                    onClick={() => navigate("/admin/dashboard/kontrakkuliahById")}
+                                    className="d-flex align-items-center fs-5 text-decoration-none"
+                                >
+                                    Kontrak Kuliah Anda
+                                </Button> */}
                             </Col>
                         </Row>
                     </div>
+
 
                     <Card className="shadow-sm border-0 overflow-hidden">
                         <Card.Header className="bg-white py-3 border-bottom">
@@ -227,72 +271,87 @@ const KontrakKuliah = () => {
                                     <h4 className="text-uppercase">Kontrak Kuliah</h4>
                                     <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
                                 </div>
-                                <Table striped bordered hover className="align-middle mb-0" size="sm">
-                                    <thead>
-                                        <tr className="bg-light">
-                                            <th className="px-1 py-3" >No</th>
-                                            <th className="px-5 py-3" >Nama Dosen</th>
-                                            <th className="px-2 py-3" >Mata Kuliah</th>
-                                            <th className="px-3 py-3" >Semester</th>
-                                            <th className="px-3 py-3" >Kontrak Kuliah</th>
-                                            <th className="px-3 py-3 no-print" >Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {filteredKontrakKuliah.length > 0 ? (
-                                            paginatedMataKuliah.map((kontrak_kuliah, index) => (
-                                                <tr key={kontrak_kuliah.id}>
-                                                    <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                                                    <td>{kontrak_kuliah.nama_dosen}</td>
-                                                    <td>{kontrak_kuliah.mata_kuliah}</td>
-                                                    <td>{kontrak_kuliah.semester}</td>
-                                                    <td>
-                                                        <a
-                                                            href={`http://localhost:5000/uploads/kontrak_kuliah/${kontrak_kuliah.file_kontrak_kuliah}`}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                        >
-                                                            Lihat PDF
-                                                        </a>
-                                                    </td>
-                                                    <td className="no-print">
-                                                        <div className="d-flex justify-content-center gap-2">
-                                                            <Button
-                                                                variant="outline-success"
-                                                                size="sm"
-                                                                className="rounded-2 px-2 py-1"
-                                                                title="Edit"
-                                                                onClick={() =>
-                                                                    navigate(`/admin/dashboard/kontrakkuliah/editkontrakkuliah/${kontrak_kuliah.id}`)
-                                                                }
+                                {loading ? (
+                                    <div className="text-center p-4">
+                                        <Spinner animation="border" />
+                                    </div>
+                                ) : error ? (
+                                    <Alert variant="danger" className="text-center">
+                                        {error}
+                                    </Alert>
+                                ) : (
+
+                                    <Table striped bordered hover className="align-middle mb-0" size="sm">
+                                        <thead>
+                                            <tr className="bg-light">
+                                                <th className="px-1 py-3" >No</th>
+                                                <th className="px-5 py-3" >Nama Dosen</th>
+                                                <th className="px-2 py-3" >Mata Kuliah</th>
+                                                <th className="px-3 py-3" >Semester</th>
+                                                <th className="px-3 py-3" >Kontrak Kuliah</th>
+                                                {/* {userRole === 'admin' && ( */}
+                                                    <th className="px-3 py-3 no-print" >Aksi</th>
+                                                {/* )} */}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {filteredKontrakKuliah.length > 0 ? (
+                                                paginatedMataKuliah.map((kontrak_kuliah, index) => (
+                                                    <tr key={kontrak_kuliah.id}>
+                                                        <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                                                        <td>{kontrak_kuliah.nama_dosen}</td>
+                                                        <td>{kontrak_kuliah.mata_kuliah}</td>
+                                                        <td>{kontrak_kuliah.semester}</td>
+                                                        <td>
+                                                            <a
+                                                                href={`http://localhost:5000/uploads/kontrak_kuliah/${kontrak_kuliah.file_kontrak_kuliah}`}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
                                                             >
-                                                                <FiEdit2 size={15} />
-                                                            </Button>
-                                                            <Button
-                                                                variant="outline-danger"
-                                                                size="sm"
-                                                                className="rounded-2 px-2 py-1"
-                                                                title="Hapus"
-                                                                onClick={() => deleteKontrakKuliah(kontrak_kuliah.id)}
-                                                            >
-                                                                <FiTrash2 size={15} />
-                                                            </Button>
+                                                                Lihat PDF
+                                                            </a>
+                                                        </td>
+                                                        {/* {userRole === 'admin' && ( */}
+                                                            <td className="no-print">
+                                                                <div className="d-flex justify-content-center gap-2">
+                                                                    <Button
+                                                                        variant="outline-success"
+                                                                        size="sm"
+                                                                        className="rounded-2 px-2 py-1"
+                                                                        title="Edit"
+                                                                        onClick={() =>
+                                                                            navigate(`/admin/dashboard/kontrakkuliah/editkontrakkuliah/${kontrak_kuliah.id}`)
+                                                                        }
+                                                                    >
+                                                                        <FiEdit2 size={15} />
+                                                                    </Button>
+                                                                    <Button
+                                                                        variant="outline-danger"
+                                                                        size="sm"
+                                                                        className="rounded-2 px-2 py-1"
+                                                                        title="Hapus"
+                                                                        onClick={() => deleteKontrakKuliah(kontrak_kuliah.id)}
+                                                                    >
+                                                                        <FiTrash2 size={15} />
+                                                                    </Button>
+                                                                </div>
+                                                            </td>
+                                                        {/* )} */}
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="8" className="text-center py-4">
+                                                        <div className="d-flex flex-column align-items-center justify-content-center py-4">
+                                                            <FiFilter size={32} className="text-muted mb-2" />
+                                                            <p className="text-muted mb-0">Tidak ada data dosen yang tersedia</p>
                                                         </div>
                                                     </td>
                                                 </tr>
-                                            ))
-                                        ) : (
-                                            <tr>
-                                                <td colSpan="8" className="text-center py-4">
-                                                    <div className="d-flex flex-column align-items-center justify-content-center py-4">
-                                                        <FiFilter size={32} className="text-muted mb-2" />
-                                                        <p className="text-muted mb-0">Tidak ada data dosen yang tersedia</p>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </Table>
+                                            )}
+                                        </tbody>
+                                    </Table>
+                                )}
                             </div>
                         </Card.Body>
                     </Card>

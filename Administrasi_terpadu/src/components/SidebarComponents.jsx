@@ -68,27 +68,27 @@ const SidebarComponents = ({ children }) => {
     return location.pathname.startsWith(basePath);
   };
 
-const handleLogout = async () => {
-  try {
-    await axios.delete("http://localhost:5000/logout", {
-      withCredentials: true,
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
-    localStorage.removeItem("token");
+  const handleLogout = async () => {
+    try {
+      await axios.delete("http://localhost:5000/logout", {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      localStorage.removeItem("token");
 
-    navigate("/login");
-  } catch (error) {
-    if (error.code === "ERR_NETWORK") {
-      alert("Gagal logout: Tidak bisa terhubung ke server.");
-    } else if (error.response) {
-      alert(`Gagal logout: ${error.response.data?.msg || "Terjadi kesalahan."}`);
-    } else {
-      console.error("Logout gagal:", error);
+      navigate("/login");
+    } catch (error) {
+      if (error.code === "ERR_NETWORK") {
+        alert("Gagal logout: Tidak bisa terhubung ke server.");
+      } else if (error.response) {
+        alert(`Gagal logout: ${error.response.data?.msg || "Terjadi kesalahan."}`);
+      } else {
+        console.error("Logout gagal:", error);
+      }
     }
-  }
-};
+  };
 
   const navLinkStyle = (active = false) => ({
     borderRadius: '6px',
@@ -179,8 +179,8 @@ const handleLogout = async () => {
                     ...navLinkStyle(isSubMenuActive('/admin/dashboard/Dosen') ||
                       isSubMenuActive('/admin/dashboard/MataKuliah') ||
                       isSubMenuActive('/admin/dashboard/Rps') ||
-                      isSubMenuActive('/admin/dashboard/KontrakKuliah') ||
-                      isSubMenuActive('/admin/dashboard/BahanAjar') ||
+                      isSubMenuActive('/admin/dashboard/PembelajaranMataKuliah') ||
+                      isSubMenuActive('/admin/dashboard/Jurnal') ||
                       isSubMenuActive('/admin/dashboard/Penelitian') ||
                       isSubMenuActive('/admin/dashboard/Pengabdian') ||
                       isSubMenuActive('/admin/dashboard/Pengajaran')),
@@ -227,39 +227,41 @@ const handleLogout = async () => {
                     >
                       Mata Kuliah
                     </Nav.Link>
+                      <Nav.Link
+                        as={Link}
+                        to="/admin/dashboard/Rps"
+                        className="text-white"
+                        style={{
+                          ...subMenuLinkStyle(isActive('/admin/dashboard/Rps')),
+                          backgroundColor: isActive('/admin/dashboard/Rps') ? colors.activeMenu : 'transparent',
+                        }}
+                      >
+                        RPS
+                      </Nav.Link>
                     <Nav.Link
                       as={Link}
-                      to="/admin/dashboard/Rps"
+                      to="/admin/dashboard/PembelajaranMataKuliah"
                       className="text-white"
                       style={{
-                        ...subMenuLinkStyle(isActive('/admin/dashboard/Rps')),
-                        backgroundColor: isActive('/admin/dashboard/Rps') ? colors.activeMenu : 'transparent',
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/PembelajaranMataKuliah')),
+                        backgroundColor: isActive('/admin/dashboard/PembelajaranMataKuliah') ? colors.activeMenu : 'transparent',
                       }}
                     >
-                      RPS
+                      Pembelajaran Mata Kuliah
                     </Nav.Link>
+
                     <Nav.Link
                       as={Link}
-                      to="/admin/dashboard/KontrakKuliah"
+                      to="/admin/dashboard/Jurnal"
                       className="text-white"
                       style={{
-                        ...subMenuLinkStyle(isActive('/admin/dashboard/KontrakKuliah')),
-                        backgroundColor: isActive('/admin/dashboard/KontrakKuliah') ? colors.activeMenu : 'transparent',
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/Jurnal')),
+                        backgroundColor: isActive('/admin/dashboard/Jurnal') ? colors.activeMenu : 'transparent',
                       }}
                     >
-                      Kontrak Kuliah
+                      Jurnal
                     </Nav.Link>
-                    <Nav.Link
-                      as={Link}
-                      to="/admin/dashboard/BahanAjar"
-                      className="text-white"
-                      style={{
-                        ...subMenuLinkStyle(isActive('/admin/dashboard/BahanAjar')),
-                        backgroundColor: isActive('/admin/dashboard/BahanAjar') ? colors.activeMenu : 'transparent',
-                      }}
-                    >
-                      Bahan Ajar
-                    </Nav.Link>
+
                     <Nav.Link
                       as={Link}
                       to="/admin/dashboard/Penelitian"
@@ -325,7 +327,8 @@ const handleLogout = async () => {
                         isSubMenuActive('/admin/dashboard/KerjaPraktik') ||
                         isSubMenuActive('/admin/dashboard/TugasAkhir') ||
                         isSubMenuActive('/admin/dashboard/Pmm') ||
-                        isSubMenuActive('/admin/dashboard/Alumni')),
+                        isSubMenuActive('/admin/dashboard/Alumni') ||
+                        isSubMenuActive('/admin/dashboard/SurveiAlumni')),
                     }}
                   >
                     <FaClipboardList className={isCollapsed ? "mx-auto" : "me-3"} size={16} />
@@ -423,6 +426,17 @@ const handleLogout = async () => {
                       }}
                     >
                       Alumni
+                    </Nav.Link>
+                    <Nav.Link
+                      as={Link}
+                      to="/admin/dashboard/SurveiAlumni"
+                      className="text-white"
+                      style={{
+                        ...subMenuLinkStyle(isActive('/admin/dashboard/SurveiAlumni')),
+                        backgroundColor: isActive('/admin/dashboard/SurveiAlumni') ? colors.activeMenu : 'transparent',
+                      }}
+                    >
+                      Survei Alumni
                     </Nav.Link>
                   </div>
                 </Collapse>
@@ -532,11 +546,11 @@ const handleLogout = async () => {
               <Collapse in={openAkademik}>
                 <div>
                   {[
-                    { path: "Dosen", label: "Dosen" },
+                    ...(role === 'admin' ? [{ path: "Dosen", label: "Dosen" }] : []),
                     { path: "MataKuliah", label: "Mata Kuliah" },
-                    { path: "Rps", label: "RPS" },
-                    { path: "KontrakKuliah", label: "Kontrak Kuliah" },
-                    { path: "BahanAjar", label: "Bahan Ajar" },
+                    ...(role === 'admin' ? [{ path: "Rps", label: "RPS" }] : []),
+                    { path: "PembelajaranMataKuliah", label: "PembelajaranMataKuliah" },
+                    { path: "Jurnal", label: "Jurnal" },
                     { path: "Penelitian", label: "Penelitian" },
                     { path: "Pengabdian", label: "Pengabdian" },
                     { path: "Pengajaran", label: "Pengajaran" }
@@ -574,23 +588,26 @@ const handleLogout = async () => {
                 <FaCalendarCheck className="me-3" size={16} /> Absensi
               </Nav.Link>
 
-              <Nav.Link
-                onClick={() => {
-                  setOpenKegiatanMahasiswa(!openKegiatanMahasiswa);
-                }}
-                className="py-3 px-4 d-flex align-items-center border-bottom"
-                style={{ borderColor: '#e5e7eb', color: colors.textDark }}
-              >
-                <FaClipboardList className="me-3" size={16} /> Kegiatan Mahasiswa
-                <FaChevronDown
-                  className="ms-auto"
-                  size={12}
-                  style={{
-                    transform: openKegiatanMahasiswa ? 'rotate(180deg)' : 'rotate(0deg)',
-                    transition: 'transform 0.3s ease'
+
+              {role === 'admin' && (
+                <Nav.Link
+                  onClick={() => {
+                    setOpenKegiatanMahasiswa(!openKegiatanMahasiswa);
                   }}
-                />
-              </Nav.Link>
+                  className="py-3 px-4 d-flex align-items-center border-bottom"
+                  style={{ borderColor: '#e5e7eb', color: colors.textDark }}
+                >
+                  <FaClipboardList className="me-3" size={16} /> Kegiatan Mahasiswa
+                  <FaChevronDown
+                    className="ms-auto"
+                    size={12}
+                    style={{
+                      transform: openKegiatanMahasiswa ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.3s ease'
+                    }}
+                  />
+                </Nav.Link>
+              )}
               <Collapse in={openKegiatanMahasiswa}>
                 <div>
                   {[
@@ -600,7 +617,8 @@ const handleLogout = async () => {
                     { path: "KerjaPraktik", label: "Kerja Praktik" },
                     { path: "TugasAkhir", label: "Tugas Akhir" },
                     { path: "Pmm", label: "Student Mobility" },
-                    { path: "Alumni", label: "Alumni" }
+                    { path: "Alumni", label: "Alumni" },
+                    { path: "SurveiAlumni", label: "Survei Alumni" }
                   ].map(item => (
                     <Nav.Link
                       key={item.path}

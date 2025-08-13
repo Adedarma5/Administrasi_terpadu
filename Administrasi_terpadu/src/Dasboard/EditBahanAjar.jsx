@@ -18,10 +18,23 @@ const EditBahanAjar = () => {
   useEffect(() => {
     getMataKuliahList();
     getDosenList();
+    getBahanAjarById();
   }, []);
 
+  const getBahanAjarById = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/bahan_ajar/${id}`);
+      const bahan_ajar = response.data;
 
-
+      setName(bahan_ajar.name);
+      setJudulMateri(bahan_ajar.judul_materi);
+      setDosenPengampu(bahan_ajar.dosen_pengampu);
+      setPertemuan(bahan_ajar.pertemuan);
+    } catch (error) {
+      console.error("Gagal mengambil data :", error);
+      setMsg("Terjadi kesalahan saat mengambil data .");
+    }
+  };
   const getMataKuliahList = async () => {
     try {
       const response = await axios.get("http://localhost:5000/mata_kuliah");

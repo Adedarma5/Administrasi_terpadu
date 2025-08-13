@@ -43,7 +43,8 @@ const SidebarAkademikComponents = ({ children }) => {
         { icon: <FaLaptopCode />, title: "Kerja Praktik", path: "/akademik/dashboard/KerjaPraktik/TambahKerjaPraktik" },
         { icon: <FaBook />, title: "Tugas Akhir", path: "/akademik/dashboard/TugasAkhir/TambahTugasAkhir" },
         { icon: <FaUniversity />, title: "Student Mobility", path: "/akademik/dashboard/Pmm/TambahPmm" },
-        { icon: <FaUserGraduate />, title: "Alumni", path: "/akademik/dashboard/Alumni/TambahAlumni" }
+        { icon: <FaUserGraduate />, title: "Alumni", path: "/akademik/dashboard/Alumni/TambahAlumni" },
+        { icon: <FaUserGraduate />, title: "Survei", path: "/akademik/dashboard/Survei/TambahSurvei" }
     ];
 
     const colors = {

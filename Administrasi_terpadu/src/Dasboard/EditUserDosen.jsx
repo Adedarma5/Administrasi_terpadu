@@ -5,8 +5,11 @@ import axios from "axios";
 
 const EditUserDosen = () => {
   const [nip, setNip] = useState("");
+  const [nidn, setNidn] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [foto_users, setFotoUsers] = useState(null);
+  const [previewFoto, setPreviewFoto] = useState("");
   const [password, setPassword] = useState("");
   const [confPassword, setConfPassword] = useState("");
   const [currentRole, setCurrentRole] = useState("");
@@ -26,9 +29,11 @@ const EditUserDosen = () => {
       const response = await axios.get(`http://localhost:5000/users/${id}`);
       const user = response.data;
       setNip(user.nip);
+      setNidn(user.nidn);
       setName(user.name);
       setEmail(user.email);
       setRole(user.role);
+      setPreviewFoto(`http://localhost:5000/uploads/users/${user.foto_users}`);
     } catch (error) {
       console.error("Gagal mengambil data user:", error);
       setMsg("Terjadi kesalahan saat mengambil data user.");
@@ -37,21 +42,25 @@ const EditUserDosen = () => {
 
   const updateUser = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append("nip", nip);
+    formData.append("nidn", nidn);
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("confPassword", confPassword);
+    formData.append("role", role);
+    if (foto_users) formData.append("foto_users", foto_users);
+
     try {
-      await axios.patch(`http://localhost:5000/users/${id}`, {
-        nip,
-        name,
-        email,
-        password,
-        confPassword,
-        role,
+      await axios.patch(`http://localhost:5000/users/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
       navigate("/admin/dashboard/userdosen");
     } catch (error) {
-      console.error("Error saat memperbarui data:", error);
-      if (error.response) {
-        setMsg(error.response.data.msg);
-      }
+      if (error.response) setMsg(error.response.data.msg);
     }
   };
 
@@ -77,6 +86,24 @@ const EditUserDosen = () => {
 
           <Form onSubmit={updateUser}>
             <Row className="align-items-center mb-3">
+              <Col md={3}><Form.Label>Foto User</Form.Label></Col>
+              <Col md={8}>
+                {previewFoto && (
+                  <div className="mb-2">
+                    <img src={previewFoto} alt="Preview" width="100" className="rounded" />
+                  </div>
+                )}
+                <Form.Control
+                  type="file"
+                  onChange={(e) => {
+                    setFotoUsers(e.target.files[0]);
+                    setPreviewFoto(URL.createObjectURL(e.target.files[0]));
+                  }}
+                />
+              </Col>
+            </Row>
+
+            <Row className="align-items-center mb-3">
               <Col md={3}>
                 <Form.Label>NIP</Form.Label>
               </Col>
@@ -86,6 +113,21 @@ const EditUserDosen = () => {
                   value={nip}
                   onChange={(e) => setNip(e.target.value)}
                   placeholder="Masukkan NIP"
+                  required
+                />
+              </Col>
+            </Row>
+
+            <Row className="align-items-center mb-3">
+              <Col md={3}>
+                <Form.Label>NIDN</Form.Label>
+              </Col>
+              <Col md={8}>
+                <Form.Control
+                  type="text"
+                  value={nidn}
+                  onChange={(e) => setNidn(e.target.value)}
+                  placeholder="Masukkan NIDN"
                   required
                 />
               </Col>

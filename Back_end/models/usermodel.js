@@ -5,10 +5,18 @@ import db from "../config/database.js"
 const { DataTypes } = Sequelize;
 
 const Users = db.define('users', {
+    foto_users: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     nip: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true
+    },
+    nidn: {
+        type: DataTypes.STRING,
+        allowNull: false
     },
     name: {
         type: DataTypes.STRING,
@@ -17,7 +25,7 @@ const Users = db.define('users', {
     email: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate:{
+        validate: {
             notEmpty: true,
             isEmail: true
         }
@@ -25,11 +33,11 @@ const Users = db.define('users', {
     password: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate:{
+        validate: {
             notEmpty: true
         }
     },
-    role:{
+    role: {
         type: DataTypes.STRING,
         allowNull: false,
     },

@@ -22,19 +22,22 @@ const Absensi = db.define('absensi', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    jam_pelajaran: {
+    kelas: {
         type: DataTypes.STRING,
         allowNull: false,
-
     },
-    foto: {
+    hari: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    jam: {
         type: DataTypes.STRING,
         allowNull: false,
 
     },
 }, {
     freezeTableName: true,
-    timestamps: false,
+    tableName: 'absensi'
 });
 
 export default Absensi;

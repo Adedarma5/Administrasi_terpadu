@@ -8,7 +8,6 @@ import FooterEnd from "../components/FooterEnd";
 import Footer from "../components/FooterComponents";
 import NavbarComponents from "../components/NavbarComponents";
 import { useNavigate } from "react-router-dom";
-// Import framer motion
 import { motion, useScroll, useInView, useAnimation } from "framer-motion";
 
 const Kema = () => {
@@ -16,33 +15,27 @@ const Kema = () => {
     const [selectedCategory, setSelectedCategory] = useState("");
     const navigate = useNavigate();
 
-    // Scroll animation controls
     const { scrollY } = useScroll();
     const controls = useAnimation();
 
-    // References for scroll animations
     const titleRef = React.useRef(null);
     const cardsRef = React.useRef(null);
     const instructionsRef = React.useRef(null);
     const buttonRef = React.useRef(null);
 
-    // Check if elements are in view
     const titleInView = useInView(titleRef, { once: false, amount: 0.5 });
     const cardsInView = useInView(cardsRef, { once: false, amount: 0.2 });
     const instructionsInView = useInView(instructionsRef, { once: false, amount: 0.3 });
     const buttonInView = useInView(buttonRef, { once: false, amount: 0.6 });
 
-    // Animate elements when they come into view
     useEffect(() => {
         if (titleInView) {
             controls.start("visible");
         }
     }, [controls, titleInView]);
 
-    // Listen to scroll position for parallax effects
     useEffect(() => {
         return scrollY.onChange((latest) => {
-            // Optional: You can use scrollY.get() to create parallax effects
         });
     }, [scrollY]);
 
@@ -57,7 +50,6 @@ const Kema = () => {
     const handleClose = () =>
         setShow(false);
 
-    // Animation variants
     const fadeIn = {
         hidden: { opacity: 0 },
         visible: { opacity: 1, transition: { duration: 0.8 } }
@@ -115,7 +107,6 @@ const Kema = () => {
         tap: { scale: 0.95 }
     };
 
-    // Scroll reveal animation styles
     const scrollReveal = {
         hidden: { opacity: 0, y: 75 },
         visible: {

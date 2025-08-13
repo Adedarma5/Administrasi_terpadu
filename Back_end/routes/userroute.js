@@ -8,15 +8,16 @@ import {
 } from "../controllers/users.js";
 import { verifyToken } from "../middleware/verifytoken.js";
 import { refreshToken } from "../controllers/refreshtoken.js";
-import { adminOnly } from "../middleware/AuthUser.js"; 
+import { adminOnly } from "../middleware/AuthUser.js";
+import upload from "../middleware/upload.js";
 
 const router = express.Router();
 
-router.get('/users', verifyToken,  getUsers);  
+router.get('/users', verifyToken, getUsers);
 router.get('/token', refreshToken);
-router.get('/users/:id', getUserById);  
-router.post('/users', Register);
-router.patch('/users/:id', updateUser); 
-router.delete('/users/:id',  deleteUser); 
+router.get('/users/:id', getUserById);
+router.post('/users', upload.single("foto_users"), Register);
+router.patch('/users/:id', upload.single("foto_users"), updateUser);
+router.delete('/users/:id', deleteUser);
 
 export default router;

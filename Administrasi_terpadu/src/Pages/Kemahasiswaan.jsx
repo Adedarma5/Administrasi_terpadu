@@ -5,75 +5,63 @@ import NavbarComponents from '../components/NavbarComponents';
 import Card from 'react-bootstrap/Card';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { FiPlus, FiFilter, FiEdit2, FiTrash2, FiSearch, FiBookOpen, FiFile, FiEye } from "react-icons/fi";
+import { FiPlus, FiSearch, FiTrash2, FiEye, FiBookOpen, FiFile, FiEdit2, FiUser, FiCalendar, FiFileText, FiDownload, FiBook, FiChevronRight } from "react-icons/fi";
 import { Row, Col, Container, Image, Table, Button, InputGroup, Form, Modal } from 'react-bootstrap';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
-
+import '../Dist/admin.css'
 
 const Kemahasiswaan = () => {
     const navigate = useNavigate();
     const [kegiatandata, setKegiatanData] = useState([]);
-    const [rpsList, setRpsList] = useState([]);
-    const [kontrakkuliahList, setKontrakKuliahList] = useState([]);
-    const [bahanajarList, setBahanAjarList] = useState([]);
-    const [matakuliahList, setMataKuliahList] = useState([]);
-    const [selectedDetail, setSelectedDetail] = useState(null);
+    const [pembelajaranmatakuliahList, setPembelajaranMataKuliahList] = useState([]);
     const [showDetailModal, setShowDetailModal] = useState(false);
-    const [selectedmatakuliah, setSelectedMataKuliah] = useState("");
-    const [selectedsemester, setSelectedSemester] = useState("");
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedSemester, setSelectedSemester] = useState("Semua");
+    const [bahanAjarList, setBahanAjarList] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
+    const [userRole, setUserRole] = useState("");
     const itemsPerPage = 10;
 
     useEffect(() => {
-        fetchRps();
-        fetchKontrakKuliah();
-        fetchBahanAjar();
-        fetchMataKuliah();
+        fetchPembelajaranMataKuliah();
     }, []);
 
-    const fetchBahanAjar = async () => {
+    const fetchPembelajaranMataKuliah = async () => {
         try {
-            const response = await axios.get("http://localhost:5000/bahan_ajar");
-            setBahanAjarList(response.data);
+            const token = localStorage.getItem("token");
+            const response = await axios.get("http://localhost:5000/pembelajaran_mata_kuliah/all", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setPembelajaranMataKuliahList(response.data);
+            const decoded = jwtDecode(token);
+            setUserRole(decoded.role);
         } catch (error) {
-            console.error("Gagal memuat Bahan Ajar:", error);
+            console.error("Gagal mengambil data", error);
         }
     };
 
-
-    const fetchMataKuliah = async () => {
+    const fetchBahanAjar = async (pembelajaranId) => {
         try {
-            const response = await axios.get("http://localhost:5000/mata_kuliah");
-            setMataKuliahList(response.data);
-        } catch (error) {
-            console.error("Gagal memuat mata kuliah:", error);
+            const token = localStorage.getItem("token");
+            const res = await axios.get(`http://localhost:5000/bahan_ajar`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const filtered = res.data.filter((bahan) => bahan.pembelajaran_id === pembelajaranId);
+            filtered.sort((a, b) => a.pertemuan - b.pertemuan);
+            setBahanAjarList(filtered);
+        } catch (err) {
+            console.error("Gagal fetch bahan ajar:", err);
+            setBahanAjarList([]);
         }
     };
 
-
-    const fetchRps = async () => {
-        setError(null);
-        try {
-            const response = await axios.get("http://localhost:5000/rps");
-            setRpsList(response.data);
-        } catch (error) {
-            setError("Gagal memuat data RPS.");
-            console.error("Error fetching data:", error);
-        }
-    };
-
-    const fetchKontrakKuliah = async () => {
-        try {
-            const response = await axios.get("http://localhost:5000/kontrak_kuliah");
-            setKontrakKuliahList(response.data);
-        } catch (error) {
-            console.error("Error fetching mata kuliah data:", error);
-        }
-    };
 
     useEffect(() => {
 
@@ -86,53 +74,45 @@ const Kemahasiswaan = () => {
             });
     }, []);
 
-    const handleShowDetail = (item) => {
-        setSelectedDetail(item);
+    const handleDownload = (filename) => {
+        if (!filename) return;
+        window.open(`http://localhost:5000/uploads/pembelajaran_mata_kuliah/${filename}`, "_blank");
+    };
+
+    const handleShowDetail = async (item) => {
+        setSelectedItem(item);
+        await fetchBahanAjar(item.id);
         setShowDetailModal(true);
     };
 
-    const handleCloseDetail = () => {
+    const handleCloseDetailModal = () => {
         setShowDetailModal(false);
-        setSelectedDetail(null);
+        setSelectedItem(null);
+        setBahanAjarList([]);
     };
 
-    const filteredRps = rpsList.filter((rps) => {
-        const nameMatch = rps.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const semesterMatch = selectedsemester === "" || rps.semester.toLowerCase() === `semester ${selectedsemester}`.toLowerCase();
-        return nameMatch && semesterMatch;
-    })
-        .sort((a, b) => {
-            const semesterA = parseInt(a.semester.replace(/\D/g, '')) || 0;
-            const semesterB = parseInt(b.semester.replace(/\D/g, '')) || 0;
-            return semesterA - semesterB;
-        });
+    const semesterList = [...new Set(pembelajaranmatakuliahList.map(item => item.semester))];
 
-
-    const filteredKontrakKuliah = kontrakkuliahList.filter((kontrak_kuliah) => {
-        const nameMatch = kontrak_kuliah.mata_kuliah?.toLowerCase().includes(searchTerm.toLowerCase());
-        return nameMatch;
+    const filtered = pembelajaranmatakuliahList.filter(item => {
+        const matchSearch = item.mata_kuliah.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchSemester = selectedSemester === "Semua" || item.semester === selectedSemester;
+        return matchSearch && matchSemester;
     });
 
-    const filteredBahanAjar = bahanajarList.filter((bahan_ajar) => {
-        const nameMatch = bahan_ajar.name?.toLowerCase().includes(searchTerm.toLowerCase());
-        const matakuliahMatch = selectedmatakuliah === "" || bahan_ajar.name?.toString() === selectedmatakuliah;
-        return nameMatch && matakuliahMatch;
-    });
 
-    const totalItems = filteredRps.length;
+    const totalItems = filtered.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
-    const paginatedRps = filteredRps.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-    const paginatedMataKuliah = filteredKontrakKuliah.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-    const sortedBahanAjar = filteredBahanAjar.sort((a, b) => a.pertemuan - b.pertemuan);
-    const paginatedBahanAjar = sortedBahanAjar.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const paginated = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+
     return (
         <div>
             <NavbarComponents />
             <Container fluid className="p-4">
-                <div className="mt-5 mx-3 ">
+                <div className="mt-5 mx-3  ">
                     <h3 className="text-uppercase text-center " style={{ color: 'darkblue' }}>Kemahasiswaan</h3>
 
-                    <div className="col-11 col-sm-10 col-md-10  col-lg-12 mt-5">
+                    <div className="col-11 col-sm-10 col-md-10  col-lg-12 mt-5 ">
                         <h5 className="fw-semibold text-uppercase mb-4 mx-4">Statistik Kegiatan Mahasiswa</h5>
                         <ResponsiveContainer width="80%" height={300}>
                             <BarChart data={kegiatandata} margin={{ bottom: 63 }}>
@@ -150,394 +130,300 @@ const Kemahasiswaan = () => {
                     </div>
                 </div>
 
-                <div className="mt-5 p-4">
-                    <h4 className='text-center text-uppercase'>rancangan pelajaran semester</h4>
-                </div>
-
-                <Card className="p-4 bg-secondary" >
-                    <Card className="shadow border-0 p-4">
-                        <Card.Body className="p-0">
-                            <div className="p-3 border-bottom">
-                                <Row className="align-items-center g-3">
-                                    <Col md={6} lg={4}>
-                                        <h5 className="mb-0 fw-semibold">Daftar RPS Sistem Informasi</h5>
-                                    </Col>
-                                </Row>
-                            </div>
-
-                            <Card.Header className="bg-white py-3 border-bottom">
-                                <div className="d-flex  align-items-center flex-wrap gap-3 ">
-                                    <div className=" ms-auto col-md-6 col-lg-4">
-                                        <InputGroup size="sm" className="border rounded overflow-hidden">
-                                            <InputGroup.Text className="bg-white border-0">
-                                                <FiSearch size={16} className="text-primary" />
-                                            </InputGroup.Text>
-                                            <Form.Control
-                                                size="sm"
-                                                placeholder="Cari nama mata kuliah..."
-                                                value={searchTerm}
-                                                onChange={(e) => {
-                                                    setSearchTerm(e.target.value);
-                                                    setCurrentPage(1);
-                                                }}
-                                                className="border-0 shadow-none py-1"
-                                            />
-                                        </InputGroup>
-                                    </div>
-                                </div>
-                            </Card.Header>
-
-
-                            <div className="table-responsive">
-                                <Table striped bordered className="align-middle  text-center" size="sm">
-                                    <thead className="bg-light">
-                                        <tr>
-                                            <th className="py-3">No</th>
-                                            <th className="py-3">Nama </th>
-                                            <th className="py-3">Semester</th>
-                                            <th className="py-3">File_Rps</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {paginatedRps.length > 0 ? (
-                                            paginatedRps.map((rps, index) => (
-                                                <tr key={rps.id}>
-                                                    <td >{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                                                    <td>{rps.name}</td>
-                                                    <td>{rps.semester}</td>
-                                                    <td>
-                                                        <a
-                                                            href={`http://localhost:5000/uploads/rps/${rps.file_rps}`}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                        >
-                                                            Lihat PDF
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        ) : (
-                                            <tr>
-                                                <td colSpan="8" className="text-center py-4">
-                                                    <div className="d-flex flex-column align-items-center justify-content-center py-4">
-                                                        <FiFilter size={32} className="text-muted mb-2" />
-                                                        <p className="text-muted mb-0">Tidak ada data dosen yang tersedia</p>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </Table>
-                            </div>
-
-                            <div className="p-3 border-top d-flex justify-content-between align-items-center">
-                                <div className="small text-muted">
-                                    Menampilkan {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
-                                </div>
-                                <div className="mx-4 ">
-                                    <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="mx-2 mb-2" >
-                                        Sebelumnya
-                                    </Button>
-                                    <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} className="mx-2 mb-2">
-                                        Selanjutnya
-                                    </Button>
-                                </div>
-                            </div>
-                        </Card.Body>
-                    </Card>
-                </Card>
-
-
-
-
-
-                <div className="mt-5 p-4">
-                    <h4 className='text-center text-uppercase'>Kontrak Kuliah</h4>
-                </div>
-
-                <Card className="p-4 bg-secondary" >
-                    <Card className="shadow border-0 p-4">
-                        <Card.Body className="p-0">
-                            <div className="p-3 border-bottom">
-                                <Row className="align-items-center g-3">
-                                    <Col md={6} lg={4}>
-                                        <h5 className="mb-0 fw-semibold">Daftar Kontrak Kuliah Sistem Informasi</h5>
-                                    </Col>
-                                </Row>
-                            </div>
-
-                            <Card className="shadow-sm border-0 overflow-hidden">
-                                <Card.Header className="bg-white py-3 border-bottom">
-                                    <div className="d-flex align-items-center flex-wrap gap-3">
-                                        <div className="ms-auto col-md-6 col-lg-4">
-                                            <InputGroup size="sm" className="border rounded overflow-hidden">
-                                                <InputGroup.Text className="bg-white border-0">
-                                                    <FiSearch size={16} className="text-primary" />
-                                                </InputGroup.Text>
-                                                <Form.Control
-                                                    size="sm"
-                                                    placeholder="Cari nama Mata Kuliah..."
-                                                    value={searchTerm}
-                                                    onChange={(e) => {
-                                                        setSearchTerm(e.target.value);
-                                                        setCurrentPage(1);
-                                                    }}
-                                                    className="border-0 shadow-none py-1"
-                                                />
-                                            </InputGroup>
-                                        </div>
-                                    </div>
-                                </Card.Header>
-
-                                <Card.Body className="p-0 text-center">
-                                    <div className="table-responsive">
-                                        <Table striped bordered hover className="align-middle mb-0" size="sm">
-                                            <thead>
-                                                <tr className="bg-light">
-                                                    <th className="px-1 py-3" >No</th>
-                                                    <th className="px-3 py-3" >Nama Dosen</th>
-                                                    <th className="px-3 py-3" >Mata Kuliah</th>
-                                                    <th className="px-3 py-3" >Semester</th>
-                                                    <th className="px-3 py-3" >Kontrak Kuliah</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {filteredKontrakKuliah.length > 0 ? (
-                                                    paginatedMataKuliah.map((kontrak_kuliah, index) => (
-                                                        <tr key={kontrak_kuliah.id}>
-                                                            <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                                                            <td>{kontrak_kuliah.nama_dosen}</td>
-                                                            <td>{kontrak_kuliah.mata_kuliah}</td>
-                                                            <td>{kontrak_kuliah.semester}</td>
-                                                            <td>
-                                                                <a
-                                                                    href={`http://localhost:5000/uploads/kontrak_kuliah/${kontrak_kuliah.file_kontrak_kuliah}`}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                >
-                                                                    Lihat PDF
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    ))
-                                                ) : (
-                                                    <tr>
-                                                        <td colSpan="8" className="text-center py-4">
-                                                            <div className="d-flex flex-column align-items-center justify-content-center py-4">
-                                                                <FiFilter size={32} className="text-muted mb-2" />
-                                                                <p className="text-muted mb-0">Tidak ada data dosen yang tersedia</p>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                )}
-                                            </tbody>
-                                        </Table>
-                                    </div>
-                                </Card.Body>
-                            </Card>
-
-                            <div className="p-3 border-top d-flex justify-content-between align-items-center">
-                                <div className="small text-muted">
-                                    Menampilkan {(currentPage - 1) * itemsPerPage + 1}–{Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
-                                </div>
-                                <div className="mx-4">
-                                    <Button
-                                        variant="outline-primary"
-                                        size="sm"
-                                        onClick={() => setCurrentPage(currentPage - 1)}
-                                        disabled={currentPage === 1}
-                                        className="mx-2 mb-2"
+                <Card.Header className="bg-white py-4 mb-4 shadow">
+                    <div className="d-flex align-items-center flex-wrap gap-3">
+                        <h5 className='mx-3 mb-0 text-uppercase'>PEMBELAJARAN MATA KULIAH</h5>
+                        <div className="ms-auto col-12 col-md-6 col-lg-6">
+                            <Row className="g-2 mx-2">
+                                <Col xs={12} md={6}>
+                                    <InputGroup>
+                                        <InputGroup.Text className="bg-light border-end-0">
+                                            <FiSearch size={16} />
+                                        </InputGroup.Text>
+                                        <Form.Control
+                                            placeholder="Cari Mata Kuliah..."
+                                            className="border-start-0 bg-light"
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                    </InputGroup>
+                                </Col>
+                                <Col xs={12} md={6}>
+                                    <Form.Select
+                                        value={selectedSemester}
+                                        onChange={(e) => setSelectedSemester(e.target.value)}
                                     >
-                                        Sebelumnya
-                                    </Button>
-                                    <Button
-                                        variant="outline-primary"
-                                        size="sm"
-                                        onClick={() => setCurrentPage(currentPage + 1)}
-                                        disabled={currentPage === totalPages}
-                                        className="mx-2 mb-2"
-                                    >
-                                        Selanjutnya
-                                    </Button>
-                                </div>
-                            </div>
-                        </Card.Body>
-                    </Card>
-                </Card>
-
-
-
-
-                <div className="mt-5 p-4">
-                    <h4 className='text-center text-uppercase'>Bahan Ajar</h4>
-                </div>
-                <Card className="p-4 bg-secondary">
-                    <Card className="shadow border-0 p-4">
-                        <Card.Body className="p-0">
-                            <div className="p-3 border-bottom">
-                                <Row className="align-items-center g-3">
-                                    <Col md={6} lg={5}>
-                                        <h5 className="mb-0 fw-semibold">Daftar Bahan Ajar Sistem Informasi</h5>
-                                    </Col>
-                                </Row>
-                            </div>
-
-                            <Card.Header className="bg-white py-3 border-bottom">
-                                <div className="d-flex align-items-center flex-wrap gap-3">
-                                    <div className="ms-auto col-md-6 col-lg-4">
-                                        <InputGroup size="sm" className="border rounded overflow-hidden">
-                                            <InputGroup.Text className="bg-white border-0">
-                                                <FiSearch size={16} className="text-primary" />
-                                            </InputGroup.Text>
-                                            <Form.Control
-                                                size="sm"
-                                                placeholder="Cari nama Mata Kuliah..."
-                                                value={searchTerm}
-                                                onChange={(e) => {
-                                                    setSearchTerm(e.target.value);
-                                                    setCurrentPage(1);
-                                                }}
-                                                className="border-0 shadow-none py-1"
-                                            />
-                                        </InputGroup>
-                                    </div>
-
-                                    <div className="col-12 col-md-4 col-lg-3">
-                                        <Form.Select
-                                            value={selectedmatakuliah}
-                                            onChange={(e) => {
-                                                setSelectedMataKuliah(e.target.value);
-                                                setCurrentPage(1);
-                                            }}
-                                            className="shadow-none py-1"
-                                        >
-                                            <option value="">-- Semua Mata Kuliah --</option>
-                                            {matakuliahList.map((mata_kuliah) => (
-                                                <option key={mata_kuliah.id} value={mata_kuliah.name}>
-                                                    {mata_kuliah.name}
-                                                </option>
-                                            ))}
-                                        </Form.Select>
-                                    </div>
-                                </div>
-                            </Card.Header>
-
-                            <div className="table-responsive">
-                                <Table striped bordered hover className="align-middle mb-0 text-center" size="sm">
-                                    <thead className="bg-light">
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Nama Mata Kuliah</th>
-                                            <th>Judul Materi</th>
-                                            <th>Pertemuan</th>
-                                            <th>File Pendukung</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {paginatedBahanAjar.length > 0 ? (
-                                            paginatedBahanAjar.map((item, index) => (
-                                                <tr key={item.id}>
-                                                    <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                                                    <td>{item.name}</td>
-                                                    <td>{item.judul_materi}</td>
-                                                    <td>{item.pertemuan}</td>
-                                                    <td>
-                                                        <a
-                                                            href={`http://localhost:5000/uploads/bahan_ajar/${item.file_pendukung}`}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                        >
-                                                            Lihat PDF
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        <div className="d-flex justify-content-center gap-2">
-                                                            <Button
-                                                                variant="outline-warning"
-                                                                size="sm"
-                                                                title="Lihat Detail"
-                                                                onClick={() => handleShowDetail(item)}
-                                                            >
-                                                                <FiEye size={16} />
-                                                            </Button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        ) : (
-                                            <tr>
-                                                <td colSpan="6" className="text-center text-muted py-3">
-                                                    Tidak ada data
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-
-                                </Table>
-                            </div>
-                        </Card.Body>
-
-                        <div className="p-3 border-top d-flex justify-content-between align-items-center">
-                            <div className="small text-muted">
-                                Menampilkan {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalItems)} dari {totalItems} entri
-                            </div>
-                            <div className="mx-4">
-                                <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="mx-2 mb-2">
-                                    Sebelumnya
-                                </Button>
-                                <Button variant="outline-primary" size="sm" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} className="mx-2 mb-2">
-                                    Selanjutnya
-                                </Button>
-                            </div>
+                                        <option value="Semua">Semua Semester</option>
+                                        {semesterList.map((semester, index) => (
+                                            <option key={index} value={semester}>{semester}</option>
+                                        ))}
+                                    </Form.Select>
+                                </Col>
+                            </Row>
                         </div>
-                    </Card>
-                </Card>
+                    </div>
+                </Card.Header>
 
-                <Modal show={showDetailModal} onHide={handleCloseDetail} centered>
+                <Card.Body>
+                    <Row>
+                        {paginated.map((item, index) => (
+                            <Col lg={4} md={6} key={item.id} className="mb-4">
+                                <Card className="h-100 shadow border-0 course-card"
+                                    style={{
+                                        transition: 'all 0.3s ease',
+                                        borderRadius: '12px'
+                                    }}>
+                                    <Card.Header
+                                        className="border-0 text-white position-relative overflow-hidden"
+                                        style={{
+                                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                            borderRadius: '12px 12px 0 0',
+                                            padding: '1.25rem'
+                                        }}
+                                    >
+                                        <div className="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 className="mb-0 fw-bold text-uppercase letter-spacing-1">
+                                                    Pembelajaran
+                                                </h6>
+                                                <small className="opacity-75">Mata Kuliah</small>
+                                            </div>
+                                            <div
+                                                className="bg-white bg-opacity-20 rounded-circle p-2"
+                                                style={{ backdropFilter: 'blur(10px)' }}
+                                            >
+                                                <FiBookOpen size={22} className="text-black" />
+                                            </div>
+                                        </div>
+                                        <div
+                                            className="position-absolute"
+                                            style={{
+                                                top: '-20px',
+                                                right: '-20px',
+                                                width: '80px',
+                                                height: '80px',
+                                                background: 'rgba(255,255,255,0.1)',
+                                                borderRadius: '50%'
+                                            }}
+                                        ></div>
+                                    </Card.Header>
+
+                                    <Card.Body className="p-4">
+                                        <div className="mb-4">
+                                            <div className="d-flex align-items-center mb-3">
+                                                <div
+                                                    className="bg-primary bg-opacity-10 rounded-circle p-2 me-3"
+                                                    style={{ width: '40px', height: '40px' }}
+                                                >
+                                                    <FiUser size={16} className="text-primary d-block mx-auto mt-1" />
+                                                </div>
+                                                <div>
+                                                    <p className="mb-0 text-muted small">Dosen Pengampu</p>
+                                                    <h6 className="mb-0 fw-semibold text-dark">{item.nama_dosen}</h6>
+                                                </div>
+                                            </div>
+
+                                            <div className="mb-3">
+                                                <p className="mb-1 text-muted small">Mata Kuliah</p>
+                                                <h5 className="mb-0 fw-bold text-primary" style={{ lineHeight: '1.3' }}>
+                                                    {item.mata_kuliah}
+                                                </h5>
+                                            </div>
+
+                                            <div className="d-flex align-items-center">
+                                                <span
+                                                    className="badge bg-light text-dark rounded-pill"
+                                                    style={{ fontSize: '0.85rem' }}
+                                                >
+                                                    <FiCalendar size={14} className="me-1" />
+                                                    {item.semester}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className="border-top pt-2">
+                                            <p className="text-muted small mb-2 fw-semibold">DOKUMEN PEMBELAJARAN</p>
+                                            <div className="d-flex flex-column gap-2">
+                                                <Button
+                                                    variant="outline-primary"
+                                                    size="sm"
+                                                    className="d-flex align-items-center justify-content-start text-start border-0 "
+                                                    onClick={() => handleDownload(item.file_kontrak_kuliah)}
+                                                    style={{
+                                                        borderRadius: '8px',
+                                                        transition: 'all 0.2s ease'
+                                                    }}
+                                                >
+                                                    <FiFileText className="me-2" size={16} />
+                                                    <span>Kontrak Kuliah</span>
+                                                    <FiDownload className="ms-auto" size={14} />
+                                                </Button>
+
+                                                <Button
+                                                    variant="outline-success"
+                                                    size="sm"
+                                                    className="d-flex align-items-center justify-content-start text-start border-0 "
+                                                    onClick={() => handleDownload(item.file_rps_pembelajaran)}
+                                                    style={{
+                                                        borderRadius: '8px',
+                                                        transition: 'all 0.2s ease'
+                                                    }}
+                                                >
+                                                    <FiFile className="me-2" size={16} />
+                                                    <span>RPS (Rencana Pembelajaran)</span>
+                                                    <FiDownload className="ms-auto" size={14} />
+                                                </Button>
+
+                                                <Button
+                                                    variant="outline-info"
+                                                    size="sm"
+                                                    className="d-flex align-items-center justify-content-start text-start border-0 "
+                                                    onClick={() => handleShowDetail(item)}
+                                                    style={{
+                                                        borderRadius: '8px',
+                                                        transition: 'all 0.2s ease'
+                                                    }}
+                                                >
+                                                    <FiBook className="me-2" size={16} />
+                                                    <span>Bahan Ajar</span>
+                                                    <FiChevronRight className="ms-auto" size={14} />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </Card.Body>
+
+                                    <Card.Footer
+                                        className="bg-white border-0 p-3"
+                                    >
+                                        <div className="d-flex justify-content-between align-items-center">
+                                            <Button
+                                                variant="primary"
+                                                size="sm"
+                                                className="px-3 rounded-pill"
+                                                onClick={() => handleShowDetail(item)}
+                                                style={{
+                                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                    border: 'none'
+                                                }}
+                                            >
+                                                <FiEye className="me-1 mb-1" size={14} />
+                                                Detail
+                                            </Button>
+
+                                            {userRole === "admin" && (
+                                                <div className="d-flex gap-2">
+                                                    <Button
+                                                        variant="outline-success"
+                                                        size="sm"
+                                                        onClick={() => navigate(`/admin/dashboard/pembelajaranmatakuliah/editpembelajaran/${item.id}`)}
+                                                        title="Edit"
+                                                    >
+                                                        <FiEdit2 size={14} />
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline-danger"
+                                                        size="sm"
+                                                        onClick={() => deleteData(item.id)}
+                                                        title="Hapus"
+                                                    >
+                                                        <FiTrash2 size={14} />
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </Card.Footer>
+                                </Card>
+                            </Col>
+                        ))}
+                    </Row>
+                </Card.Body>
+
+                <Modal show={showDetailModal} onHide={handleCloseDetailModal} size="lg">
                     <Modal.Header closeButton>
-                        <Modal.Title className="fw-semibold ">
-                            <FiBookOpen className="mx-2" />
-                            Detail Bahan Ajar
+                        <Modal.Title>
+                            <FiBookOpen className="me-2" /> Detail Pembelajaran Mata Kuliah
                         </Modal.Title>
                     </Modal.Header>
-
                     <Modal.Body>
-                        {selectedDetail && (
-                            <ul className="list-group list-group-flush">
-                                <li className="list-group-item">
-                                    <strong className="text-secondary">Dosen Pengampu:</strong><br />
-                                    {selectedDetail.dosen_pengampu}
-                                </li>
-                                <li className="list-group-item">
-                                    <strong className="text-secondary">Mata Kuliah:</strong><br />
-                                    {selectedDetail.name}
-                                </li>
-                                <li className="list-group-item">
-                                    <strong className="text-secondary">Judul Materi:</strong><br />
-                                    {selectedDetail.judul_materi}
-                                </li>
-                                <li className="list-group-item">
-                                    <strong className="text-secondary">Pertemuan Ke-:</strong> {selectedDetail.pertemuan}
-                                </li>
-                                <li className="list-group-item">
-                                    <strong className="text-secondary">File Pendukung:</strong><br />
-                                    <a
-                                        href={`http://localhost:5000/uploads/bahan_ajar/${selectedDetail.file_pendukung}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn btn-sm btn-outline-primary mt-2"
-                                    >
-                                        <FiFile className="mx-2 mb-1" />
-                                        Lihat File PDF
-                                    </a>
-                                </li>
-                            </ul>
+                        {selectedItem && (
+                            <div className="px-1">
+                                <div className="mb-3 border-bottom pb-2">
+                                    <strong>Nama Dosen:</strong>
+                                    <div>{selectedItem.nama_dosen}</div>
+                                </div>
+                                <div className="mb-3 border-bottom pb-2">
+                                    <strong>Mata Kuliah:</strong>
+                                    <div>{selectedItem.mata_kuliah}</div>
+                                </div>
+                                <div className="mb-3 border-bottom pb-2">
+                                    <strong>Semester:</strong>
+                                    <div>{selectedItem.semester}</div>
+                                </div>
+                                <div className="mb-3 border-bottom pb-2">
+                                    <strong>File Kontrak Kuliah:</strong>
+                                    <div>
+                                        <a
+                                            href={`http://localhost:5000/uploads/pembelajaran_mata_kuliah/${selectedItem.file_kontrak_kuliah}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="btn btn-outline-primary btn-sm"
+                                        >
+                                            <FiFile className="me-1" /> Lihat Kontrak Kuliah
+                                        </a>
+                                    </div>
+                                </div>
+                                <div className="mb-3 border-bottom pb-2">
+                                    <strong>File RPS:</strong>
+                                    <div>
+                                        <a
+                                            href={`http://localhost:5000/uploads/pembelajaran_mata_kuliah/${selectedItem.file_rps_pembelajaran}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="btn btn-outline-primary btn-sm"
+                                        >
+                                            <FiFile className="me-1" /> Lihat RPS
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <hr />
+                                <h5 className="mb-3">Bahan Ajar</h5>
+
+                                {bahanAjarList.length === 0 ? (
+                                    <p className="text-muted">Belum ada bahan ajar ditambahkan.</p>
+                                ) : (
+                                    <div className="row g-3">
+                                        {bahanAjarList
+                                            .slice()
+                                            .sort((a, b) => a.pertemuan - b.pertemuan)
+                                            .map((bahan, index) => (
+                                                <div key={index} className="col-12 col-md-4">
+                                                    <div className="border rounded p-3 h-100 d-flex flex-column justify-content-between shadow-sm">
+                                                        <div>
+                                                            <div className="mb-2 text-primary fw-bold">
+                                                                Pertemuan {bahan.pertemuan}
+                                                            </div>
+                                                            <div className="mb-3" style={{ minHeight: "3rem", fontWeight: "600" }}>
+                                                                {bahan.judul_materi}
+                                                            </div>
+                                                        </div>
+                                                        <a
+                                                            href={`http://localhost:5000/uploads/bahan_ajar/${bahan.file_pendukung}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="btn btn-sm btn-outline-primary d-flex align-items-center justify-content-center mt-auto"
+                                                        >
+                                                            <FiFile className="me-1" /> Lihat File PDF
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                    </div>
+                                )}
+                            </div>
                         )}
                     </Modal.Body>
-
                     <Modal.Footer>
-                        <Button variant="danger" onClick={handleCloseDetail}>
+                        <Button variant="danger" onClick={handleCloseDetailModal}>
                             Tutup
                         </Button>
                     </Modal.Footer>

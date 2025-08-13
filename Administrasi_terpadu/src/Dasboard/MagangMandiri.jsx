@@ -211,20 +211,20 @@ const MagangMandiri = () => {
               <h4 className="text-uppercase">Magang Mandiri</h4>
               <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
             </div>
-            <Table striped bordered className="align-middle mb-0 text-center">
+            <Table striped bordered className=" align-middle mb-0 text-center small">
               <thead className="bg-light">
                 <tr>
-                  <th className="py-3">No</th>
-                  <th className="py-3">Nama</th>
-                  <th className="py-3">Nim</th>
-                  <th className="py-3">Judul</th>
-                  <th className="py-3">Nama Perusahaan</th>
-                  <th className="py-3">Tanggal Mulai</th>
-                  <th className="py-3">Tanggal Selesai</th>
-                  <th className="py-3">Sertifikat</th>
-                  <th className="py-3">Konversi Nilai</th>
-                  <th className="py-3">File Laporan</th>
-                  <th className="py-3 no-print">Aksi</th>
+                  <th className="py-3 px-3">No</th>
+                  <th className="py-3 px-5">Nama</th>
+                  <th className="py-3 px-5">Nim</th>
+                  <th className="py-3 px-5">Judul</th>
+                  <th className="py-3 px-5">Nama Perusahaan</th>
+                  <th className="py-3 px-5">Tanggal Mulai</th>
+                  <th className="py-3 px-5">Tanggal Selesai</th>
+                  <th className="py-3 px-3">Sertifikat</th>
+                  <th className="py-3 px-3">Konversi Nilai</th>
+                  <th className="py-3 px-3">File Laporan</th>
+                  <th className="py-3 px-5 no-print">Aksi</th>
                 </tr>
               </thead>
               <tbody>

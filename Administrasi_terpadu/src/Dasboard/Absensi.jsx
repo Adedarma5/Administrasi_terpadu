@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { Container, Card, Table, Button, Row, Col, Form, InputGroup, Spinner, Alert } from "react-bootstrap";
-import { FiPlus, FiSearch, FiEdit2, FiTrash2, FiEye } from "react-icons/fi";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Container, Card, Table, Button, Row, Col, Form, InputGroup,
+  Spinner, Alert, Modal
+} from "react-bootstrap";
+import { FiPlus, FiSearch, FiBookOpen, FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useReactToPrint } from 'react-to-print';
-import { useRef } from 'react';
-import "../Dist/Home.css"
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import "../Dist/Home.css";
 
 const Absensi = () => {
   const navigate = useNavigate();
@@ -18,16 +20,116 @@ const Absensi = () => {
   const [selectedmatakuliah, setSelectedMataKuliah] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedAbsensi, setSelectedAbsensi] = useState(null);
+  const [absensiPertemuanList, setAbsensiPertemuanList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const user = JSON.parse(localStorage.getItem('user'));
   const printRef = useRef();
 
+  useEffect(() => {
+    fetchAbsensi();
+    fetchMataKuliah();
+  }, []);
 
+  const fetchAbsensi = async () => {
+    setLoading(true);
+    setError(null);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError("Token tidak ditemukan. Silakan login ulang.");
+      setLoading(false);
+      return;
+    }
+    try {
+      const response = await axios.get("http://localhost:5000/absensi", {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      setAbsensiList(response.data);
+    } catch (error) {
+      setError("Gagal memuat data Absensi.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMataKuliah = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get("http://localhost:5000/mata_kuliah");
+      setMataKuliahList(response.data);
+    } catch (error) {
+      setError("Gagal memuat data Mata Kuliah.");
+    }
+    setLoading(false);
+  };
+
+  const deleteAbsensi = async (id) => {
+    const result = await Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: "Data yang dihapus tidak bisa dikembalikan!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, hapus!',
+      cancelButtonText: 'Batal'
+    });
+
+    if (result.isConfirmed) {
+      const token = localStorage.getItem('token'); 
+
+      try {
+        await axios.delete(`http://localhost:5000/absensi/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        fetchAbsensi();
+        Swal.fire("Berhasil!", "Data berhasil dihapus.", "success");
+      } catch (error) {
+        console.error(error); 
+        Swal.fire("Gagal", "Terjadi kesalahan saat menghapus data.", "error");
+      }
+    }
+  };
+
+
+  const handleShowDetail = async (absensi) => {
+    const token = localStorage.getItem("token");
+    const url = `http://localhost:5000/absensipertemuan/byuser?absensi_id=${absensi.id}`;
+
+    try {
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setSelectedAbsensi(absensi);
+      setAbsensiPertemuanList(res.data);
+      setShowDetailModal(true);
+    } catch (err) {
+      console.error("Gagal mengambil absensi pertemuan", err);
+    }
+  };
+
+
+
+
+  const handleCloseDetailModal = () => {
+    setShowDetailModal(false);
+    setSelectedAbsensi(null);
+    setAbsensiPertemuanList([]);
+  };
 
   const handlePrint = useReactToPrint({
     contentRef: printRef,
-    documentTitle: "Laporan Absensi Dosen",
+    documentTitle: "",
     onBeforeGetContent: () => {
       return new Promise((resolve) => {
         setTimeout(() => {
@@ -41,9 +143,7 @@ const Absensi = () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Laporan Absensi");
 
-
-    worksheet.addRow(["No", "Nama", "Mata Kuliah", "Jam Pelajaran", "Foto"]);
-
+    worksheet.addRow(["No", "Nama", "Mata Kuliah", "kelas", "Jam", "Hari"]);
 
     for (let i = 0; i < filteredAbsensi.length; i++) {
       const absensi = filteredAbsensi[i];
@@ -51,127 +151,51 @@ const Absensi = () => {
         i + 1,
         absensi.name,
         absensi.mata_kuliah,
-        absensi.jam_pelajaran,
-        "",
+        absensi.kelas,
+        absensi.jam,
+        absensi.hari,
+
       ]);
 
-      const response = await fetch(`http://localhost:5000/uploads/absensi/${absensi.foto}`);
-      const blob = await response.blob();
-      const buffer = await blob.arrayBuffer();
+      try {
+        const blob = await response.blob();
+        const buffer = await blob.arrayBuffer();
 
-      const imageId = workbook.addImage({
-        buffer,
-        extension: 'jpeg/png',
-      });
+        const imageId = workbook.addImage({
+          buffer,
+          extension: 'jpeg',
+        });
 
-      worksheet.addImage(imageId, {
-        tl: { col: 4, row: row.number - 1 },
-        ext: { width: 100, height: 100 }
-      })
-      worksheet.getRow(row.number).height = 80;
+        worksheet.addImage(imageId, {
+          tl: { col: 4, row: row.number - 1 },
+          ext: { width: 100, height: 100 }
+        });
+
+        worksheet.getRow(row.number).height = 80;
+      } catch (err) {
+        console.warn("Gagal menambahkan gambar ke Excel:", err);
+      }
     }
 
     worksheet.columns = [
       { width: 5 },
-      { width: 50 },
+      { width: 30 },
       { width: 25 },
-      { width: 20 },
-      { width: 20 },
+      { width: 15 },
+      { width: 20 }
     ];
-
 
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     });
     saveAs(blob, "Laporan_Absensi.xlsx");
   };
 
-
-
-
-  useEffect(() => {
-    fetchAbsensi();
-    fetchMataKuliah();
-  }, []);
-
-  const fetchAbsensi = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      let url = "http://localhost:5000/absensi";
-
-      if (user?.role === "user") {
-        url = `http://localhost:5000/absensi?userId=${user.id}`;
-      }
-
-      const token = localStorage.getItem('token');
-
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      setAbsensiList(response.data);
-    } catch (error) {
-      setError("Gagal memuat data Absensi.");
-      console.error("Error fetching data:", error);
-    }
-    setLoading(false);
-  };
-
-
-  const fetchMataKuliah = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios.get("http://localhost:5000/mata_kuliah");
-      setMataKuliahList(response.data);
-    } catch (error) {
-      setError("Gagal memuat data Mata Kuliah.");
-      console.error("Error fetching data:", error);
-    }
-    setLoading(false);
-  };
-
-  const deleteAbsensi = async (id) => {
-    const result = await Swal.fire({
-      title: 'Apakah Anda yakin?',
-      text: "Data yang dihapus tidak bisa dikembalikan!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Ya, hapus!',
-      cancelButtonText: 'Batal'
-    });
-
-    if (result.isConfirmed) {
-      try {
-        await axios.delete(`http://localhost:5000/absensi/${id}`);
-        fetchAbsensi();
-        Swal.fire({
-          icon: 'success',
-          title: 'Berhasil!',
-          text: 'Data berhasil dihapus.',
-          timer: 2000,
-          showConfirmButton: false,
-        });
-      } catch (error) {
-        console.error("Error deleting:", error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops!',
-          text: 'Terjadi kesalahan saat menghapus data.',
-        });
-      }
-    }
-  };
-
   const filteredAbsensi = absensiList.filter((absensi) => {
-    const jam_pelajaranMatch = absensi.jam_pelajaran?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matakuliahMatch = selectedmatakuliah === "" || absensi.mata_kuliah?.toString() === selectedmatakuliah;
-    return jam_pelajaranMatch && matakuliahMatch;
+    const jamMatch = absensi.jam?.toLowerCase().includes(searchTerm.toLowerCase());
+    const mkMatch = selectedmatakuliah === "" || absensi.mata_kuliah === selectedmatakuliah;
+    return jamMatch && mkMatch;
   });
 
   const totalItems = filteredAbsensi.length;
@@ -255,7 +279,7 @@ const Absensi = () => {
           </Card.Header>
 
 
-          <div className="table-responsive" ref={printRef}>
+          <div ref={printRef}>
             <div className="print-only">
               <h4 className="text-uppercase">Laporan Absensi</h4>
               <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
@@ -269,66 +293,82 @@ const Absensi = () => {
                 {error}
               </Alert>
             ) : (
-              <Table striped bordered  className="align-middle mb-0 text-center">
-                <thead className="bg-light">
-                  <tr>
-                    <th className="py-3">No</th>
-                    <th className="py-3">Nama </th>
-                    <th className="py-3">Mata Kuliah</th>
-                    <th className="py-3">Jam Pelajaran</th>
-                    <th className="py-3">Foto</th>
-                    <th className="py-3 text-center no-print">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginatedAbsensi.length > 0 ? (
-                    paginatedAbsensi.map((absensi, index) => (
-                      <tr key={absensi.id}>
-                        <td className="fw-medium">{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                        <td>{absensi.name}</td>
-                        <td>{absensi.mata_kuliah}</td>
-                        <td>{absensi.jam_pelajaran}</td>
-                        <td>
-                          <a
-                            href={`http://localhost:5000/uploads/absensi/${absensi.foto}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Lihat FOTO
-                          </a>
-                        </td>
-                        <td className="no-print">
-                          <div className="d-flex justify-content-center gap-2">
+              <div className="table-responsive">
+                <Table striped bordered responsive className="align-middle mb-0 text-center small">
+                  <thead className="bg-light">
+                    <tr>
+                      <th className="py-3">No</th>
+                      <th className="py-3">Nama</th>
+                      <th className="py-3">Mata Kuliah</th>
+                      <th className="py-3">Kelas</th>
+                      <th className="py-3">Hari</th>
+                      <th className="py-3">Jam</th>
+                      <th className="py-3 no-print">Foto</th>
+                      <th className="py-3 no-print">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedAbsensi.length > 0 ? (
+                      paginatedAbsensi.map((absensi, index) => (
+                        <tr key={absensi.id}>
+                          <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                          <td>{absensi.name}</td>
+                          <td>{absensi.mata_kuliah}</td>
+                          <td>{absensi.kelas}</td>
+                          <td>{absensi.hari}</td>
+                          <td>{absensi.jam}</td>
+                          <td className="no-print">
                             <Button
-                              variant="outline-success"
+                              variant="outline-primary"
                               size="sm"
-                              title="Edit"
-                              onClick={() => navigate(`/admin/dashboard/absensi/editabsensi/${absensi.id}`)}
-
+                              onClick={() =>
+                                navigate(`/admin/dashboard/Absensi/tambahabsensipertemuan`)
+                              }
                             >
-                              <FiEdit2 size={15} />
+                              <span>Tambah FOTO</span>
                             </Button>
-                            <Button
-                              variant="outline-danger"
-                              size="sm"
-                              title="Hapus"
-                              onClick={() => deleteAbsensi(absensi.id)}>
-                              <FiTrash2 size={15} />
-                            </Button>
-                          </div>
+                          </td>
+                          <td className="no-print">
+                            <div className="d-flex justify-content-center gap-2">
+                              <Button
+                                variant="outline-warning"
+                                size="sm"
+                                onClick={() => handleShowDetail(absensi)}
+                              >
+                                <FiEye />
+                              </Button>
+                              <Button
+                                variant="outline-success"
+                                size="sm"
+                                onClick={() =>
+                                  navigate(`/admin/dashboard/absensi/editabsensi/${absensi.id}`)
+                                }
+                              >
+                                <FiEdit2 />
+                              </Button>
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => deleteAbsensi(absensi.id)}
+                              >
+                                <FiTrash2 />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="8" className="text-center text-muted py-3">
+                          Tidak ada data
                         </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="7" className="text-center text-muted py-3">
-                        Tidak ada data
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </Table>
+                    )}
+                  </tbody>
+                </Table>
+              </div>
             )}
+
           </div>
 
           <div className="p-3 border-top d-flex justify-content-between align-items-center">
@@ -346,7 +386,59 @@ const Absensi = () => {
           </div>
         </Card.Body>
       </Card>
-    </Container>
+
+
+      <Modal show={showDetailModal} onHide={handleCloseDetailModal} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <FiBookOpen className="me-2" /> Detail Absensi Pertemuan
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedAbsensi && (
+            <>
+              <div className="mb-2"><strong>Nama Dosen:</strong> {selectedAbsensi.name}</div>
+              <div className="mb-2"><strong>Mata Kuliah:</strong> {selectedAbsensi.mata_kuliah}</div>
+              <div className="mb-2"><strong>Kelas:</strong> {selectedAbsensi.kelas}</div>
+              <div className="mb-2"><strong>Hari:</strong> {selectedAbsensi.hari}</div>
+              <div className="mb-2"><strong>Jam:</strong> {selectedAbsensi.jam}</div>
+
+              <h5 className="mt-4 mb-3">Absensi Pertemuan</h5>
+              {absensiPertemuanList.length === 0 ? (
+                <p className="text-muted">Belum ada absensi pertemuan.</p>
+              ) : (
+                <div className="row g-3">
+                  {absensiPertemuanList.map((item, index) => (
+                    <div key={index} className="col-md-4">
+                      <div className="border-none  shadow">
+                        <div className=" p-2 d-flex justify-content-between align-items-center">
+                          <strong>Pertemuan {item.pertemuan}</strong>
+                          <span className={`badge ${item.keterangan === 'Telat' ? 'bg-danger' : 'bg-success'}`}>
+                            {item.keterangan}
+                          </span>
+                        </div>
+                        <img
+                          src={`http://localhost:5000/uploads/absensi_pertemuan/${item.foto}`}
+                          alt={`Foto pertemuan ${item.pertemuan}`}
+                          className="img-fluid "
+                        />
+
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseDetailModal}>
+            Tutup
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+    </Container >
   );
 };
 

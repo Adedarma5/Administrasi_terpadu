@@ -210,17 +210,17 @@ const TugasAkhir = () => {
               <h4 className="text-uppercase">Magang Mandiri</h4>
               <p>Tanggal Cetak: {new Date().toLocaleDateString()}</p>
             </div>
-            <Table striped bordered className="align-middle mb-0 text-center">
+            <Table striped bordered className=" align-middle mb-0 text-center small">
               <thead className="bg-light">
                 <tr>
-                  <th className="py-3">No</th>
-                  <th className="py-3">Nama</th>
-                  <th className="py-3">Nim</th>
-                  <th className="py-3">NO Hp</th>
-                  <th className="py-3">Skripsi Versi Distribusi</th>
-                  <th className="py-3">Program TGA</th>
-                  <th className="py-3">Jurnal Skripsi Dengan Format Sisfo</th>
-                  <th className="py-3 no-print">Aksi</th>
+                  <th className="py-3 align-middle">No</th>
+                  <th className="py-3 px-5  align-middle">Nama</th>
+                  <th className="py-3  align-middle">Nim</th>
+                  <th className="py-3  align-middle">NO Hp</th>
+                  <th className="py-3 align-middle">Skripsi Versi Distribusi</th>
+                  <th className="py-3 align-middle">Program TGA</th>
+                  <th className="py-3 align-middle">Jurnal Skripsi Dengan Format Sisfo</th>
+                  <th className="py-3  align-middle  no-print">Aksi</th>
                 </tr>
               </thead>
               <tbody>

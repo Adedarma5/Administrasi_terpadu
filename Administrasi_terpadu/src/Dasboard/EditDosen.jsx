@@ -135,7 +135,7 @@ const EditDosen = () => {
               </Col>
               <Col md={8}>
                 <Form.Control
-                  type="number"
+                  type="text"
                   value={nip}
                   onChange={(e) => setNip(e.target.value)}
                   required
